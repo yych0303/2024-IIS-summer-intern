@@ -26,39 +26,6 @@ open import Data.Sum using (_⊎_; inj₁; inj₂) renaming ([_,_] to case-⊎)
 
 ```
 
-## Fin
-
-Goal (S ≃ T) ⇔ (N = M)
-
-
-⟦_⟧ (n : ℕ) : Set
-  zero : ⟦ suc n ⟧
-
-_×_ (A B : Set) : Set
-Σ[]
-Π
-
-#_ (A : Set) : ℕ
-
-
-
-
-data ⟦_⟧ : ℕ → Set where
-  Φ : ⟦ 0 ⟧
-  S : {n : ℕ} → (s : ⟦ n ⟧) → ⟦ suc n ⟧
-
-
--- def ⨄ ­- × ／
-
-data _! : ⟦_⟧ → Set where
-  ⟦ 1 ⟧ : ⟦ 0 ⟧ !
-  S ⟦ n ⟧ × (⟦ n ⟧ !) : {n : ℕ} → (S ⟦ n ⟧) !
-
-
-
--- #_ : (A : Set) → ℕ
--- # A = {!  !}
-
  
 ```agda
 
