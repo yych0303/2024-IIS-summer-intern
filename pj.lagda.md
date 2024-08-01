@@ -3,7 +3,6 @@
 ```agda
 
 ------ std lib
-
 import Relation.Binary.PropositionalEquality as Eq
 open Eq using (_≡_; refl; sym; trans; cong)
 open Eq.≡-Reasoning
@@ -33,7 +32,6 @@ open import Function.Equivalence using (_⇔_)
 
 
 ------ plfa
-
 open import plfa.part1.Isomorphism using (_≃_; _≲_; extensionality; _⇔_)
 open plfa.part1.Isomorphism.≃-Reasoning
 
@@ -42,7 +40,7 @@ open plfa.part1.Isomorphism.≃-Reasoning
 open import Logic
 open import N-cal
 
-
+------ private
 private Type = Set
 private Type₁ = Set₁
 
@@ -81,101 +79,6 @@ N-calculus
 
 ```agda
 
--- Comb ------------------------------
-
-{-
-
-Ele = ℕ
-
-data Comb : Type where
-  Φ : Comb
-  ε : {Ele} → Comb → Comb
-
-unit = ε {_} Φ
-
--- Elements 
-lookup : Ele → Comb → Bool
-lookup x Φ = false
-lookup x (ε {y} A) with x Data.Nat.≟ y
-...                   | yes _ = true
-...                   | no  _ = lookup x A
-
-
--- relation 
-
-
-
-
-
-postulate
-  ε-commute : ∀ {x y : Ele} {A : Comb} → (ε {x} (ε {y} A) ≡ ε {y} (ε {x} A)) 
-
-
-_U_ : Comb → Comb → Comb
-Φ U B = B
-ε {x} A U B = ε {x} (A U B)
-
---  _-_ : Comb → Comb → Comb
---  Φ - B = Φ
---  A - Φ = A
---  ε A - ε B = A - B
-
-_∙_ : Comb → Comb → Comb
-Φ ∙ B = Φ
-ε A ∙ B = B U (A ∙ B) 
-
--- _/_: Comb → Comb
-
-Σ[x:_]_ : Comb → (Ele → Comb) → Comb
-Σ[x: Φ ] F = Φ
-Σ[x: ε {x} A ] F = (F x) U (Σ[x: A ] F) 
-
-Π[x:_]_ : Comb → (Ele → Comb) → Comb
-Π[x: Φ ] F = unit
-Π[x: ε {x} A ] F = (F x) ∙ (Π[x: A ] F)
-
-_! : Comb → Comb
-Φ ! = unit
-ε {x} A ! = ε {x} A ∙ (A !)
-
-
-
--- # ---------------------------
-
-# : Comb → ℕ
-# Φ = zero
-# (ε A) = suc (# A)
-
--- propersitions
-postulate
-  _ : ∀ {A B : Comb} → # (A U B) ≡ # A + # B
-  -- _ : ∀ {A B : Comb} → # (A - B) ≡ # A ∸ # B
-  _ : ∀ {A B : Comb} → # (A ∙ B) ≡ # A * # B
-  -- _ : ∀ {A B : Comb} → # (A / B) ≡ # A / # B
-  -- _ : ∀ {A : Comb} {F : Ele → Comb} → # (Σ[x: A ] F) ≡ {!   !}
-  -- _ : ∀ {A : Comb} {F : Ele → Comb} → # (Π[x: A ] F) ≡ {!   !}
-  
-
-
-
-
--- create Comb 
-
-⟦_⟧ : ℕ → Comb
-⟦ zero ⟧ = Φ
-⟦ suc n ⟧ = ε {suc n} ⟦ n ⟧
-
--}
-
-
-
-```
-
-
-Types
-
-
-```agda
 
 {-
 -- https://agda.github.io/agda-stdlib/master/Data.Product.Base.html
@@ -226,23 +129,8 @@ data _≣_ {A : Type} : A → A → Type where
 infix 0 _≣_ 
 
 
-
-
 -- Types ------------------------------------------------------------------------
 
-
-
-
-{-- Example: 1 + 1 = 2
-_ : Fin 1 ⊎ Fin 1 ≃ Fin 2
-_ = record
-  { to = λ { (inj₁ fzero) → (fzero {1}) ; (inj₂ fzero) → fsuc {1} fzero }
-  ; from = λ { (fzero {1}) → inj₁ fzero ; (fsuc {1} fzero) → inj₂ fzero }
-  ; from∘to = λ { (inj₁ x) → refl ; (inj₂ y) → refl }
-  ; to∘from = λ { zero → refl ; suc zero → refl }
-  }
-
--}
 
 ∥_∥ : Type → Type
 ∥ A ∥ = (A → ⊥) → ⊥
@@ -252,38 +140,36 @@ _ = record
 Pow : Type → Type → Type
 Pow A B = A → B
 
--- 
 
--- Definition of Identity mapping
--- id : (A : Type) → A → A 
--- id A a = a
 
-Iso : Type → Type → Type
-Iso A B = Σ[ f ∈ (A → B) ] Σ[ g ∈ (B → A) ] ( g ∘ f ≡ id {A} × f ∘ g ≡ id {B} ) 
 
-Mono : Type → Type → Type
-Mono A B = Σ[ f ∈ (A → B) ] Π[ x ∈ A ] Π[ y ∈ A ] ((f x ≡ f y) → (x ≡ y))
+
+Bijection : Type → Type → Type
+Bijection A B = Σ[ f ∈ (A → B) ] Σ[ g ∈ (B → A) ] ( g ∘ f ≡ id {A} × f ∘ g ≡ id {B} ) 
+
+
+Injection : Type → Type → Type
+Injection A B = Σ[ f ∈ (A → B) ] Π[ x ∈ A ] Π[ y ∈ A ] ((f x ≡ f y) → (x ≡ y))
+
+
+
 
 -- Definition of Factorial 
 -- Factorial : (A : Type) → Type
 -- Type A 的所有排列
 
 Factorial : Type → Type
-Factorial A = A ≃ A
+Factorial A = Bijection A A
+-- Factorial A = A ≃ A
 
 
-
--- Definition of Factorial
--- data Factorial : ℕ → Type where
---   Φ! : {f : Fin 1} → Factorial 0
---   ε! : {n : ℕ} → {f : Fin (suc n)} → Factorial n → Factorial (suc n)
 
 
 -- Definition of Permutation
 -- Permutation : (A : Type) → (B : Type) → Type
 
 Permutation : Type → Type → Type
-Permutation A B = Mono B A
+Permutation A B = Injection B A
 -- Permutation A B = Σ f ∈ (B → A) , Π x ∈ B , Π y ∈ B , ((f x ≡ f y) → (x ≡ y))
 
 
@@ -402,17 +288,6 @@ F-Factorial (suc n) = Fin (suc n) × F-Factorial n
 
 {-
 
--- Definition of Fin
-data Fin : ℕ → Type where
-  zero : {n : ℕ} → Fin (suc n)
-  suc : {n : ℕ} → Fin n → Fin (suc n)
-
-
-𝟘 = Fin 0
-𝟙 = Fin 1
-𝟚 = Fin 2
-
-
 -- Definition of C 
 data Combin : ∀ {l m : ℕ} → Fin l → Fin m → Type where
   CΦ : Combin zero zero 
@@ -428,6 +303,100 @@ data Combin : ∀ {l m : ℕ} → Fin l → Fin m → Type where
 choose : {n : ℕ} → Type → ℕ → Type
 choose {n} A zero = 𝟙
 choose {n} A (suc k) = {! Σ A !}
+
+-}
+
+
+
+
+-- Comb ------------------------------
+
+{-
+
+Ele = ℕ
+
+data Comb : Type where
+  Φ : Comb
+  ε : {Ele} → Comb → Comb
+
+unit = ε {_} Φ
+
+-- Elements 
+lookup : Ele → Comb → Bool
+lookup x Φ = false
+lookup x (ε {y} A) with x Data.Nat.≟ y
+...                   | yes _ = true
+...                   | no  _ = lookup x A
+
+
+-- relation 
+
+
+
+
+
+postulate
+  ε-commute : ∀ {x y : Ele} {A : Comb} → (ε {x} (ε {y} A) ≡ ε {y} (ε {x} A)) 
+
+
+_U_ : Comb → Comb → Comb
+Φ U B = B
+ε {x} A U B = ε {x} (A U B)
+
+--  _-_ : Comb → Comb → Comb
+--  Φ - B = Φ
+--  A - Φ = A
+--  ε A - ε B = A - B
+
+_∙_ : Comb → Comb → Comb
+Φ ∙ B = Φ
+ε A ∙ B = B U (A ∙ B) 
+
+-- _/_: Comb → Comb
+
+Σ[x:_]_ : Comb → (Ele → Comb) → Comb
+Σ[x: Φ ] F = Φ
+Σ[x: ε {x} A ] F = (F x) U (Σ[x: A ] F) 
+
+Π[x:_]_ : Comb → (Ele → Comb) → Comb
+Π[x: Φ ] F = unit
+Π[x: ε {x} A ] F = (F x) ∙ (Π[x: A ] F)
+
+_! : Comb → Comb
+Φ ! = unit
+ε {x} A ! = ε {x} A ∙ (A !)
+
+
+
+-- # ---------------------------
+
+# : Comb → ℕ
+# Φ = zero
+# (ε A) = suc (# A)
+
+-- propersitions
+postulate
+  _ : ∀ {A B : Comb} → # (A U B) ≡ # A + # B
+  -- _ : ∀ {A B : Comb} → # (A - B) ≡ # A ∸ # B
+  _ : ∀ {A B : Comb} → # (A ∙ B) ≡ # A * # B
+  -- _ : ∀ {A B : Comb} → # (A / B) ≡ # A / # B
+  -- _ : ∀ {A : Comb} {F : Ele → Comb} → # (Σ[x: A ] F) ≡ {!   !}
+  -- _ : ∀ {A : Comb} {F : Ele → Comb} → # (Π[x: A ] F) ≡ {!   !}
+  
+
+
+-- Definition of Factorial
+-- data Factorial : ℕ → Type where
+--   Φ! : {f : Fin 1} → Factorial 0
+--   ε! : {n : ℕ} → {f : Fin (suc n)} → Factorial n → Factorial (suc n)
+
+
+
+-- create Comb 
+
+⟦_⟧ : ℕ → Comb
+⟦ zero ⟧ = Φ
+⟦ suc n ⟧ = ε {suc n} ⟦ n ⟧
 
 -}
 
