@@ -1,48 +1,73 @@
 ## Imports
 
 ```agda
+
+------ std lib
+
 import Relation.Binary.PropositionalEquality as Eq
 open Eq using (_≡_; refl; sym; trans; cong)
 open Eq.≡-Reasoning
+
 open import Data.Bool using (Bool; true; false; T; _∧_; _∨_; not)
 open import Data.Nat using (ℕ; zero; suc; _+_; _*_; _∸_; _≤_; s≤s; z≤n)
 open import Data.Nat.Properties
-open import Relation.Nullary using (¬_; Dec; yes; no)
--- open import Data.Product using (_×_; ∃; ∃-syntax) renaming (_,_ to ⟨_,_⟩)
-open import Function using (_∘_)
-open import Level using (Level)
-
-open import plfa.part1.Isomorphism using (_≃_; _≲_; extensionality; _⇔_)
-open plfa.part1.Isomorphism.≃-Reasoning
 
 open import Data.Product using (_×_; proj₁; proj₂) -- renaming (_,_ to ⟨_,_⟩)
 open import Data.Sum using (_⊎_; inj₁; inj₂) renaming ([_,_] to case-⊎)
 
-open import Agda.Builtin.Sigma
+-- open import Data.Fin
 
-open import Data.Unit using (⊤; tt)
-open import Data.Empty using (⊥; ⊥-elim)
+
+open import Relation.Nullary using (¬_; Dec; yes; no)
+-- open import Data.Unit using (⊤; tt)
+-- open import Data.Empty using (⊥; ⊥-elim)
+
+open import Level using (Level)
+
+open import Function using (_∘_)
 open import Function.Equivalence using (_⇔_)
 
 
+------ plfa
 
-Type = Set
+open import plfa.part1.Isomorphism using (_≃_; _≲_; extensionality; _⇔_)
+open plfa.part1.Isomorphism.≃-Reasoning
 
+
+------ file import
+open import Logic
+
+------------------------------------------------------------------------
 ```
 ## Goal
 
-Example:
+Goal:
+(S ≃ T) ≃ (Fin n ≃ Fin m) ⇔ (N = M)
 
+Example:
 C n , k = Σ [n] (λ i → C (i-1) (k-1))
 
 
 
-Goal 
 
-(S ≃ T) ⇔ (N = M)
-
+Num
 1. type of combination
-2. 
+2. List 
+
+Set
+1. K A
+
+Type
+1. _×_ , _⊎_
+2. Sg , Pi
+3. _/_ , _-_
+4. Fin
+5. Factorial , Combination , Permutation
+
+
+
+
+
 
 
 ```agda
@@ -59,7 +84,7 @@ combination _ 0 = 1
 combination 0 _ = 0
 combination (suc i) (suc j) = combination i j + combination i (suc j) 
 
-
+-- Sigma : 
 
 
 -- Comb ------------------------------
@@ -149,24 +174,28 @@ postulate
 -}
 -- Pi Type --------------------------------------
 
-Pi : (A : Type) (B : A → Type) → Type
-Pi A B = (x : A) → B x
+Π : (A : Type) (B : A → Type) → Type
+Π A B = (x : A) → B x
 
-syntax Pi A (λ x → b) = Π x ∶ A , b
+syntax Π A (λ x → b) = Π x ∈ A , b
 
 
 -- Sg Type --------------------------------------
-{-
-data Σ {A : Type} (B : A → Type) : Type where
-  _,_ : (x : A) (y : B x) → Σ {A} B
-  
-pr₁ : {A : Type} {B : A → Type} → Σ B → A
-pr₁ (x , y) = x
 
-pr₂ : {A : Type} {B : A → Type} → (z : Σ B) → B (pr₁ z)
-pr₂ (x , y) = y
--}
+record Σ {a b} (A : Set) (B : A → Set) : Set  where
+  constructor _,_
+  field
+    fst : A
+    snd : B fst
 
+open Σ public
+
+infixr 4 _,_
+
+syntax Σ A (λ x → b) = Σ x ∈ A , b
+
+
+-- infixr 0 Σ_∈_,_ , Π_∈_,_
 
 
 data _≣_ {A : Type} : A → A → Type where
@@ -177,7 +206,7 @@ infix 0 _≣_
 
 
 
--- ---------------------------------------
+-- Types ------------------------------------------------------------------------
 
 -- Definition of Fin
 data Fin : ℕ → Type where
@@ -191,36 +220,98 @@ data Fin : ℕ → Type where
 
 
 
+{-- Example: 1 + 1 = 2
+_ : Fin 1 ⊎ Fin 1 ≃ Fin 2
+_ = record
+  { to = λ { (inj₁ fzero) → (fzero {1}) ; (inj₂ fzero) → fsuc {1} fzero }
+  ; from = λ { (fzero {1}) → inj₁ fzero ; (fsuc {1} fzero) → inj₂ fzero }
+  ; from∘to = λ { (inj₁ x) → refl ; (inj₂ y) → refl }
+  ; to∘from = λ { zero → refl ; suc zero → refl }
+  }
 
+-}
 
-F→ℕ : ∀ {n} → Fin n → ℕ
-F→ℕ zero = zero
-F→ℕ (suc f) = suc (F→ℕ (f))
-
-postulate
-  f≲F : ∀ {n m : ℕ} 
-    → n ≤ m
-    ---------
-    → Fin n ≲ Fin m
-
-
-
+∥_∥ : Type → Type
+∥ A ∥ = Σ n ∈ ℕ , (A ≃ Fin n)
 
 -- Pow n k
+-- Pow A B == A^B
 Pow : Type → Type → Type
-Pow A B = Π x ∶ A , B
+Pow A B = A → B
 
+-- 
 
-Fac : ∀ {n : ℕ} {Fin n ≃ A} (A : Type) → Type
-Fac {n} {F≃A} A = Π x ∶ Fin n , {!  !}
-  
- -- Π x ∶ (Fin n) , Fin (F→ℕ x)
+-- Definition of Identity mapping
+-- id : (A : Type) → A → A 
+-- id A a = a
+
+Iso : Type → Type → Type
+Iso A B = Σ f ∈ (A → B) , Σ g ∈ (B → A) , ( g ∘ f ≡ id {A} × f ∘ g ≡ id {B} ) 
+
+Mono : Type → Type → Type
+Mono A B = Σ f ∈ (A → B) , Π x ∈ A , Π y ∈ A , ((f x ≡ f y) → (x ≡ y))
+
+-- Definition of Factorial 
+-- Factorial : (A : Type) → Type
+-- Type A 的所有排列
+
+Factorial : Type → Type
+Factorial A = A ≃ A
+
 
 
 -- Definition of Factorial
-data Factorial : ℕ → Type where
-  Φ! : {f : Fin 1} → Factorial 0
-  ε! : {n : ℕ} → {f : Fin (suc n)} → Factorial n → Factorial (suc n)
+-- data Factorial : ℕ → Type where
+--   Φ! : {f : Fin 1} → Factorial 0
+--   ε! : {n : ℕ} → {f : Fin (suc n)} → Factorial n → Factorial (suc n)
+
+
+-- Definition of Permutation
+-- Permutation : (A : Type) → (B : Type) → Type
+
+Permutation : Type → Type → Type
+Permutation A B = Mono B A
+-- Permutation A B = Σ f ∈ (B → A) , Π x ∈ B , Π y ∈ B , ((f x ≡ f y) → (x ≡ y))
+
+
+-- Definition of Div
+-- Div : (A : Type) → (B : Type) → Type
+Div : Type → Type → Type
+Div A B = Σ n ∈ ℕ , (Fin n × (A ≃ B × Fin n))
+
+
+
+
+
+-- 
+-- Definition of Combination
+-- Combination : (A : Type) → (B : Type) → Type
+
+Combination : Type → Type → Type
+Combination A B = {!   !}
+  where 
+    FA  = Factorial A
+    PAB = Permutation A B
+
+
+
+Combina : ℕ → ℕ → Type
+Combina n k = {!   !}
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 -- Definition of C 
 data Combin : ∀ {l m : ℕ} → Fin l → Fin m → Type where
