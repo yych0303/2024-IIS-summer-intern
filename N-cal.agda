@@ -1,10 +1,11 @@
 open import Data.Nat using (ℕ; zero; suc; _+_; _*_; _∸_)
 open import Data.List.Base
 open import Relation.Nullary using (¬_; Dec; yes; no)
+open import Data.String using (String; _≟_)
 
 
-Type = Set
-Type₁ = Set₁
+private Type = Set
+private Type₁ = Set₁
 
 
 -- Num
@@ -30,7 +31,6 @@ pi[ x ∷ l ] F = F x * sigma[ l ] F
 
 
 -- N-calculus
-open import Data.String using (String; _≟_)
 
 Var St : Type
 Var = String
@@ -86,3 +86,4 @@ infix 1 eval
 
 -- ev : ℕ
 -- ev = eval (`Σ[ "x"  ∈  (12 ∷ 222 ∷ 32 ∷ []) ] $ "x"  ) 
+ 

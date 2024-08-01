@@ -2,8 +2,8 @@
 
 module Logic where
 
-Type = Set
-Type₁ = Set₁
+private Type = Set
+private Type₁ = Set₁
 
 data Bool : Type where
  true false : Bool

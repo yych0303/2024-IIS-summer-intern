@@ -8,24 +8,28 @@ import Relation.Binary.PropositionalEquality as Eq
 open Eq using (_≡_; refl; sym; trans; cong)
 open Eq.≡-Reasoning
 
-open import Data.Bool using (Bool; true; false; T; _∧_; _∨_; not)
+open import Data.Bool -- using (Bool; true; false; T; _∧_; _∨_; not)
+open import Data.Unit  using (⊤; tt)
+open import Data.Empty using (⊥; ⊥-elim)
+
 open import Data.Nat using (ℕ; zero; suc; _+_; _*_; _∸_; _≤_; s≤s; z≤n)
 open import Data.Nat.Properties
 
-open import Data.Product using (_×_; proj₁; proj₂) -- renaming (_,_ to ⟨_,_⟩)
+open import Data.Product -- using (_×_; proj₁; proj₂) -- renaming (_,_ to ⟨_,_⟩)
 open import Data.Sum using (_⊎_; inj₁; inj₂) renaming ([_,_] to case-⊎)
 
--- open import Data.Fin
+open import Data.Fin using (Fin; toℕ; Fin′; cast; fromℕ) renaming (suc to fsuc ; zero to fzero)
+
+open import Data.List.Base
 
 
 open import Relation.Nullary using (¬_; Dec; yes; no)
--- open import Data.Unit using (⊤; tt)
--- open import Data.Empty using (⊥; ⊥-elim)
 
 open import Level using (Level)
 
 open import Function using (_∘_)
 open import Function.Equivalence using (_⇔_)
+-- open import Function.Bundles using (Equivalence; mkEquivalence)
 
 
 ------ plfa
@@ -36,6 +40,11 @@ open plfa.part1.Isomorphism.≃-Reasoning
 
 ------ file import
 open import Logic
+open import N-cal
+
+
+private Type = Set
+private Type₁ = Set₁
 
 ------------------------------------------------------------------------
 ```
@@ -45,12 +54,12 @@ Goal:
 (S ≃ T) ≃ (Fin n ≃ Fin m) ⇔ (N = M)
 
 Example:
-C n , k = Σ [n] (λ i → C (i-1) (k-1))
+C n , k = Σ i ∈ [n] , (C (i-1) (k-1))
 
 
 
 
-Num
+Computation Num
 1. type of combination
 2. List 
 
@@ -64,28 +73,13 @@ Type
 4. Fin
 5. Factorial , Combination , Permutation
 
-
+N-calculus
 
 
 
 
 
 ```agda
-
--- Num
-
-
-factorial : ℕ → ℕ 
-factorial zero = 1
-factorial (suc n) = (suc n) * (factorial n)
-
-combination : ℕ → ℕ → ℕ
-combination _ 0 = 1
-combination 0 _ = 0
-combination (suc i) (suc j) = combination i j + combination i (suc j) 
-
--- Sigma : 
-
 
 -- Comb ------------------------------
 
@@ -172,30 +166,58 @@ postulate
 ⟦ suc n ⟧ = ε {suc n} ⟦ n ⟧
 
 -}
+
+
+
+```
+
+
+Types
+
+
+```agda
+
+{-
+-- https://agda.github.io/agda-stdlib/master/Data.Product.Base.html
+------------------------------------------------------------------------
+-- Existential quantifiers
+
+∃ : ∀ {A : Set a} → (A → Set b) → Set (a ⊔ b)
+∃ = Σ _
+
+∃₂ : ∀ {A : Set a} {B : A → Set b}
+     (C : (x : A) → B x → Set c) → Set (a ⊔ b ⊔ c)
+∃₂ C = ∃ λ a → ∃ λ b → C a b
+
+------------------------------------------------------------------------
+-- Syntaxes
+
+-- The syntax declaration below is attached to Σ-syntax, to make it
+-- easy to import Σ without the special syntax.
+
+infix 2 Σ-syntax
+
+Σ-syntax : (A : Set a) → (A → Set b) → Set (a ⊔ b)
+Σ-syntax = Σ
+
+syntax Σ-syntax A (λ x → B) = Σ[ x ∈ A ] B
+
+infix 2 ∃-syntax
+
+∃-syntax : ∀ {A : Set a} → (A → Set b) → Set (a ⊔ b)
+∃-syntax = ∃
+
+syntax ∃-syntax (λ x → B) = ∃[ x ] B
+
+-}
+
 -- Pi Type --------------------------------------
 
-Π : (A : Type) (B : A → Type) → Type
-Π A B = (x : A) → B x
+Π-syntax : (A : Type) (B : A → Type) → Type
+Π-syntax A B = (x : A) → B x
 
-syntax Π A (λ x → b) = Π x ∈ A , b
-
-
--- Sg Type --------------------------------------
-
-record Σ {a b} (A : Set) (B : A → Set) : Set  where
-  constructor _,_
-  field
-    fst : A
-    snd : B fst
-
-open Σ public
-
-infixr 4 _,_
-
-syntax Σ A (λ x → b) = Σ x ∈ A , b
-
-
--- infixr 0 Σ_∈_,_ , Π_∈_,_
+syntax  Π-syntax A (λ x → b) = Π[ x ∈ A ] b
+infix 2 Π-syntax
 
 
 data _≣_ {A : Type} : A → A → Type where
@@ -208,15 +230,6 @@ infix 0 _≣_
 
 -- Types ------------------------------------------------------------------------
 
--- Definition of Fin
-data Fin : ℕ → Type where
-  zero : {n : ℕ} → Fin (suc n)
-  suc : {n : ℕ} → Fin n → Fin (suc n)
-
-
-𝟘 = Fin 0
-𝟙 = Fin 1
-𝟚 = Fin 2
 
 
 
@@ -232,7 +245,7 @@ _ = record
 -}
 
 ∥_∥ : Type → Type
-∥ A ∥ = Σ n ∈ ℕ , (A ≃ Fin n)
+∥ A ∥ = (A → ⊥) → ⊥
 
 -- Pow n k
 -- Pow A B == A^B
@@ -246,10 +259,10 @@ Pow A B = A → B
 -- id A a = a
 
 Iso : Type → Type → Type
-Iso A B = Σ f ∈ (A → B) , Σ g ∈ (B → A) , ( g ∘ f ≡ id {A} × f ∘ g ≡ id {B} ) 
+Iso A B = Σ[ f ∈ (A → B) ] Σ[ g ∈ (B → A) ] ( g ∘ f ≡ id {A} × f ∘ g ≡ id {B} ) 
 
 Mono : Type → Type → Type
-Mono A B = Σ f ∈ (A → B) , Π x ∈ A , Π y ∈ A , ((f x ≡ f y) → (x ≡ y))
+Mono A B = Σ[ f ∈ (A → B) ] Π[ x ∈ A ] Π[ y ∈ A ] ((f x ≡ f y) → (x ≡ y))
 
 -- Definition of Factorial 
 -- Factorial : (A : Type) → Type
@@ -277,7 +290,7 @@ Permutation A B = Mono B A
 -- Definition of Div
 -- Div : (A : Type) → (B : Type) → Type
 Div : Type → Type → Type
-Div A B = Σ n ∈ ℕ , (Fin n × (A ≃ B × Fin n))
+Div A B = Σ[ n ∈ ℕ ] (Fin n × (A ≃ B × Fin n))
 
 
 
@@ -297,20 +310,107 @@ Combination A B = {!   !}
 
 Combina : ℕ → ℕ → Type
 Combina n k = {!   !}
- 
+
+
+
+-- F-Types
+
+eqFin : Type → Type
+eqFin A = Σ[ n ∈ ℕ ] (A ≃ Fin n)
+
+e : eqFin (Fin 3) 
+e = 3 , {!   !}
+
+-- Fin post
+postulate
+  F⊥ : Fin 0 ≃ ⊥
+  F⊤ : Fin 1 ≃ ⊤
+
+  F0⊎Fn : ∀ {n : ℕ} → ((Fin 0 ⊎ Fin n) ≃ Fin n)
+  Fn⊎F0 : ∀ {n : ℕ} → ((Fin n ⊎ Fin 0) ≃ Fin n)
+  Fm⊎Fn : ∀ {m n : ℕ} → ((Fin m ⊎ Fin n) ≃ Fin (m + n))
+
+  F1×Fn : ∀ {n : ℕ} → ((Fin 1 × Fin n) ≃ Fin n)
+  Fn×F1 : ∀ {n : ℕ} → ((Fin n × Fin 1) ≃ Fin n)
+  Fm×Fn : ∀ {m n : ℕ} → ((Fin m × Fin n) ≃ Fin (m * n))
+
+  F→ℕ : ∀ {m n : ℕ} → ((Fin m ≃ Fin n) → (m ≡ n))
+  
+
+
+_ = λ n → λ k → `C[ ` n `+ ` k , ` k ] 
+_ = λ n → λ k → `C[ ` n `+ ` k , ` n ]
+
+
+Ps : Type
+Ps = List St
+
+[_]ᶜ : ℕ → St
+[ zero ]ᶜ = []
+[ suc n ]ᶜ = n ∷ [ n ]ᶜ
+
+
+
+
+_!ᶜ : ℕ → Ps
+zero !ᶜ = [] ∷ []
+suc n !ᶜ = Data.List.Base.map (λ l → (suc n) ∷ l) ([] ∷ n !ᶜ) 
+  
+
+Combi : St → ℕ → Ps
+Combi _ 0            = [] ∷ []
+Combi [] (suc k)      = []
+Combi (x ∷ s) (suc k) = Data.List.Base.map (λ l → x ∷ l) (Combi s k) Data.List.Base.++ (Combi s (suc k))
+
+
+fs = [ 5 ]ᶜ
+fd = 5 !ᶜ
+oc = Combi (1 ∷ 2 ∷ 3 ∷ 4 ∷ 5 ∷ []) 3
+pc = Combi (1 ∷ 2 ∷ 3 ∷ 4 ∷ 5 ∷ []) 2
+
+
+
+Q : Fin 3 ⊎ Fin 4 ≃ Fin 7
+Q = 
+  ≃-begin 
+    (Fin 3 ⊎ Fin 4)  
+  ≃⟨ Fm⊎Fn {3} {4} ⟩
+    Fin 7
+  ≃-∎
+
+q : 3 + 4 ≡ 7
+q = {!   !}
 
 
 
 
 
+neqFin : {n : ℕ} → Type → Type
+neqFin {n} A = (A ≃ Fin n)
+
+ne : neqFin {3} (Fin 3) 
+ne = {!   !}
+
+
+
+F-Factorial : ℕ → Type
+F-Factorial 0 = Fin 1
+F-Factorial (suc n) = Fin (suc n) × F-Factorial n
 
 
 
 
+{-
+
+-- Definition of Fin
+data Fin : ℕ → Type where
+  zero : {n : ℕ} → Fin (suc n)
+  suc : {n : ℕ} → Fin n → Fin (suc n)
 
 
-
-
+𝟘 = Fin 0
+𝟙 = Fin 1
+𝟚 = Fin 2
 
 
 -- Definition of C 
@@ -329,58 +429,18 @@ choose : {n : ℕ} → Type → ℕ → Type
 choose {n} A zero = 𝟙
 choose {n} A (suc k) = {! Σ A !}
 
+-}
 
 ```
 
--- calculus
-open import Data.String using (String; _≟_)
 
-Var : Type
-Var = ℕ
-
--- infix  5  ƛ_⇒_
--- infix  5  μ_⇒_
-infixl 7  _·_
-infix  8  `suc_
--- infix  9  [_]
--- infix  9  ⟨_⟩
-
-data Term : Type where
-  `_                      : Var → Term
-  _⨃_                     : Term → Term → Term
-  _·_                     : Term → Term → Term
-  Σ[_∈_]_                 : Var → Term → Term → Term
-  Π[_∈_]_                 : Var → Term → Term → Term
-  C[_,_]                  : Term → Var → Term 
-  `zero                   :  Term
-  `suc_                   :  Term → Term
-  case_[zero⇒_|suc_⇒_]    :  Term → Term → Var → Term → Term
 
   
-
-
-data Value : Term → Type where
-
-  V-ƛ : ∀ {x N}
-      ---------------
-    → Value (ƛ x ⇒ N)
-
-  V-zero :
-      -----------
-      Value `zero
-
-  V-suc : ∀ {V}
-    → Value V
-      --------------
-    → Value (`suc V)
-
-
  
-
 
  
 
 
 
-     
-     
+       
+        
