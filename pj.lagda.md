@@ -7,8 +7,8 @@ import Relation.Binary.PropositionalEquality as Eq
 open Eq using (_≡_; refl; sym; trans; cong)
 open Eq.≡-Reasoning
 
-open import Data.Bool -- using (Bool; true; false; T; _∧_; _∨_; not)
-open import Data.Unit  using (⊤; tt)
+-- open import Data.Bool -- using (Bool; true; false; T; _∧_; _∨_; not)
+-- open import Data.Unit  using (⊤; tt)
 open import Data.Empty using (⊥; ⊥-elim)
 
 open import Data.Nat using (ℕ; zero; suc; _+_; _*_; _∸_; _≤_; s≤s; z≤n)
@@ -19,10 +19,11 @@ open import Data.Sum using (_⊎_; inj₁; inj₂) renaming ([_,_] to case-⊎)
 
 open import Data.Fin using (Fin; toℕ; Fin′; cast; fromℕ) renaming (suc to fsuc ; zero to fzero)
 
+
 open import Data.List.Base
 
 
-open import Relation.Nullary using (¬_; Dec; yes; no)
+-- open import Relation.Nullary using (¬_; Dec; yes; no)
 
 open import Level using (Level)
 
@@ -53,6 +54,7 @@ Goal:
 
 Example:
 C n , k = Σ i ∈ [n] , (C (i-1) (k-1))
+
 
 
 
@@ -116,6 +118,9 @@ syntax ∃-syntax (λ x → B) = ∃[ x ] B
 
 -- Pi Type --------------------------------------
 
+
+
+
 Π-syntax : (A : Type) (B : A → Type) → Type
 Π-syntax A B = (x : A) → B x
 
@@ -139,7 +144,6 @@ infix 0 _≣_
 -- Pow A B == A^B
 Pow : Type → Type → Type
 Pow A B = A → B
-
 
 
 
@@ -209,8 +213,8 @@ e = 3 , {!   !}
 
 -- Fin post
 postulate
-  F⊥ : Fin 0 ≃ ⊥
-  F⊤ : Fin 1 ≃ ⊤
+  -- F⊥ : Fin 0 ≃ ⊥
+  -- F⊤ : Fin 1 ≃ ⊤
 
   F0⊎Fn : ∀ {n : ℕ} → ((Fin 0 ⊎ Fin n) ≃ Fin n)
   Fn⊎F0 : ∀ {n : ℕ} → ((Fin n ⊎ Fin 0) ≃ Fin n)
@@ -223,40 +227,6 @@ postulate
   F→ℕ : ∀ {m n : ℕ} → ((Fin m ≃ Fin n) → (m ≡ n))
   
 
-
-_ = λ n → λ k → `C[ ` n `+ ` k , ` k ] 
-_ = λ n → λ k → `C[ ` n `+ ` k , ` n ]
-
-
-Ps : Type
-Ps = List St
-
-[_]ᶜ : ℕ → St
-[ zero ]ᶜ = []
-[ suc n ]ᶜ = n ∷ [ n ]ᶜ
-
-
-
-
-_!ᶜ : ℕ → Ps
-
-zero !ᶜ  = [] ∷ []
-suc n !ᶜ = Data.List.Base.map (λ l → (suc n) ∷ l) ([] ∷ n !ᶜ) 
-  
-
-Combi : St → ℕ → Ps
-Combi _ 0            = [] ∷ []
-Combi [] (suc k)      = []
-Combi (x ∷ s) (suc k) = Data.List.Base.map (λ l → x ∷ l) (Combi s k) Data.List.Base.++ (Combi s (suc k))
-
-
-fs = [ 5 ]ᶜ
-fd = 5 !ᶜ
-oc = Combi (1 ∷ 2 ∷ 3 ∷ 4 ∷ 5 ∷ []) 3
-pc = Combi (1 ∷ 2 ∷ 3 ∷ 4 ∷ 5 ∷ []) 2
-
-
-
 Q : Fin 3 ⊎ Fin 4 ≃ Fin 7
 Q = 
   ≃-begin 
@@ -264,11 +234,6 @@ Q =
   ≃⟨ Fm⊎Fn {3} {4} ⟩
     Fin 7
   ≃-∎
-
-q : 3 + 4 ≡ 7
-q = {!   !}
-
-
 
 
 
@@ -401,6 +366,31 @@ postulate
 
 -}
 
+
+
+opsType = record 
+  { Val  = ℕ
+  ; A    = Type
+  ; Ae   = Fin
+  ; Av   = λ x → Fin 0
+  ; A0   = Fin 0
+  ; A1   = Fin 1
+  ; _A+_ = _⊎_
+  ; _A*_ = _×_
+  ; AC   = _×_
+  }
+
+
+
+
+evalType = eval opsType
+
+
+et = evalType (`Σ[ "x"  ∈  (2 ∷ 3 ∷ 4 ∷ []) ] ($ "x") ) 
+
+
+
+
 ```
 
 
@@ -413,4 +403,4 @@ postulate
 
 
        
-         
+          

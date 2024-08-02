@@ -2,7 +2,7 @@ open import Data.Nat using (ℕ; zero; suc; _+_; _*_; _∸_; _≤_; s≤s; z≤n
 open import Data.List.Base 
 
 
-
+open import N-cal
 ------ private
 private Type = Set
 private Type₁ = Set₁
@@ -37,8 +37,19 @@ Pᶜ : ∀ {A : Type} → List A → ℕ → List (List A)
 Pᶜ l k = concatMap _!ᶜ (Cᶜ l k)
 
 
+{- 
+evalc : Term ℕ → List (List ℕ)
+evalc = eval (record 
+  { Ae         = λ x → x
+  ; Av         = λ x → [] -- __
+  ; _A+_       = _++_
+  ; _A*_       = _*_
+  ; AC         = Cᶜ
+  })
 
+-}
 
+-- ---------------------------------------------------- test
 aa = [ 4 ]ᶜ
 -- ac = inserts aa 9
 -- bb = aa !ᶜ
@@ -51,5 +62,30 @@ fd = fs !ᶜ
 oc = Cᶜ (1 ∷ 2 ∷ 3 ∷ 4 ∷ 5 ∷ []) 3
 pc = Cᶜ (1 ∷ 2 ∷ 3 ∷ 4 ∷ 5 ∷ []) 2
 
+
+
+Cˢ : ℕ → ℕ → List ℕ
+Cˢ _ 0 = [ 0 ]
+Cˢ 0 _ = []
+Cˢ (suc i) (suc j) = Cˢ i (suc j) ++ Cˢ i j
  
- 
+
+opsSt = record 
+  { Val  = ℕ
+  ; A    = List ℕ
+  ; Ae   = [_]ᶜ
+  ; Av   = λ x → []
+  ; A0   = []
+  ; A1   = [ 0 ]
+  ; _A+_ = _++_
+  ; _A*_ = {!   !}
+  ; AC   = λ x y → Cˢ (length x) (length y)
+  }
+
+
+evalSt = eval opsSt
+
+-- 0 ~ 4
+es = evalSt (`Σ[ "x"  ∈  [ 5 ]ᶜ ] ($ "x") ) 
+
+eee = evalSt (`C[ ` 4 , ` 2 ] ) 
