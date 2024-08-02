@@ -27,8 +27,8 @@ open import Relation.Nullary using (¬_; Dec; yes; no)
 open import Level using (Level)
 
 open import Function using (_∘_)
-open import Function.Equivalence using (_⇔_)
--- open import Function.Bundles using (Equivalence; mkEquivalence)
+-- open import Function.Equivalence using (_⇔_)
+open import Function.Dependent.Bundles
 
 
 ------ plfa
@@ -239,7 +239,8 @@ Ps = List St
 
 
 _!ᶜ : ℕ → Ps
-zero !ᶜ = [] ∷ []
+
+zero !ᶜ  = [] ∷ []
 suc n !ᶜ = Data.List.Base.map (λ l → (suc n) ∷ l) ([] ∷ n !ᶜ) 
   
 
@@ -412,4 +413,4 @@ postulate
 
 
        
-        
+         
