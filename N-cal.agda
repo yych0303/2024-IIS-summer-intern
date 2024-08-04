@@ -10,7 +10,7 @@ private Type₁ = Set₁
 
 private
   variable
-    a b ℓ : Level
+    ℓ ℓ₁ : Level
 -- N-calculus
 
 Idx : Type
@@ -25,13 +25,13 @@ infix  9  `_ $_
 
 -- idx = String 
 
--- Val  A   --  ops
+-- Val  R   --  ops
 ------------
 -- ℕ    ℕ      opsℕ
 -- ℕ   Type   opsType
 -- 
 
-data Term (Val : Set a) : Set a where
+data Term (Val : Set ℓ) : Set ℓ where
   `_         : Val → Term Val
   $_         : Idx → Term Val
   _`+_       : Term Val → Term Val → Term Val
@@ -39,11 +39,12 @@ data Term (Val : Set a) : Set a where
   `Σ[_∈_]_   : Idx → List Val → Term Val → Term Val
   `Π[_∈_]_   : Idx → List Val → Term Val → Term Val
   `C[_,_]    : Term Val → Term Val → Term Val
+-- `P[_,_]    : Term Val → Term Val → Term Val
 --  _`!      : Term Val → Term Val
 
 
 
-[_:=_]_ : {a : Level} {Val : Set a} → Idx → Val → Term Val → Term Val
+[_:=_]_ : {ℓ : Level} {Val : Set ℓ} → Idx → Val → Term Val → Term Val
 [ v := n ] (` x)                    = ` x
 [ v := n ] ($ x) with x Data.String.≟ v
 ...                         | yes _ = ` n 
@@ -55,43 +56,43 @@ data Term (Val : Set a) : Set a where
 [ v := n ] `C[ t , t₁ ]             = `C[ [ v := n ] t , [ v := n ] t₁ ]
 
 
-record EvalOps  : Set (lsuc (a ⊔ b)) where
+record EvalOps  : Set (lsuc (ℓ ⊔ ℓ₁)) where
   field
-    Val         : Set a
-    A           : Set b
-    Ae          : Val → A
-    Av          : Idx → A
-    A0          : A
-    A1          : A
-    _A+_        : A → A → A
-    _A*_        : A → A → A
-    AC          : A → A → A
+    Val         : Set ℓ
+    R           : Set ℓ₁
+    Rv          : Val → R
+    Ri          : Idx → R
+    R0          : R
+    R1          : R
+    _R+_        : R → R → R
+    _R*_        : R → R → R
+    RC          : R → R → R
 
-_Asigma[_]_ : {a b : Level} (ops : EvalOps {a} {b}) → List (EvalOps.Val ops) → (EvalOps.Val ops → EvalOps.A ops) → EvalOps.A ops
-ops Asigma[ [] ] F    = EvalOps.A0 ops
-ops Asigma[ e ∷ l ] F = EvalOps._A+_ ops (F e) (ops Asigma[ l ] F)
+_Rsigma[_]_ : {ℓ ℓ₁ : Level} (ops : EvalOps {ℓ} {ℓ₁}) → List (EvalOps.Val ops) → (EvalOps.Val ops → EvalOps.R ops) → EvalOps.R ops
+ops Rsigma[ [] ] F    = EvalOps.R0 ops
+ops Rsigma[ e ∷ l ] F = EvalOps._R+_ ops (F e) (ops Rsigma[ l ] F)
 
-_Api[_]_ : {a b : Level} (ops : EvalOps {a} {b}) → List (EvalOps.Val ops) → (EvalOps.Val ops → EvalOps.A ops) → EvalOps.A ops
-ops Api[ [] ] F    = EvalOps.A1 ops
-ops Api[ e ∷ l ] F = EvalOps._A*_ ops (F e) (ops Asigma[ l ] F)
+_Rpi[_]_ : {ℓ ℓ₁ : Level} (ops : EvalOps {ℓ} {ℓ₁}) → List (EvalOps.Val ops) → (EvalOps.Val ops → EvalOps.R ops) → EvalOps.R ops
+ops Rpi[ [] ] F    = EvalOps.R1 ops
+ops Rpi[ e ∷ l ] F = EvalOps._R*_ ops (F e) (ops Rsigma[ l ] F)
 
--- AC : {a b : Level} (ops : EvalOps {a} {b}) → EvalOps.A ops → EvalOps.Val ops → EvalOps.A ops
--- AC ops a k = {!  !}
+-- RC : {ℓ ℓ₁ : Level} (ops : EvalOps {ℓ} {ℓ₁}) → EvalOps.R ops → EvalOps.Val ops → EvalOps.R ops
+-- RC ops a k = {!  !}
 
--- _A!_ : {a b : Level} (ops : EvalOps {a} {b}) → EvalOps.Val ops → EvalOps.A ops
--- ops A! e =  ops Api[ ] 
+-- _R!_ : {ℓ ℓ₁ : Level} (ops : EvalOps {ℓ} {ℓ₁}) → EvalOps.Val ops → EvalOps.R ops
+-- ops R! e =  ops Rpi[ ] 
 
 
 {-# NON_TERMINATING #-}
-eval : {a b : Level} (ops : EvalOps {a} {b}) → Term (EvalOps.Val ops) → (EvalOps.A ops)
+eval : {ℓ ℓ₁ : Level} (ops : EvalOps {ℓ} {ℓ₁}) → Term (EvalOps.Val ops) → (EvalOps.R ops)
 
-eval ops (` e)            = EvalOps.Ae ops            e
-eval ops ($ v)            = EvalOps.Av ops            v -- not possible
-eval ops (t `+ t₁)        = EvalOps._A+_ ops          (eval ops t) (eval ops t₁)
-eval ops (t `* t₁)        = EvalOps._A*_ ops          (eval ops t) (eval ops t₁)
-eval ops (`Σ[ v ∈ s ] t)  = ops Asigma[ s ]   (λ n → eval ops ([ v := n ] t))
-eval ops (`Π[ v ∈ s ] t)  = ops Api[ s ]      (λ n → eval ops ([ v := n ] t))
-eval ops `C[ t , t₁ ]     = EvalOps.AC ops            (eval ops t) (eval ops t₁)
+eval ops (` e)            = EvalOps.Rv ops            e
+eval ops ($ v)            = EvalOps.Ri ops            v -- not possible
+eval ops (t `+ t₁)        = EvalOps._R+_ ops          (eval ops t) (eval ops t₁)
+eval ops (t `* t₁)        = EvalOps._R*_ ops          (eval ops t) (eval ops t₁)
+eval ops (`Σ[ v ∈ s ] t)  = ops Rsigma[ s ]   (λ n → eval ops ([ v := n ] t))
+eval ops (`Π[ v ∈ s ] t)  = ops Rpi[ s ]      (λ n → eval ops ([ v := n ] t))
+eval ops `C[ t , t₁ ]     = EvalOps.RC ops            (eval ops t) (eval ops t₁)
 
 infix 1 eval
 
@@ -108,29 +109,17 @@ combination _ 0 = 1
 combination 0 _ = 0
 combination (suc i) (suc j) = combination i j + combination i (suc j) 
 
-{-
-
-sigma[_]_ : List ℕ → (ℕ → ℕ) → ℕ
-sigma[ [] ] F    = 0
-sigma[ x ∷ l ] F = F x + sigma[ l ] F
-
-pi[_]_ : List ℕ → (ℕ → ℕ) → ℕ
-pi[ [] ] F    = 1
-pi[ x ∷ l ] F = F x * sigma[ l ] F
-
--}
-
 
 opsℕ = record 
   { Val  = ℕ
-  ; A    = ℕ
-  ; Ae   = λ x → x
-  ; Av   = λ x → 0 -- __
-  ; A0   = 0
-  ; A1   = 1
-  ; _A+_ = _+_
-  ; _A*_ = _*_
-  ; AC   = combination
+  ; R    = ℕ
+  ; Rv   = λ x → x
+  ; Ri   = λ x → 0 -- __
+  ; R0   = 0
+  ; R1   = 1
+  ; _R+_ = _+_
+  ; _R*_ = _*_
+  ; RC   = combination
   }
 
 evalℕ : Term ℕ → ℕ
@@ -145,8 +134,3 @@ ev = evalℕ (`Σ[ "x"  ∈  (2 ∷ 3 ∷ 4 ∷ []) ] `C[ $ "x" , ` 2 ]  )
 er = λ n → λ k → evalℕ `C[ ` n `+ ` k , ` k ] 
 -- _ = λ n → λ k → `C[ ` n `+ ` k , ` n ]
 
-
-
-
-
-        

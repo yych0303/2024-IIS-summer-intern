@@ -370,14 +370,14 @@ postulate
 
 opsType = record 
   { Val  = ℕ
-  ; A    = Type
-  ; Ae   = Fin
-  ; Av   = λ x → Fin 0
-  ; A0   = Fin 0
-  ; A1   = Fin 1
-  ; _A+_ = _⊎_
-  ; _A*_ = _×_
-  ; AC   = _×_
+  ; R    = Type
+  ; Rv   = Fin
+  ; Ri   = λ x → Fin 0
+  ; R0   = Fin 0
+  ; R1   = Fin 1
+  ; _R+_ = _⊎_
+  ; _R*_ = _×_
+  ; RC   = _×_
   }
 
 
@@ -389,9 +389,61 @@ evalType = eval opsType
 et = evalType (`Σ[ "x"  ∈  (2 ∷ 3 ∷ 4 ∷ []) ] ($ "x") ) 
 
 
-
-
 ```
+
+
+infix 4 _≈_
+
+data _≈_ : Type → Type → Set where
+
+  0-∙₂
+  
+
+  0-∙₁ : ∀ {L}
+    → L ∙ Fin 0 ≈ L
+
+  0-∙₂
+  
+  ξ-∙₁ : ∀ {L L′ M}
+    → L ≈ L′
+      -----------------
+    → L ∙ M ≈ L′ ∙ M
+
+  ξ-∙₂ : ∀ {V M M′}
+    → Value V
+    → M ≈ M′
+      -----------------
+    → V ∙ M ≈ V ∙ M′
+
+  β-ƛ : ∀ {x N V}
+    → Value V
+      ------------------------------
+    → (ƛ x ⇒ N) ∙ V —→ N [ x := V ]
+
+  ξ-suc : ∀ {M M′}
+    → M —→ M′
+      ------------------
+    → `suc M —→ `suc M′
+
+  ξ-case : ∀ {x L L′ M N}
+    → L —→ L′
+      -----------------------------------------------------------------
+    → case L [zero⇒ M |suc x ⇒ N ] —→ case L′ [zero⇒ M |suc x ⇒ N ]
+
+  β-zero : ∀ {x M N}
+      ----------------------------------------
+    → case `zero [zero⇒ M |suc x ⇒ N ] —→ M
+
+  β-suc : ∀ {x V M N}
+    → Value V
+      ---------------------------------------------------
+    → case `suc V [zero⇒ M |suc x ⇒ N ] —→ N [ x := V ]
+
+  β-μ : ∀ {x M}
+      ------------------------------
+    → μ x ⇒ M —→ M [ x := μ x ⇒ M ]
+
+        
 
 
 

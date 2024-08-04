@@ -72,14 +72,14 @@ Cˢ (suc i) (suc j) = Cˢ i (suc j) ++ Cˢ i j
 
 opsSt = record 
   { Val  = ℕ
-  ; A    = List ℕ
-  ; Ae   = [_]ᶜ
-  ; Av   = λ x → []
-  ; A0   = []
-  ; A1   = [ 0 ]
-  ; _A+_ = _++_
-  ; _A*_ = {!   !}
-  ; AC   = λ x y → Cˢ (length x) (length y)
+  ; R    = List ℕ
+  ; Rv   = [_]ᶜ
+  ; Ri   = λ x → []
+  ; R0   = []
+  ; R1   = [ 0 ]
+  ; _R+_ = _++_
+  ; _R*_ = {!   !}
+  ; RC   = λ x y → Cˢ (length x) (length y)
   }
 
 
