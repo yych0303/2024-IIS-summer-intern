@@ -9,8 +9,6 @@ private Type₁ = Set₁
 
 
 
-[_]ᶜ : ℕ → List ℕ
-[ n ]ᶜ = iterate suc 0 n
 
 
 -- n 1 → n + 1
@@ -33,8 +31,6 @@ Cᶜ [] (suc k)      = []
 Cᶜ (x ∷ s) (suc k) = map (x ∷_) (Cᶜ s k) ++ (Cᶜ s (suc k))
 
 
-Pᶜ : ∀ {A : Type} → List A → ℕ → List (List A)
-Pᶜ l k = concatMap _!ᶜ (Cᶜ l k)
 
 
 {- 
@@ -46,13 +42,6 @@ evalc = eval (record
   ; _A*_       = _*_
   ; AC         = Cᶜ
   })
-
--}
-
--- ---------------------------------------------------- test
-aa = [ 4 ]ᶜ
--- ac = inserts aa 9
--- bb = aa !ᶜ
 cc = Pᶜ aa 3
 ll = length cc
 
@@ -62,30 +51,23 @@ fd = fs !ᶜ
 oc = Cᶜ (1 ∷ 2 ∷ 3 ∷ 4 ∷ 5 ∷ []) 3
 pc = Cᶜ (1 ∷ 2 ∷ 3 ∷ 4 ∷ 5 ∷ []) 2
 
+-}
 
 
-Cˢ : ℕ → ℕ → List ℕ
-Cˢ _ 0 = [ 0 ]
-Cˢ 0 _ = []
-Cˢ (suc i) (suc j) = Cˢ i (suc j) ++ Cˢ i j
- 
 
-opsSt = record 
-  { Val  = ℕ
-  ; R    = List ℕ
-  ; Rv   = [_]ᶜ
-  ; Ri   = λ x → []
-  ; R0   = []
-  ; R1   = [ 0 ]
-  ; _R+_ = _++_
-  ; _R*_ = {!   !}
-  ; RC   = λ x y → Cˢ (length x) (length y)
-  }
+-------------------------------------------------------------------test
+
+  -- sigma x ∈ {2, 3, 4} Cx , 2 = 10
+private ev = evalSt (`Σ[ "x"  ∈  (2 ∷ 3 ∷ 4 ∷ []) ] `C[ $ "x" , ` 2 ]  ) 
 
 
-evalSt = eval opsSt
+
+private er = λ n → λ k → evalSt `C[ ` n `+ ` k , ` k ] 
+-- _ = λ n → λ k → `C[ ` n `+ ` k , ` n ]
+-- = λ n k → N-cal.combination (n + k) k
 
 -- 0 ~ 4
-es = evalSt (`Σ[ "x"  ∈  [ 5 ]ᶜ ] ($ "x") ) 
+-- es = evalSt (`Σ[ "x"  ∈  [ 5 ]ᶜ ] ($ "x") ) 
 
-eee = evalSt (`C[ ` 4 , ` 2 ] ) 
+private eee = evalSt (`C[ ` 4 , ` 2 ] ) 
+  

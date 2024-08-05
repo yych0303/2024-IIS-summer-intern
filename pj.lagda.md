@@ -366,27 +366,28 @@ postulate
 
 -}
 
-
+ringType : Ring Type
+ringType = record
+  { R0   = Fin 0
+  ; R1   = Fin 1
+  ; _R+_ = _⊎_
+  ; _R*_ = _×_
+  ; RP   = {!   !}
+  ; RC   = {!   !}
+  }
 
 opsType = record 
   { Val  = ℕ
   ; R    = Type
-  ; Rv   = Fin
-  ; Ri   = λ x → Fin 0
-  ; R0   = Fin 0
-  ; R1   = Fin 1
-  ; _R+_ = _⊎_
-  ; _R*_ = _×_
-  ; RC   = _×_
+  ; rVal   = Fin
+  ; rIdx   = λ x → Fin 0
+  ; ring = ringType
   }
-
-
-
 
 evalType = eval opsType
 
 
-et = evalType (`Σ[ "x"  ∈  (2 ∷ 3 ∷ 4 ∷ []) ] ($ "x") ) 
+-- et = evalType (`Σ[ "x"  ∈  (2 ∷ 3 ∷ 4 ∷ []) ] ($ "x") ) 
 
 
 ```
