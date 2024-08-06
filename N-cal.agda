@@ -7,7 +7,7 @@ open import Data.String using (String; _≟_) public
 
 private
   variable
-    ℓ ℓ₁ : Level
+    ℓ : Level
 -- N-calculus
 {-
 main frame
@@ -89,16 +89,21 @@ data Term (Val : Set ℓ) : Set ℓ where
 
 
 -- Ring (Set) : Set -------------------------------------------------------
+open import Relation.Binary.Core using (Rel)
+open import Relation.Binary.Structures using (IsEquivalence)
 
-record Ring {ℓ : Level} (R : Set ℓ) : Set (lsuc ℓ) where
+record Ring {ℓ : Level} : Set (lsuc ℓ) where
   field
+    R           : Set ℓ
     R0          : R
     R1          : R
     _R+_        : R → R → R
-    _R*_        : R → R → R
+    _R*_        : R → R → R   
     RIdx        : Idx → R
     RP          : R → R → R
-    RC          : R → R → R
+    RC          : R → R → R 
+    _≈_         : Rel R ℓ
+    isEq        : IsEquivalence _≈_
 open Ring
 
 
@@ -121,15 +126,15 @@ open Ring
 
 -- eval : EvalOps → Term Val → R ----------------------
 
-private rsigma : {ℓ : Level} {R : Set ℓ} → (Ring {ℓ} R) → List R → (R → R) → R
+private rsigma : (ring : Ring {ℓ}) → List (R ring) → ((R ring) → (R ring)) → (R ring)
 rsigma ring []      F = R0   ring
 rsigma ring (i ∷ l) F = _R+_ ring (F i) (rsigma ring l F)
 
-private rpi : {ℓ : Level} {R : Set ℓ} → (Ring {ℓ} R) → List R → (R → R) → R
+private rpi : (ring : Ring {ℓ}) → List (R ring) → ((R ring) → (R ring)) → (R ring)
 rpi ring []      F = R1   ring
 rpi ring (i ∷ l) F = _R*_ ring (F i) (rsigma ring l F)
 
-private r! : {ℓ : Level} {R : Set ℓ} → (Ring {ℓ} R) → R → R
+private r! : (ring : Ring {ℓ}) → (R ring) → (R ring)
 r! ring r =  RP ring r r 
 
 -- RC : {ℓ ℓ₁ : Level} (ring : EvalOps {ℓ} {ℓ₁}) → R ring → Val ring → R ring
@@ -142,7 +147,7 @@ r! ring r =  RP ring r r
 infix 1 eval
 
 {-# NON_TERMINATING #-}
-eval : {ℓ : Level} {R : Set ℓ} → (Ring {ℓ} R) → Term R → R
+eval : (ring : Ring {ℓ}) → Term (R ring) → (R ring)
 eval ring term with term
 ...     | (` v)            = v
 ...     | ($ i)            = RIdx    ring i -- not possible
@@ -156,16 +161,25 @@ eval ring term with term
 
 
 -- Ring ℕ ---------------------------------------------------------------------
+open import Relation.Binary.PropositionalEquality using (_≡_; refl; sym; trans)
 
-ringℕ : Ring ℕ
+
+ringℕ : Ring
 ringℕ = record
-  { R0   = 0
+  { R    = ℕ
+  ; R0   = 0
   ; R1   = 1
   ; _R+_ = _+_
   ; _R*_ = _*_
-  ; RIdx   = λ x → 0
+  ; RIdx = λ x → 0
   ; RP   = permutation
   ; RC   = combination
+  ; _≈_  = _≡_
+  ; isEq = record
+    { refl  = refl
+    ; sym   = sym
+    ; trans = trans
+    }
   }
     where      
       permutation : ℕ → ℕ → ℕ
@@ -187,15 +201,22 @@ evalℕ = eval ringℕ
 -- Ring (List ℕ) -----------------------------------------------
 
 
-ringListℕ : Ring (List ℕ)
+ringListℕ : Ring
 ringListℕ = record  
-  { R0   = r0
+  { R    = List ℕ
+  ; R0   = r0
   ; R1   = r1
   ; _R+_ = r+
   ; _R*_ = r*
   ; RIdx = λ x → []
   ; RP   = rP
   ; RC   = rC
+  ; _≈_  = R≈
+  ; isEq = record
+    { refl  = {!   !}
+    ; sym   = {!   !}
+    ; trans = {!   !}
+    }
   }
     where
       r0 = []
@@ -212,6 +233,13 @@ ringListℕ = record
       rC [] _ = r0
       rC (x ∷ xs) (y ∷ ys) = r+ (rC xs ys) (rC xs (y ∷ ys))
 
+      R≈ = {!   !}
+
+
+
+
+      
+
 evalListℕ : Term (List ℕ) → List ℕ
 evalListℕ = eval ringListℕ
 
@@ -223,15 +251,23 @@ St : Set → Set
 St A = List (List A)
 
 
-ringSt : {A : Set} → Ring (St A)
-ringSt = record
-  { R0   = r0
+ringSt : Set → Ring
+ringSt A = record
+  { R    = St A
+  ; R0   = r0
   ; R1   = r1
   ; _R+_ = r+
   ; _R*_ = r*
   ; RIdx = λ x → []
   ; RP   = rP
-  ; RC   = rC
+  ; RC   = rC  
+  ; _≈_  = {!   !}
+  ; isEq = record
+    { refl  = {!   !}
+    ; sym   = {!   !}
+    ; trans = {!   !}
+    }
+
   }
     where
       r0 : {A : Set} → St A
@@ -255,7 +291,7 @@ ringSt = record
   
 
 evalSt : {A : Set} → Term (St A) → St A
-evalSt {A} = eval (ringSt {A})
+evalSt {A} = eval (ringSt A)
 
 
 
@@ -269,15 +305,16 @@ open import Data.Sum using (_⊎_; inj₁; inj₂) renaming ([_,_] to case-⊎)
 open import Data.Product using (_×_; proj₁; proj₂) -- renaming (_,_ to ⟨_,_⟩)
 
 
-ringType : Ring Type
+ringType : Ring
 ringType = record
-  { R0   = r0
+  { R    = Type
+  ; R0   = r0
   ; R1   = r1
   ; _R+_ = r+
   ; _R*_ = r*
   ; RIdx = λ x → r0
-  ; RP   = rP
-  ; RC   = rC
+  ; RP   = {!   !}
+  ; RC   = {!   !} 
   }
     where
       r0 = Fin 0
@@ -300,8 +337,6 @@ evalType : Term Type → Type
 evalType = eval ringType
 
 -}
-
-
 
 -- trns -----------------------------------------------------------------
 
@@ -384,17 +419,4 @@ OrdRing r r0 rs r+ r* = record
 
 
 
--- uu = evalListℕ (trns funcℕListℕ ev)
--- private ev : ℕ  -- sigma x ∈ {2, 3, 4} Cx , 2 = 10
--- ev = `Σ[ "x"  ∈  (2 ∷ 3 ∷ 4 ∷ []) ] `C[ $ "x" , ` 2 ] 
-
--- evalListℕ (trns funcℕListℕ (` 2 `* ` 3))
-
--- er = λ n → λ k → evalℕ `C[ ` n `+ ` k , ` k ] 
--- _ = λ n → λ k → `C[ ` n `+ ` k , ` n ]
--- = λ n k → N-cal.combination (n + k) k
-
-
-
-
-       
+        
