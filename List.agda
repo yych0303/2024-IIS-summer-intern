@@ -58,16 +58,16 @@ pc = Cᶜ (1 ∷ 2 ∷ 3 ∷ 4 ∷ 5 ∷ []) 2
 -------------------------------------------------------------------test
 
   -- sigma x ∈ {2, 3, 4} Cx , 2 = 10
-private ev = evalSt (`Σ[ "x"  ∈  (2 ∷ 3 ∷ 4 ∷ []) ] `C[ $ "x" , ` 2 ]  ) 
+private ev = (`Σ[ "x"  ∈  (2 ∷ 3 ∷ 4 ∷ []) ] `C[ $ "x" , ` 2 ]  ) 
 
 
 
-private er = λ n → λ k → evalSt `C[ ` n `+ ` k , ` k ] 
+private er = λ n → λ k → `C[ ` n `+ ` k , ` k ] 
 -- _ = λ n → λ k → `C[ ` n `+ ` k , ` n ]
 -- = λ n k → N-cal.combination (n + k) k
 
 -- 0 ~ 4
 -- es = evalSt (`Σ[ "x"  ∈  [ 5 ]ᶜ ] ($ "x") ) 
 
-private eee = evalSt (`C[ ` 4 , ` 2 ] ) 
+private eee = (`C[ ` 4 , ` 2 ] ) 
   

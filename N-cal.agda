@@ -184,14 +184,36 @@ evalℕ : Term ℕ → ℕ
 evalℕ = eval ringℕ
 
 
-private ev : ℕ  -- sigma x ∈ {2, 3, 4} Cx , 2 = 10
-ev = evalℕ (`Σ[ "x"  ∈  (2 ∷ 3 ∷ 4 ∷ []) ] `C[ $ "x" , ` 2 ]  ) 
+-- Ring (List ℕ) -----------------------------------------------
 
 
+ringListℕ : Ring (List ℕ)
+ringListℕ = record  
+  { R0   = r0
+  ; R1   = r1
+  ; _R+_ = r+
+  ; _R*_ = r*
+  ; RIdx = λ x → []
+  ; RP   = rP
+  ; RC   = rC
+  }
+    where
+      r0 = []
+      r1 = [ 0 ]
+      r+ = λ xs ys → xs ++ (map ((length xs) +_) ys)
+      r*  = λ xs ys → foldl (λ acc x → (r+ ys acc)) r0 xs
+      rP : List ℕ → List ℕ → List ℕ
+      rP _ [] = r1
+      rP [] _ = r0
+      rP (x ∷ xs) (y ∷ ys) = r* (x ∷ xs) (rP xs ys)
+      
+      rC : List ℕ → List ℕ → List ℕ
+      rC _ [] = r1
+      rC [] _ = r0
+      rC (x ∷ xs) (y ∷ ys) = r+ (rC xs ys) (rC xs (y ∷ ys))
 
-private er = λ n → λ k → evalℕ `C[ ` n `+ ` k , ` k ] 
--- _ = λ n → λ k → `C[ ` n `+ ` k , ` n ]
--- = λ n k → N-cal.combination (n + k) k
+evalListℕ : Term (List ℕ) → List ℕ
+evalListℕ = eval ringListℕ
 
 
 
@@ -203,62 +225,81 @@ St A = List (List A)
 
 ringSt : {A : Set} → Ring (St A)
 ringSt = record
-  { R0   = []
-  ; R1   = [ [] ]
-  ; _R+_ = _++_
-  ; _R*_ = prod
-  ; RIdx   = λ x → []
-  ; RP   = λ xs ys → permutation xs (length ys)
-  ; RC   = λ xs ys → combination xs (length ys)
+  { R0   = r0
+  ; R1   = r1
+  ; _R+_ = r+
+  ; _R*_ = r*
+  ; RIdx = λ x → []
+  ; RP   = rP
+  ; RC   = rC
   }
     where
-      prod : {A : Set} → St A → St A → St A
-      prod = λ xs ys → concatMap (λ x → map (x ++_) ys ) xs
+      r0 : {A : Set} → St A
+      r0 = []
+      r1 : {A : Set} → St A
+      r1 = [ [] ]
+      r+ : {A : Set} → St A → St A → St A
+      r+ = _++_
+      r* : {A : Set} → St A → St A → St A
+      r* = λ xs ys → concatMap (λ x → map (x ++_) ys ) xs
       
-      permutation : {A : Set} → St A → ℕ → St A
-      permutation _  0  = [ [] ]
-      permutation [] _  = []
-      permutation (l ∷ ls) (suc k) = prod (l ∷ ls)  (permutation ls k)
+      rP : {A : Set} → St A → St A → St A
+      rP _ []  = r1
+      rP [] _  = r0
+      rP (x ∷ xs) (y ∷ ys) = r* (x ∷ xs)  (rP xs ys)
 
-      combination : {A : Set} → St A → ℕ → St A
-      combination _  0 = [ [] ]
-      combination [] _ = []
-      combination (l ∷ ls) (suc k) = map (l ++_) (combination ls k) ++ combination ls (suc k)
+      rC : {A : Set} → St A → St A → St A
+      rC _ [] = r1
+      rC [] _ = r0
+      rC (x ∷ xs) (y ∷ ys) = r+ (r* [ x ] (rC xs ys)) (rC xs (y ∷ ys))
   
 
 evalSt : {A : Set} → Term (St A) → St A
 evalSt {A} = eval (ringSt {A})
 
--- Ring (List ℕ) -----------------------------------------------
 
 
-ringListℕ : Ring (List ℕ)
-ringListℕ = record  
+-- Ring Type ---------------------------------------------------- 
+{-
+
+Type = Set
+
+open import Data.Fin using (Fin; toℕ; Fin′; cast; fromℕ) renaming (suc to fsuc ; zero to fzero)
+open import Data.Sum using (_⊎_; inj₁; inj₂) renaming ([_,_] to case-⊎)
+open import Data.Product using (_×_; proj₁; proj₂) -- renaming (_,_ to ⟨_,_⟩)
+
+
+ringType : Ring Type
+ringType = record
   { R0   = r0
   ; R1   = r1
-  ; _R+_ = _++_
-  ; _R*_ = λ xs ys → concatMap (λ x → map (x *_) ys) xs
-  ; RIdx   = λ x → []
-  ; RP   = λ x y → rP x (length y)
-  ; RC   = λ x y → rC x (length y)
+  ; _R+_ = r+
+  ; _R*_ = r*
+  ; RIdx = λ x → r0
+  ; RP   = rP
+  ; RC   = rC
   }
     where
-      r0 = []
-      r1 = [ 1 ]
-      r* = λ xs ys → concatMap (λ x → map (x *_) ys) xs
+      r0 = Fin 0
+      r1 = Fin 1
+      r+ = _⊎_
+      r* = _×_
       
-      rP : List ℕ → ℕ → List ℕ
-      rP _  0 = r1
-      rP [] _ = r0
-      rP (x ∷ xs) (suc k) = r* (x ∷ xs) (rP xs k)
-      
-      rC : List ℕ → ℕ → List ℕ
-      rC _ 0 = r1
-      rC [] _ = r0
-      rC (x ∷ xs) (suc j) = rC xs (suc j) ++ rC xs j
+      rP : Type → Type → Type
+      rP _ r0  = r1
+      rP r0 _  = r0
+      -- rP (Fin n) (Fin k)  = r* ? ?
 
-evalListℕ : Term (List ℕ) → List ℕ
-evalListℕ = eval ringListℕ
+      rC : Type → Type → Type
+      rC _ r0 = r1
+      rC r0 _ = r0
+      -- rC (x ∷ xs) (y ∷ ys) = r+ (r* [ x ] (rC xs ys)) (rC xs (y ∷ ys))
+  
+
+evalType : Term Type → Type
+evalType = eval ringType
+
+-}
 
 
 
@@ -343,13 +384,17 @@ OrdRing r r0 rs r+ r* = record
 
 
 
+-- uu = evalListℕ (trns funcℕListℕ ev)
+-- private ev : ℕ  -- sigma x ∈ {2, 3, 4} Cx , 2 = 10
+-- ev = `Σ[ "x"  ∈  (2 ∷ 3 ∷ 4 ∷ []) ] `C[ $ "x" , ` 2 ] 
+
+-- evalListℕ (trns funcℕListℕ (` 2 `* ` 3))
+
+-- er = λ n → λ k → evalℕ `C[ ` n `+ ` k , ` k ] 
+-- _ = λ n → λ k → `C[ ` n `+ ` k , ` n ]
+-- = λ n k → N-cal.combination (n + k) k
 
 
-      -- factorial : ℕ → ℕ 
-      -- factorial zero = 1
-      -- factorial (suc n) = (suc n) * (factorial n)
 
 
-
-
-   
+       
