@@ -372,19 +372,15 @@ ringType = record
   ; R1   = Fin 1
   ; _R+_ = _⊎_
   ; _R*_ = _×_
+  ; RIdx   = λ x → Fin 0
   ; RP   = {!   !}
   ; RC   = {!   !}
   }
 
-opsType = record 
-  { Val  = ℕ
-  ; R    = Type
-  ; rVal   = Fin
-  ; rIdx   = λ x → Fin 0
-  ; ring = ringType
-  }
 
-evalType = eval opsType
+funcℕType = Fin
+
+evalType = eval ringType
 
 
 -- et = evalType (`Σ[ "x"  ∈  (2 ∷ 3 ∷ 4 ∷ []) ] ($ "x") ) 
@@ -456,4 +452,4 @@ data _≈_ : Type → Type → Set where
 
 
        
-          
+           

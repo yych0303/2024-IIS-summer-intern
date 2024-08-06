@@ -5,14 +5,65 @@ open import Data.List.Base public
 open import Relation.Nullary using (¬_; Dec; yes; no)
 open import Data.String using (String; _≟_) public
 
-private Type = Set
-private Type₁ = Set₁
-
 private
   variable
     ℓ ℓ₁ : Level
 -- N-calculus
+{-
+main frame
+...
 
+  Term A -- trns funcAB -> Term B
+    |                        |
+    |                        |
+eval ringA               eval ringB
+    |                        |
+    V                        V
+    A ------- funcAB ------> B
+
+
+
+data Term (Val : Set ℓ) : Set ℓ
+  `_ | $_ | _`+_ | _`*_ | `Σ[_∈_]_ | `Π[_∈_]_ | 
+  [_]`! | `P[_,_] | `C[_,_] 
+
+
+
+
+
+record Ring (R : Type) : Type
+
+
+[_:=_]_ : {ℓ : Level} {Val : Set ℓ} → Idx → Val → Term Val → Term Val
+
+
+eval : {ℓ : Level} {R : Set ℓ} → (Ring {ℓ} R) → Term R → R
+
+
+
+ring 
+...
+ringℕ
+ringSt
+ringListℕ
+
+
+ 
+trns : {R R' : Set} → (R → R') → Term R → Term R'
+
+
+func
+...
+funcℕStℕ
+funcℕListℕ
+
+
+
+
+
+-}
+
+-- Term --------------------------------------------------------------
 
 infix  5 `Σ[_∈_]_ `Π[_∈_]_ 
 infixl 6 `C[_,_]  `P[_,_]
@@ -22,7 +73,7 @@ infix  9  [_:=_]_
 infixl 9  [_]`!
 infix  9  `_ $_
 
-private Idx : Type
+private Idx : Set
 Idx = String
 
 data Term (Val : Set ℓ) : Set ℓ where
@@ -37,6 +88,21 @@ data Term (Val : Set ℓ) : Set ℓ where
   `C[_,_]     : Term Val → Term Val → Term Val
 
 
+-- Ring (Set) : Set -------------------------------------------------------
+
+record Ring {ℓ : Level} (R : Set ℓ) : Set (lsuc ℓ) where
+  field
+    R0          : R
+    R1          : R
+    _R+_        : R → R → R
+    _R*_        : R → R → R
+    RIdx        : Idx → R
+    RP          : R → R → R
+    RC          : R → R → R
+open Ring
+
+
+-- [:=] ---------------------------------------------------------------------
 
 [_:=_]_ : {ℓ : Level} {Val : Set ℓ} → Idx → Val → Term Val → Term Val
 [ i := v ] (` x)                    = ` x
@@ -53,70 +119,43 @@ data Term (Val : Set ℓ) : Set ℓ where
 
 
 
--- EvalOps  : Set ----------------------------------
-
-record Ring (R : Set ℓ₁) : Set ℓ₁ where
-  field
-    R0          : R
-    R1          : R
-    _R+_        : R → R → R
-    _R*_        : R → R → R
-    RP          : R → R → R
-    RC          : R → R → R
-open Ring
-
-record EvalOps  : Set (lsuc (ℓ ⊔ ℓ₁)) where
-  field
-    Val         : Set ℓ
-    R           : Set ℓ₁
-    rVal        : Val → R
-    rIdx        : Idx → R
-    ring        : Ring R
-open EvalOps
-    
-
-
-
-
-
 -- eval : EvalOps → Term Val → R ----------------------
 
-private rsigma : {ℓ ℓ₁ : Level} (ops : EvalOps {ℓ} {ℓ₁}) → List (Val ops) → (Val ops → R ops) → R ops
-rsigma ops []      F = R0   (ring ops)
-rsigma ops (i ∷ l) F = _R+_ (ring ops) (F i) (rsigma ops l F)
+private rsigma : {ℓ : Level} {R : Set ℓ} → (Ring {ℓ} R) → List R → (R → R) → R
+rsigma ring []      F = R0   ring
+rsigma ring (i ∷ l) F = _R+_ ring (F i) (rsigma ring l F)
 
-private rpi : {ℓ ℓ₁ : Level} (ops : EvalOps {ℓ} {ℓ₁}) → List (Val ops) → (Val ops → R ops) → R ops
-rpi ops []      F = R1   (ring ops)
-rpi ops (i ∷ l) F = _R*_ (ring ops) (F i) (rsigma ops l F)
+private rpi : {ℓ : Level} {R : Set ℓ} → (Ring {ℓ} R) → List R → (R → R) → R
+rpi ring []      F = R1   ring
+rpi ring (i ∷ l) F = _R*_ ring (F i) (rsigma ring l F)
 
-private r! : {ℓ ℓ₁ : Level} (ops : EvalOps {ℓ} {ℓ₁}) → R ops → R ops
-r! ops r =  RP (ring ops) r r 
+private r! : {ℓ : Level} {R : Set ℓ} → (Ring {ℓ} R) → R → R
+r! ring r =  RP ring r r 
 
--- RC : {ℓ ℓ₁ : Level} (ops : EvalOps {ℓ} {ℓ₁}) → R ops → Val ops → R ops
--- RC ops a k = {!  !}
+-- RC : {ℓ ℓ₁ : Level} (ring : EvalOps {ℓ} {ℓ₁}) → R ring → Val ring → R ring
+-- RC ring a k = {!  !}
 
--- private RP : {ℓ ℓ₁ : Level} (ops : EvalOps {ℓ} {ℓ₁}) → R ops → R ops → R ops
--- RP ops A B = R! ops {!   !}
+-- private RP : {ℓ ℓ₁ : Level} (ring : EvalOps {ℓ} {ℓ₁}) → R ring → R ring → R ring
+-- RP ring R B = R! ring {!   !}
 
 
 infix 1 eval
 
 {-# NON_TERMINATING #-}
-eval : {ℓ ℓ₁ : Level} (ops : EvalOps {ℓ} {ℓ₁}) → Term (Val ops) → R ops
+eval : {ℓ : Level} {R : Set ℓ} → (Ring {ℓ} R) → Term R → R
+eval ring term with term
+...     | (` v)            = v
+...     | ($ i)            = RIdx    ring i -- not possible
+...     | (t `+ t₁)        = _R+_    ring (eval ring t) (eval ring t₁)
+...     | (t `* t₁)        = _R*_    ring (eval ring t) (eval ring t₁)
+...     | `P[ t , t₁ ]     = RP      ring (eval ring t) (eval ring t₁)
+...     | `C[ t , t₁ ]     = RC      ring (eval ring t) (eval ring t₁)
+...     | (`Σ[ i ∈ l ] t)  = rsigma  ring l (λ v → eval ring ([ i := v ] t))
+...     | (`Π[ i ∈ l ] t)  = rpi     ring l (λ v → eval ring ([ i := v ] t))
+...     | [ t ]`!          = r!      ring (eval ring t)
 
-eval ops term with term
-...    | (` v)            = rVal    ops v
-...    | ($ i)            = rIdx    ops i -- not possible
-...    | (t `+ t₁)        = _R+_    (ring ops) (eval ops t) (eval ops t₁)
-...    | (t `* t₁)        = _R*_    (ring ops) (eval ops t) (eval ops t₁)
-...    | `P[ t , t₁ ]     = RP      (ring ops) (eval ops t) (eval ops t₁)
-...    | `C[ t , t₁ ]     = RC      (ring ops) (eval ops t) (eval ops t₁)
-...    | (`Σ[ i ∈ l ] t)  = rsigma  ops l (λ v → eval ops ([ i := v ] t))
-...    | (`Π[ i ∈ l ] t)  = rpi     ops l (λ v → eval ops ([ i := v ] t))
-...    | [ t ]`!          = r!      ops (eval ops t)
 
-
--- ℕ ---------------------------------------------------------------------
+-- Ring ℕ ---------------------------------------------------------------------
 
 ringℕ : Ring ℕ
 ringℕ = record
@@ -124,6 +163,7 @@ ringℕ = record
   ; R1   = 1
   ; _R+_ = _+_
   ; _R*_ = _*_
+  ; RIdx   = λ x → 0
   ; RP   = permutation
   ; RC   = combination
   }
@@ -139,16 +179,9 @@ ringℕ = record
       combination (suc i) (suc j) = combination i j + combination i (suc j) 
 
 
-opsℕ = record 
-  { Val  = ℕ
-  ; R    = ℕ
-  ; rVal   = λ x → x
-  ; rIdx   = λ x → 0 -- __
-  ; ring = ringℕ
-  }   
 
 evalℕ : Term ℕ → ℕ
-evalℕ = eval opsℕ
+evalℕ = eval ringℕ
 
 
 private ev : ℕ  -- sigma x ∈ {2, 3, 4} Cx , 2 = 10
@@ -162,41 +195,39 @@ private er = λ n → λ k → evalℕ `C[ ` n `+ ` k , ` k ]
 
 
 
--- Ring (List (List A)) ---------------------------------------------------- 
+-- Ring (St A) ---------------------------------------------------- 
 
-ringSt : {A : Type} → Ring (List (List A))
+St : Set → Set
+St A = List (List A)
+
+
+ringSt : {A : Set} → Ring (St A)
 ringSt = record
   { R0   = []
   ; R1   = [ [] ]
   ; _R+_ = _++_
   ; _R*_ = prod
+  ; RIdx   = λ x → []
   ; RP   = λ xs ys → permutation xs (length ys)
   ; RC   = λ xs ys → combination xs (length ys)
   }
     where
-      prod : {A : Type} → List (List A) → List (List A) → List (List A)
+      prod : {A : Set} → St A → St A → St A
       prod = λ xs ys → concatMap (λ x → map (x ++_) ys ) xs
       
-      permutation : ∀ {A : Type} → List (List A) → ℕ → List (List A)
+      permutation : {A : Set} → St A → ℕ → St A
       permutation _  0  = [ [] ]
       permutation [] _  = []
       permutation (l ∷ ls) (suc k) = prod (l ∷ ls)  (permutation ls k)
 
-      combination : {A : Type} → List (List A) → ℕ → List (List A)
+      combination : {A : Set} → St A → ℕ → St A
       combination _  0 = [ [] ]
       combination [] _ = []
       combination (l ∷ ls) (suc k) = map (l ++_) (combination ls k) ++ combination ls (suc k)
   
 
-opsSt = record 
-  { Val  = ℕ
-  ; R    = List (List ℕ)
-  ; rVal   = λ n → map [_] (iterate suc 0 n)
-  ; rIdx   = λ x → []
-  ; ring = ringSt
-  }
-
-evalSt = eval opsSt
+evalSt : {A : Set} → Term (St A) → St A
+evalSt {A} = eval (ringSt {A})
 
 -- Ring (List ℕ) -----------------------------------------------
 
@@ -207,6 +238,7 @@ ringListℕ = record
   ; R1   = r1
   ; _R+_ = _++_
   ; _R*_ = λ xs ys → concatMap (λ x → map (x *_) ys) xs
+  ; RIdx   = λ x → []
   ; RP   = λ x y → rP x (length y)
   ; RC   = λ x y → rC x (length y)
   }
@@ -225,18 +257,86 @@ ringListℕ = record
       rC [] _ = r0
       rC (x ∷ xs) (suc j) = rC xs (suc j) ++ rC xs j
 
-opsListℕ = record 
-  { Val  = ℕ
-  ; R    = List ℕ
-  ; rVal   = [_]ᶜ
-  ; rIdx   = λ x → []
-  ; ring = ringListℕ
-  }
+evalListℕ : Term (List ℕ) → List ℕ
+evalListℕ = eval ringListℕ
+
+
+
+-- trns -----------------------------------------------------------------
+
+infix 1 trns
+
+{-# NON_TERMINATING #-}
+trns : {R R' : Set} → (R → R') → Term R → Term R'
+trns func term with term
+...     | (` v)            = (` (func v))          
+...     | ($ i)            = ($ i)          
+...     | (t `+ t₁)        = (trns func t `+ trns func t₁)      
+...     | (t `* t₁)        = (trns func t `* trns func t₁)      
+...     | `P[ t , t₁ ]     = `P[ trns func t , trns func t₁ ]   
+...     | `C[ t , t₁ ]     = `C[ trns func t , trns func t₁ ]   
+...     | (`Σ[ i ∈ l ] t)  = (`Σ[ i ∈ map func l ] trns func t)
+...     | (`Π[ i ∈ l ] t)  = (`Π[ i ∈ map func l ] trns func t)
+...     | [ t ]`!          = [ trns func t ]`!        
+
+
+-- func ------------------------------------------------------------------
+
+funcℕStℕ : ℕ → St ℕ
+funcℕStℕ = λ n → map [_] (iterate suc 0 n)
+
+funcℕListℕ : ℕ → List ℕ
+funcℕListℕ = [_]ᶜ
     where
       [_]ᶜ : ℕ → List ℕ
       [ n ]ᶜ = iterate suc 0 n
-    
-evalListℕ = eval opsListℕ
+
+
+
+
+
+
+
+
+
+
+
+
+
+{-
+
+OrdRing : (R : Set ℓ₁) 
+        → (R0 : R) 
+        → (RS : R → R) 
+        → (R+ : R → R → R)
+        → (R* : R → R → R)
+        ------------------
+        → Ring R
+OrdRing r r0 rs r+ r* = record
+  { R0   = r0
+  ; R1   = r1
+  ; _R+_ = r+
+  ; _R*_ = r*
+  ; RP   = rP
+  ; RC   = rC
+  }
+    where
+      r1 = rs r0
+        
+      rP : R → R → R
+      rP _  0 = r1
+      rP [] _ = r0
+      rP (x ∷ xs) (suc k) = r* (x ∷ xs) (rP xs k)
+      
+      rC : R → R → R
+      rC _ 0 = r1
+      rC [] _ = r0
+      rC (rs rn) (rs rk) = rC xs (suc j) ++ rC xs j
+
+
+
+-}
+
 
 
 
@@ -252,3 +352,4 @@ evalListℕ = eval opsListℕ
 
 
 
+   
