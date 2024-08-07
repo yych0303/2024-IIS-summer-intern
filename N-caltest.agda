@@ -1,4 +1,5 @@
 open import N-cal
+open import Rings
 
 -- ev -- sigma x ∈ {2, 3, 4} Cx , 2 = 10
 ev = `Σ[ "x"  ∈  (2 ∷ 3 ∷ 4 ∷ []) ] `C[ $ "x" , ` 2 ] 

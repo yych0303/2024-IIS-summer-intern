@@ -19,11 +19,11 @@ module N-cal where
 open import Agda.Primitive
 open import Data.List.Base public
 open import Data.String using (String; _≟_)
-open import Relation.Nullary using (yes; no)
+open import Relation.Nullary using (yes; no; Dec)
 
 private
   variable
-    ℓ : Level
+    ℓ ℓ₁ : Level
 
 St : Set → Set
 St A = List (List A)
@@ -69,17 +69,17 @@ data Term (Val : Set ℓ) : Set ℓ where
 -- [:=] ---------------------------------------------------------------------
 
 [_:=_]_ : {ℓ : Level} {Val : Set ℓ} → Idx → Val → Term Val → Term Val
-[ i := v ] (` x)                    = ` x
-[ i := v ] ($ x) with x Data.String.≟ i
-...                         | yes _ = ` v 
-...                         | no  _ = $ x
-[ i := v ] (t `+ t₁)                = [ i := v ] t `+ [ i := v ] t₁
-[ i := v ] (t `* t₁)                = [ i := v ] t `* [ i := v ] t₁
-[ i := v ] (`Σ[ x ∈ s ] t)          = `Σ[ x ∈ s ] [ i := v ] t
-[ i := v ] (`Π[ x ∈ s ] t)          = `Π[ x ∈ s ] [ i := v ] t
-[ i := v ] [ t ]`!                  = [ [ i := v ] t ]`!
-[ i := v ] `P[ t , t₁ ]             = `P[ [ i := v ] t , [ i := v ] t₁ ]
-[ i := v ] `C[ t , t₁ ]             = `C[ [ i := v ] t , [ i := v ] t₁ ]
+[ i := v ] (` x)            = ` x
+[ i := v ] ($ x) with x ≟ i
+...                 | yes _ = ` v 
+...                 | no  _ = $ x
+[ i := v ] (t `+ t₁)        = [ i := v ] t `+ [ i := v ] t₁
+[ i := v ] (t `* t₁)        = [ i := v ] t `* [ i := v ] t₁
+[ i := v ] (`Σ[ x ∈ s ] t)  = `Σ[ x ∈ s ] [ i := v ] t
+[ i := v ] (`Π[ x ∈ s ] t)  = `Π[ x ∈ s ] [ i := v ] t
+[ i := v ] [ t ]`!          = [ [ i := v ] t ]`!
+[ i := v ] `P[ t , t₁ ]     = `P[ [ i := v ] t , [ i := v ] t₁ ]
+[ i := v ] `C[ t , t₁ ]     = `C[ [ i := v ] t , [ i := v ] t₁ ]
 
 ```
 
@@ -90,6 +90,8 @@ data Term (Val : Set ℓ) : Set ℓ where
 
 -- Ring (Set) : Set -------------------------------------------------------
 open import Relation.Binary.Core using (Rel)
+open import Relation.Binary.Definitions using (Decidable)
+
 
 
 -- Commutative Ring
@@ -98,47 +100,30 @@ record Ring {ℓ : Level} : Set (lsuc ℓ) where
     R             : Set ℓ
     R0            : R
     R1            : R
+    Rpre          : R → R
     -- Operations -------------
     _R+_          : R → R → R
     _R*_          : R → R → R   
     RIdx          : Idx → R
-    RP            : R → R → R
-    RC            : R → R → R 
     -- Equivalence relation ----
-    _≃_           : Rel R ℓ
-    refl          : ∀ {x : R} 
-                    -----
-                  → x ≃ x
-    trans         : ∀ {x y z : R}
-                  → x ≃ y
-                  → y ≃ z
-                    -----
-                  → x ≃ z
-    sym           : ∀ {x y : R}
-                  → x ≃ y
-                    -----
-                  → y ≃ x
-    -- Ring properties ---------
-    R0-identity+  : ∀ {x : R}
-                  → (R0 R+ x) ≃ (R0 R+ x)
-    R1-identity*  : ∀ {x : R}
-                  → (R1 R* x) ≃ (R1 R* x)
-    R+-commut     : ∀ {x y : R}
-                  → (x R+ y) ≃ (x R+ y)
-    R*-commut     : ∀ {x y : R}
-                  → (x R* y) ≃ (x R* y)
-    R+-assoc      : ∀ {x y z : R}
-                  → ((x R+ y) R+ z) ≃ (x R+ (y R+ z))
-    R*-assoc      : ∀ {x y z : R}
-                  → ((x R* y) R* z) ≃ (x R* (y R* z))
-    R*-+distr     : ∀ {x y z : R}
-                  → (x R* (y R+ z)) ≃ ((x R* y) R+ (x R* z))
-    P-C*!         : ∀ {x y : R}
-                  → (RP x y) ≃ (RC x y R* RP y y)
-  
+    _≃_         : Rel R ℓ
+    isDecEquiv  : Decidable (_≃_)
+    refl        : ∀ {x : R} → x ≃ x
+    trans       : ∀ {x y z : R} → x ≃ y → y ≃ z → x ≃ z
+    sym         : ∀ {x y : R} → x ≃ y → y ≃ x
+
+    -- Commutative Ring properties ---------
+    zero-pre-one    : R0 ≃ Rpre R1
+    zero-identity+  : ∀ {x : R}     → (R0 R+ x) ≃ x
+    one-identity*   : ∀ {x : R}     → (R1 R* x) ≃ x
+    comm+           : ∀ {x y : R}   → (x R+ y) ≃ (y R+ x)
+    comm*           : ∀ {x y : R}   → (x R* y) ≃ (y R* x)
+    assoc+          : ∀ {x y z : R} → ((x R+ y) R+ z) ≃ (x R+ (y R+ z))
+    assoc*          : ∀ {x y z : R} → ((x R* y) R* z) ≃ (x R* (y R* z))
+    distrib         : ∀ {x y z : R} → (x R* (y R+ z)) ≃ ((x R* y) R+ (x R* z))
 
 
-open Ring
+
 
 
 ```
@@ -146,41 +131,51 @@ open Ring
 ## Evaluate Term R to R
 
 ```agda
-
 -- eval : Ring → Term R → R ----------------------
 
-private rsigma : (ring : Ring {ℓ}) → List (R ring) → ((R ring) → (R ring)) → (R ring)
-rsigma ring []      F = R0   ring
-rsigma ring (i ∷ l) F = _R+_ ring (F i) (rsigma ring l F)
+module _ {ℓ : Level} (ring : Ring {ℓ}) where
+  open Ring ring
 
-private rpi : (ring : Ring {ℓ}) → List (R ring) → ((R ring) → (R ring)) → (R ring)
-rpi ring []      F = R1   ring
-rpi ring (i ∷ l) F = _R*_ ring (F i) (rsigma ring l F)
+  private 
+    rsigma : List R → (R → R) → R
+    rsigma []      F = R0  
+    rsigma (i ∷ l) F = (F i) R+ (rsigma l F)
 
-private r! : (ring : Ring {ℓ}) → (R ring) → (R ring)
-r! ring r =  RP ring r r 
+    rpi : List R → (R → R) → R
+    rpi []      F = R1  
+    rpi (i ∷ l) F = (F i) R* (rsigma l F)
 
--- RC : {ℓ ℓ₁ : Level} (ring : EvalOps {ℓ} {ℓ₁}) → R ring → Val ring → R ring
--- RC ring a k = {!  !}
+    rC : R → R → R
+    {-# NON_TERMINATING #-}
+    rC x y with isDecEquiv R0 x | isDecEquiv R0 y
+    ...                                 | _     | yes _ = R1
+    ...                                 | yes _ | _     = R0 
+    ...                                 | _     | _     = (x R* (rC (Rpre x) (Rpre y))) R+ (rC (Rpre x) (y))
 
--- private RP : {ℓ ℓ₁ : Level} (ring : EvalOps {ℓ} {ℓ₁}) → R ring → R ring → R ring
--- RP ring R B = R! ring {!   !}
+    rP : R → R → R
+    {-# NON_TERMINATING #-}
+    rP x y with isDecEquiv R0 x | isDecEquiv R0 y
+    ...                                 | _     | yes _ = R1
+    ...                                 | yes _ | _     = R0 
+    ...                                 | _     | _     = x R* (rP (Rpre x) (Rpre y))
 
+    r! : R → R
+    r! r =  rP r r 
 
-infix 1 eval
+  infix 1 eval
 
-{-# NON_TERMINATING #-}
-eval : (ring : Ring {ℓ}) → Term (R ring) → (R ring)
-eval ring term with term
-...     | (` v)            = v
-...     | ($ i)            = RIdx    ring i -- not possible
-...     | (t `+ t₁)        = _R+_    ring (eval ring t) (eval ring t₁)
-...     | (t `* t₁)        = _R*_    ring (eval ring t) (eval ring t₁)
-...     | `P[ t , t₁ ]     = RP      ring (eval ring t) (eval ring t₁)
-...     | `C[ t , t₁ ]     = RC      ring (eval ring t) (eval ring t₁)
-...     | (`Σ[ i ∈ l ] t)  = rsigma  ring l (λ v → eval ring ([ i := v ] t))
-...     | (`Π[ i ∈ l ] t)  = rpi     ring l (λ v → eval ring ([ i := v ] t))
-...     | [ t ]`!          = r!      ring (eval ring t)
+  {-# NON_TERMINATING #-}
+  eval : Term R → R
+  eval term with term
+  ...          | (` v)            = v
+  ...          | ($ i)            = RIdx    i -- not possible
+  ...          | (t `+ t₁)        = (eval t) R+ (eval t₁)
+  ...          | (t `* t₁)        = (eval t) R+ (eval t₁)
+  ...          | `P[ t , t₁ ]     = rP (eval t) (eval t₁)
+  ...          | `C[ t , t₁ ]     = rC (eval t) (eval t₁)
+  ...          | (`Σ[ i ∈ l ] t)  = rsigma l (λ v → eval ([ i := v ] t))
+  ...          | (`Π[ i ∈ l ] t)  = rpi l (λ v → eval ([ i := v ] t))
+  ...          | [ t ]`!          = r! (eval t)
 
 ```
 
@@ -214,17 +209,25 @@ trns func term with term
 
 ```agda
 
-
 -- Reasoning -------------------------------------------------------------
+--    -- Ring properties ---------
+--    zero-pre-one    : R0 ≃ Rpre R1
+--    zero-identity+  : ∀ {x : R}     → (R0 R+ x) ≃ x
+--    one-identity*   : ∀ {x : R}     → (R1 R* x) ≃ x
+--    comm+           : ∀ {x y : R}   → (x R+ y) ≃ (y R+ x)
+--    comm*           : ∀ {x y : R}   → (x R* y) ≃ (y R* x)
+--    assoc+          : ∀ {x y z : R} → ((x R+ y) R+ z) ≃ (x R+ (y R+ z))
+--    assoc*          : ∀ {x y z : R} → ((x R* y) R* z) ≃ (x R* (y R* z))
+--    distrib         : ∀ {x y z : R} → (x R* (y R+ z)) ≃ ((x R* y) R+ (x R* z))
 
 
 
+module _ {ℓ : Level} (ring : Ring {ℓ}) where
+  open Ring ring
 
-
-
-
-
-
+  -- zero-identity+r : ∀ {x : R} → (R0 R+ x) ≃ x
+  -- zero-identity+r {x} = {!   !}
 
 
 ```
+     

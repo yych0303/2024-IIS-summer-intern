@@ -2,14 +2,41 @@ module Rings where
 -- Rings
 {-
 
-ringℕ
-ringSt
-ringListℕ
+record
+{ R               = ?              
+; R0              = r0             
+; R1              = r1             
+; Rpre            = rpre           
+; _R+_            = _r+_           
+; _R*_            = _r*_           
+; RIdx            = λ _ → ?          
+; _≃_             = ?           
+; isDecEquiv      = ?    
+; refl            = ?          
+; trans           = ?         
+; sym             = ?           
+; zero-pre-one    = ?
+; zero-identity+  = ?
+; one-identity*   = ?
+; comm+           = ?
+; comm*           = ?
+; assoc+          = ?
+; assoc*          = ?
+; distrib         = ? 
+}
+  where
+    r0   = ?
+    r1   = ?
+    rpre = ?
+    _r+_ = ?
+    _r*_ = ?    
+
 
 -}
 
 
 open import N-cal
+
 
 -- Ring ℕ ---------------------------------------------------------------------
 open import Data.Nat using (ℕ; zero; suc; _+_; _*_)
@@ -18,33 +45,31 @@ open import Relation.Binary.PropositionalEquality using (_≡_; refl; sym; trans
 
 ringℕ : Ring
 ringℕ = record
-  { R    = ℕ
-  ; R0   = 0
-  ; R1   = 1
-  ; _R+_ = _+_
-  ; _R*_ = _*_
-  ; RIdx = λ x → 0
-  ; RP   = permutation
-  ; RC   = combination
-  ; _≈_  = _≡_
-  ; isEq = record
-    { refl  = refl
-    ; sym   = sym
-    ; trans = trans
-    }
+  { R               = ℕ        
+  ; R0              = 0        
+  ; R1              = 1        
+  ; Rpre            = rpre        
+  ; _R+_            = _+_        
+  ; _R*_            = _*_        
+  ; RIdx            = λ x → 0          
+  ; _≃_             = _≡_     
+  ; isDecEquiv      = Data.Nat._≟_    
+  ; refl            = refl          
+  ; trans           = trans         
+  ; sym             = sym           
+  ; zero-pre-one    = refl
+  ; zero-identity+  = refl
+  ; one-identity*   = {!   !}
+  ; comm+           = {!   !}
+  ; comm*           = {!   !}
+  ; assoc+          = {!   !}
+  ; assoc*          = {!   !}
+  ; distrib         = {!   !} 
   }
-    where      
-      permutation : ℕ → ℕ → ℕ
-      permutation _ 0 = 1
-      permutation 0 _ = 0
-      permutation (suc i) (suc j) = (suc i) * permutation i j 
-
-      combination : ℕ → ℕ → ℕ
-      combination _ 0 = 1
-      combination 0 _ = 0
-      combination (suc i) (suc j) = combination i j + combination i (suc j) 
-
-
+    where
+      rpre : ℕ → ℕ
+      rpre 0       = 0
+      rpre (suc x) = x  
 
 evalℕ : Term ℕ → ℕ
 evalℕ = eval ringℕ
@@ -55,42 +80,36 @@ evalℕ = eval ringℕ
 
 ringListℕ : Ring
 ringListℕ = record  
-  { R    = List ℕ
-  ; R0   = r0
-  ; R1   = r1
-  ; _R+_ = r+
-  ; _R*_ = r*
-  ; RIdx = λ x → []
-  ; RP   = rP
-  ; RC   = rC
-  ; _≈_  = R≈
-  ; isEq = record
-    { refl  = {!   !}
-    ; sym   = {!   !}
-    ; trans = {!   !}
-    }
+  { R               = List ℕ          
+  ; R0              = []        
+  ; R1              = [ 0 ]          
+  ; Rpre            = rpre
+  ; _R+_            = r+          
+  ; _R*_            = r*                
+  ; RIdx            = λ x → []          
+  ; _≃_             = {!   !}    
+  ; isDecEquiv      = {!   !}
+  ; refl            = {!   !}          
+  ; trans           = {!   !}         
+  ; sym             = {!   !}           
+  ; zero-pre-one    = {!   !}
+  ; zero-identity+  = {!   !}
+  ; one-identity*   = {!   !}
+  ; comm+           = {!   !}
+  ; comm*           = {!   !}
+  ; assoc+          = {!   !}
+  ; assoc*          = {!   !}
+  ; distrib         = {!   !} 
   }
     where
-      r0 = []
-      r1 = [ 0 ]
-      r+ = λ xs ys → xs ++ (map ((length xs) +_) ys)
-      r*  = λ xs ys → foldl (λ acc x → (r+ ys acc)) r0 xs
-      rP : List ℕ → List ℕ → List ℕ
-      rP _ [] = r1
-      rP [] _ = r0
-      rP (x ∷ xs) (y ∷ ys) = r* (x ∷ xs) (rP xs ys)
-      
-      rC : List ℕ → List ℕ → List ℕ
-      rC _ [] = r1
-      rC [] _ = r0
-      rC (x ∷ xs) (y ∷ ys) = r+ (rC xs ys) (rC xs (y ∷ ys))
+      r0    = []
+      r1    = [ 0 ]
+      rpre  : List ℕ → List ℕ 
+      rpre []      = []
+      rpre (x ∷ l) = l
+      r+    = λ xs ys → xs ++ (map ((length xs) +_) ys)
+      r*    = λ xs ys → foldl (λ acc x → (r+ ys acc)) r0 xs
 
-      R≈ = {!   !}
-
-
-
-
-      
 
 evalListℕ : Term (List ℕ) → List ℕ
 evalListℕ = eval ringListℕ
@@ -103,42 +122,40 @@ evalListℕ = eval ringListℕ
 
 ringSt : Set → Ring
 ringSt A = record
-  { R    = St A
-  ; R0   = r0
-  ; R1   = r1
-  ; _R+_ = r+
-  ; _R*_ = r*
-  ; RIdx = λ x → []
-  ; RP   = rP
-  ; RC   = rC  
-  ; _≈_  = {!   !}
-  ; isEq = record
-    { refl  = {!   !}
-    ; sym   = {!   !}
-    ; trans = {!   !}
-    }
-
-  }
+  { R               = St A
+  ; R0              = r0
+  ; R1              = r1
+  ; Rpre            = rpre
+  ; _R+_            = r+
+  ; _R*_            = r*
+  ; RIdx            = λ x → []
+  ; _≃_             = {!   !}    
+  ; isDecEquiv      = {!   !}
+  ; refl            = {!   !}          
+  ; trans           = {!   !}         
+  ; sym             = {!   !}           
+  ; zero-pre-one    = {!   !}
+  ; zero-identity+  = {!   !}
+  ; one-identity*   = {!   !}
+  ; comm+           = {!   !}
+  ; comm*           = {!   !}
+  ; assoc+          = {!   !}
+  ; assoc*          = {!   !}
+  ; distrib         = {!   !} 
+  }  
     where
       r0 : {A : Set} → St A
       r0 = []
       r1 : {A : Set} → St A
       r1 = [ [] ]
+      rpre : (List (List A)) → List (List A)
+      rpre [] = []
+      rpre (x ∷ xs) = xs
+
       r+ : {A : Set} → St A → St A → St A
       r+ = _++_
       r* : {A : Set} → St A → St A → St A
       r* = λ xs ys → concatMap (λ x → map (x ++_) ys ) xs
-      
-      rP : {A : Set} → St A → St A → St A
-      rP _ []  = r1
-      rP [] _  = r0
-      rP (x ∷ xs) (y ∷ ys) = r* (x ∷ xs)  (rP xs ys)
-
-      rC : {A : Set} → St A → St A → St A
-      rC _ [] = r1
-      rC [] _ = r0
-      rC (x ∷ xs) (y ∷ ys) = r+ (r* [ x ] (rC xs ys)) (rC xs (y ∷ ys))
-  
 
 evalSt : {A : Set} → Term (St A) → St A
 evalSt {A} = eval (ringSt A)
@@ -203,4 +220,5 @@ funcℕListℕ = [_]ᶜ
 
 
 
-
+ 
+  
