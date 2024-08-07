@@ -14,7 +14,6 @@ eval ringA               eval ringB
 ```
 
 ```agda
-{-# OPTIONS --warning=noUnreachableClauses #-}
 module N-cal where
   
 open import Agda.Primitive
@@ -96,17 +95,17 @@ module _ {ℓ : Level} (ring : Ring {ℓ}) where
 
     rC : R → R → R
     {-# NON_TERMINATING #-}
-    rC x y with x  | y
-    ...       | _  | R0 = R1
-    ...       | R0 | _  = R0 
-    ...       | _  | _  = (x R* (rC (Rpre x) (Rpre y))) R+ (rC (Rpre x) (y))
+    rC x y with isDecEquivR0 x | isDecEquivR0 y
+    ...                 | _     | yes _ = R1
+    ...                 | yes _ | _     = R0 
+    ...                 | _     | _     = (R1 R* (rC (Rpre x) (Rpre y))) R+ (rC (Rpre x) (y))
 
     rP : R → R → R
     {-# NON_TERMINATING #-}
-    rP x y with x  | y
-    ...       | _  | R0 = R1
-    ...       | R0 | _  = R0 
-    ...       | _  | _  = x R* (rP (Rpre x) (Rpre y))
+    rP x y with isDecEquivR0 x | isDecEquivR0 y
+    ...                 | _     | yes _ = R1
+    ...                 | yes _ | _     = R0 
+    ...                 | _     | _     = x R* (rP (Rpre x) (Rpre y))
 
     r! : R → R
     r! r =  rP r r 

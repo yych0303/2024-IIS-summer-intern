@@ -5,26 +5,27 @@ module CommutativeRing where
 
 open import Agda.Primitive
 open import Relation.Binary.Core using (Rel)
-open import Relation.Binary.Definitions using (Decidable)
+open import Relation.Nullary using (Dec)
 
 
 
 -- Commutative Ring
 record Ring {ℓ : Level} : Set (lsuc ℓ) where
   field
-    R             : Set ℓ
-    R0            : R
-    R1            : R
-    Rpre          : R → R
+    R               : Set ℓ
+    R0              : R
+    R1              : R
+    Rpre            : R → R
     -- Operations -------------
-    _R+_          : R → R → R
-    _R*_          : R → R → R   
+    _R+_            : R → R → R
+    _R*_            : R → R → R   
 --    RIdx          : Idx → R
     -- Equivalence relation ----
-    _≃_         : Rel R ℓ
-    refl        : ∀ {x : R} → x ≃ x
-    trans       : ∀ {x y z : R} → x ≃ y → y ≃ z → x ≃ z
-    sym         : ∀ {x y : R} → x ≃ y → y ≃ x
+    _≃_             : Rel R ℓ
+    isDecEquivR0    : ∀ (x : R) → Dec (R0 ≃ x)
+    refl            : ∀ {x : R} → x ≃ x
+    trans           : ∀ {x y z : R} → x ≃ y → y ≃ z → x ≃ z
+    sym             : ∀ {x y : R} → x ≃ y → y ≃ x
 
     -- Commutative Ring properties ---------
     zero-pre-one    : R0 ≃ Rpre R1
