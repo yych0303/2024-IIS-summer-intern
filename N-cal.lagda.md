@@ -32,7 +32,11 @@ private
 St : Set → Set
 St A = List (List A)
 
+```
+## Term 
 
+
+```agda
 
 -- Term --------------------------------------------------------------
 
@@ -81,7 +85,7 @@ data Term (Val : Set ℓ) : Set ℓ where
 [ i := v ] `C[ t , t₁ ]             = `C[ [ i := v ] t , [ i := v ] t₁ ]
 
 ```
-### Interface of commuttative ring
+## Interface of commuttative ring
 
 ```agda
 
@@ -140,7 +144,7 @@ open Ring
 
 
 ```
-### Evaluate Term R to R
+## Evaluate Term R to R
 
 ```agda
 
@@ -180,7 +184,7 @@ eval ring term with term
 ...     | [ t ]`!          = r!      ring (eval ring t)
 
 ```
-### Translate Term A to Term B
+## Translate Term A to Term B
 
 ```agda
 
@@ -201,59 +205,20 @@ trns func term with term
 ...     | (`Π[ i ∈ l ] t)  = (`Π[ i ∈ map func l ] trns func t)
 ...     | [ t ]`!          = [ trns func t ]`!        
 
+
+
+
+```
+## Reasoning 
+
+```agda
+
+
 -- Reasoning -------------------------------------------------------------
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{-
-
-OrdRing : (R : Set ℓ₁) 
-        → (R0 : R) 
-        → (RS : R → R) 
-        → (R+ : R → R → R)
-        → (R* : R → R → R)
-        ------------------
-        → Ring R
-OrdRing r r0 rs r+ r* = record
-  { R0   = r0
-  ; R1   = r1
-  ; _R+_ = r+
-  ; _R*_ = r*
-  ; RP   = rP
-  ; RC   = rC
-  }
-    where
-      r1 = rs r0
-        
-      rP : R → R → R
-      rP _  0 = r1
-      rP [] _ = r0
-      rP (x ∷ xs) (suc k) = r* (x ∷ xs) (rP xs k)
-      
-      rC : R → R → R
-      rC _ 0 = r1
-      rC [] _ = r0
-      rC (rs rn) (rs rk) = rC xs (suc j) ++ rC xs j
-
-
-
--}
 
 
 
