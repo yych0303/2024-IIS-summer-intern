@@ -1,6 +1,6 @@
-## N-calculus
+# N-calculus
 
-# main frame
+## main frame
 ...
 
   Term A -- trns funcAB -> Term B
@@ -21,13 +21,13 @@ data Term (Val : Set ℓ) : Set ℓ
 [_:=_]_ : {ℓ : Level} {Val : Set ℓ} → Idx → Val → Term Val → Term Val
 
 
-# Interface of commuttative ring
+### Interface of commuttative ring
 record Ring (R : Type) : Type
 
-# Evaluate Term R to R
+### Evaluate Term R to R
 eval : (ring : Ring {ℓ}) → Term (R ring) → (R ring)
 
-# Translate Term A to Term B
+### Translate Term A to Term B
 trns : {A B : Set} → (A → B) → Term A → Term B
 
 
