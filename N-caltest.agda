@@ -1,3 +1,5 @@
+{-# OPTIONS --allow-unsolved-metas #-}
+module N-caltest where
 open import N-cal
 open import Rings
 

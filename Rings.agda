@@ -1,3 +1,4 @@
+{-# OPTIONS --allow-unsolved-metas #-}
 module Rings where
 -- Rings
 {-
@@ -10,8 +11,7 @@ record
 ; _R+_            = _r+_           
 ; _R*_            = _r*_           
 ; RIdx            = λ _ → ?          
-; _≃_             = ?           
-; isDecEquiv      = ?    
+; _≃_             = ?    
 ; refl            = ?          
 ; trans           = ?         
 ; sym             = ?           
@@ -39,7 +39,7 @@ open import N-cal
 
 
 -- Ring ℕ ---------------------------------------------------------------------
-open import Data.Nat using (ℕ; zero; suc; _+_; _*_)
+open import Data.Nat using (ℕ; zero; suc; _+_; _*_; _≟_)
 open import Relation.Binary.PropositionalEquality using (_≡_; refl; sym; trans)
 
 
@@ -50,10 +50,8 @@ ringℕ = record
   ; R1              = 1        
   ; Rpre            = rpre        
   ; _R+_            = _+_        
-  ; _R*_            = _*_        
-  ; RIdx            = λ x → 0          
-  ; _≃_             = _≡_     
-  ; isDecEquiv      = Data.Nat._≟_    
+  ; _R*_            = _*_            
+  ; _≃_             = _≡_    
   ; refl            = refl          
   ; trans           = trans         
   ; sym             = sym           
@@ -86,9 +84,7 @@ ringListℕ = record
   ; Rpre            = rpre
   ; _R+_            = r+          
   ; _R*_            = r*                
-  ; RIdx            = λ x → []          
-  ; _≃_             = {!   !}    
-  ; isDecEquiv      = {!   !}
+  ; _≃_             = {!   !}
   ; refl            = {!   !}          
   ; trans           = {!   !}         
   ; sym             = {!   !}           
@@ -118,7 +114,8 @@ evalListℕ = eval ringListℕ
 
 -- Ring (St A) ---------------------------------------------------- 
 
-
+St : Set → Set
+St A = List (List A)
 
 ringSt : Set → Ring
 ringSt A = record
@@ -128,9 +125,7 @@ ringSt A = record
   ; Rpre            = rpre
   ; _R+_            = r+
   ; _R*_            = r*
-  ; RIdx            = λ x → []
-  ; _≃_             = {!   !}    
-  ; isDecEquiv      = {!   !}
+  ; _≃_             = {!   !}
   ; refl            = {!   !}          
   ; trans           = {!   !}         
   ; sym             = {!   !}           

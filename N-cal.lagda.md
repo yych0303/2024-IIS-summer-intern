@@ -14,19 +14,14 @@ eval ringA               eval ringB
 ```
 
 ```agda
+{-# OPTIONS --warning=noUnreachableClauses #-}
 module N-cal where
-
+  
 open import Agda.Primitive
+open import CommutativeRing public
 open import Data.List.Base public
 open import Data.String using (String; _≟_)
-open import Relation.Nullary using (yes; no; Dec)
-
-private
-  variable
-    ℓ ℓ₁ : Level
-
-St : Set → Set
-St A = List (List A)
+open import Relation.Nullary using (yes; no)
 
 ```
 
@@ -47,7 +42,7 @@ infix  9  `_ $_
 private Idx : Set
 Idx = String
 
-data Term (Val : Set ℓ) : Set ℓ where
+data Term {ℓ : Level} (Val : Set ℓ) : Set ℓ where
   `_          : Val → Term Val
   $_          : Idx → Term Val
   _`+_        : Term Val → Term Val → Term Val
@@ -82,52 +77,6 @@ data Term (Val : Set ℓ) : Set ℓ where
 [ i := v ] `C[ t , t₁ ]     = `C[ [ i := v ] t , [ i := v ] t₁ ]
 
 ```
-
-## Interface of commuttative ring
-
-```agda
-
-
--- Ring (Set) : Set -------------------------------------------------------
-open import Relation.Binary.Core using (Rel)
-open import Relation.Binary.Definitions using (Decidable)
-
-
-
--- Commutative Ring
-record Ring {ℓ : Level} : Set (lsuc ℓ) where
-  field
-    R             : Set ℓ
-    R0            : R
-    R1            : R
-    Rpre          : R → R
-    -- Operations -------------
-    _R+_          : R → R → R
-    _R*_          : R → R → R   
-    RIdx          : Idx → R
-    -- Equivalence relation ----
-    _≃_         : Rel R ℓ
-    isDecEquiv  : Decidable (_≃_)
-    refl        : ∀ {x : R} → x ≃ x
-    trans       : ∀ {x y z : R} → x ≃ y → y ≃ z → x ≃ z
-    sym         : ∀ {x y : R} → x ≃ y → y ≃ x
-
-    -- Commutative Ring properties ---------
-    zero-pre-one    : R0 ≃ Rpre R1
-    zero-identity+  : ∀ {x : R}     → (R0 R+ x) ≃ x
-    one-identity*   : ∀ {x : R}     → (R1 R* x) ≃ x
-    comm+           : ∀ {x y : R}   → (x R+ y) ≃ (y R+ x)
-    comm*           : ∀ {x y : R}   → (x R* y) ≃ (y R* x)
-    assoc+          : ∀ {x y z : R} → ((x R+ y) R+ z) ≃ (x R+ (y R+ z))
-    assoc*          : ∀ {x y z : R} → ((x R* y) R* z) ≃ (x R* (y R* z))
-    distrib         : ∀ {x y z : R} → (x R* (y R+ z)) ≃ ((x R* y) R+ (x R* z))
-
-
-
-
-
-```
-
 ## Evaluate Term R to R
 
 ```agda
@@ -147,17 +96,17 @@ module _ {ℓ : Level} (ring : Ring {ℓ}) where
 
     rC : R → R → R
     {-# NON_TERMINATING #-}
-    rC x y with isDecEquiv R0 x | isDecEquiv R0 y
-    ...                                 | _     | yes _ = R1
-    ...                                 | yes _ | _     = R0 
-    ...                                 | _     | _     = (x R* (rC (Rpre x) (Rpre y))) R+ (rC (Rpre x) (y))
+    rC x y with x  | y
+    ...       | _  | R0 = R1
+    ...       | R0 | _  = R0 
+    ...       | _  | _  = (x R* (rC (Rpre x) (Rpre y))) R+ (rC (Rpre x) (y))
 
     rP : R → R → R
     {-# NON_TERMINATING #-}
-    rP x y with isDecEquiv R0 x | isDecEquiv R0 y
-    ...                                 | _     | yes _ = R1
-    ...                                 | yes _ | _     = R0 
-    ...                                 | _     | _     = x R* (rP (Rpre x) (Rpre y))
+    rP x y with x  | y
+    ...       | _  | R0 = R1
+    ...       | R0 | _  = R0 
+    ...       | _  | _  = x R* (rP (Rpre x) (Rpre y))
 
     r! : R → R
     r! r =  rP r r 
@@ -168,7 +117,7 @@ module _ {ℓ : Level} (ring : Ring {ℓ}) where
   eval : Term R → R
   eval term with term
   ...          | (` v)            = v
-  ...          | ($ i)            = RIdx    i -- not possible
+  ...          | ($ i)            = R0   -- not possible
   ...          | (t `+ t₁)        = (eval t) R+ (eval t₁)
   ...          | (t `* t₁)        = (eval t) R+ (eval t₁)
   ...          | `P[ t , t₁ ]     = rP (eval t) (eval t₁)
@@ -190,43 +139,25 @@ infix 1 trns
 {-# NON_TERMINATING #-}
 trns : {A B : Set} → (A → B) → Term A → Term B
 trns func term with term
-...     | (` v)            = (` (func v))        
-...     | ($ i)            = ($ i)        
-...     | (t `+ t₁)        = (trns func t `+ trns func t₁)    
-...     | (t `* t₁)        = (trns func t `* trns func t₁)    
-...     | `P[ t , t₁ ]     = `P[ trns func t , trns func t₁ ]   
-...     | `C[ t , t₁ ]     = `C[ trns func t , trns func t₁ ]   
-...     | (`Σ[ i ∈ l ] t)  = (`Σ[ i ∈ map func l ] trns func t)
-...     | (`Π[ i ∈ l ] t)  = (`Π[ i ∈ map func l ] trns func t)
-...     | [ t ]`!          = [ trns func t ]`!      
+...               | (` v)            = (` (func v))        
+...               | ($ i)            = ($ i)        
+...               | (t `+ t₁)        = (trns func t `+ trns func t₁)    
+...               | (t `* t₁)        = (trns func t `* trns func t₁)    
+...               | `P[ t , t₁ ]     = `P[ trns func t , trns func t₁ ]   
+...               | `C[ t , t₁ ]     = `C[ trns func t , trns func t₁ ]   
+...               | (`Σ[ i ∈ l ] t)  = (`Σ[ i ∈ map func l ] trns func t)
+...               | (`Π[ i ∈ l ] t)  = (`Π[ i ∈ map func l ] trns func t)
+...               | [ t ]`!          = [ trns func t ]`!      
 
 
 
 
 ```
 
-## Reasoning
+## Term Reasoning
 
 ```agda
 
--- Reasoning -------------------------------------------------------------
---    -- Ring properties ---------
---    zero-pre-one    : R0 ≃ Rpre R1
---    zero-identity+  : ∀ {x : R}     → (R0 R+ x) ≃ x
---    one-identity*   : ∀ {x : R}     → (R1 R* x) ≃ x
---    comm+           : ∀ {x y : R}   → (x R+ y) ≃ (y R+ x)
---    comm*           : ∀ {x y : R}   → (x R* y) ≃ (y R* x)
---    assoc+          : ∀ {x y z : R} → ((x R+ y) R+ z) ≃ (x R+ (y R+ z))
---    assoc*          : ∀ {x y z : R} → ((x R* y) R* z) ≃ (x R* (y R* z))
---    distrib         : ∀ {x y z : R} → (x R* (y R+ z)) ≃ ((x R* y) R+ (x R* z))
-
-
-
-module _ {ℓ : Level} (ring : Ring {ℓ}) where
-  open Ring ring
-
-  -- zero-identity+r : ∀ {x : R} → (R0 R+ x) ≃ x
-  -- zero-identity+r {x} = {!   !}
 
 
 ```
