@@ -13,10 +13,6 @@ eval ringA               eval ringB
 
 ```
 
-
-
-
-
 ```agda
 module N-cal where
 
@@ -33,8 +29,8 @@ St : Set → Set
 St A = List (List A)
 
 ```
-## Term 
 
+## Term
 
 ```agda
 
@@ -64,6 +60,7 @@ data Term (Val : Set ℓ) : Set ℓ where
 
 
 ```
+
 ### Substitution
 
 ```agda
@@ -85,6 +82,7 @@ data Term (Val : Set ℓ) : Set ℓ where
 [ i := v ] `C[ t , t₁ ]             = `C[ [ i := v ] t , [ i := v ] t₁ ]
 
 ```
+
 ## Interface of commuttative ring
 
 ```agda
@@ -137,13 +135,14 @@ record Ring {ℓ : Level} : Set (lsuc ℓ) where
                   → (x R* (y R+ z)) ≃ ((x R* y) R+ (x R* z))
     P-C*!         : ∀ {x y : R}
                   → (RP x y) ≃ (RC x y R* RP y y)
-    
+  
 
 
 open Ring
 
 
 ```
+
 ## Evaluate Term R to R
 
 ```agda
@@ -184,6 +183,7 @@ eval ring term with term
 ...     | [ t ]`!          = r!      ring (eval ring t)
 
 ```
+
 ## Translate Term A to Term B
 
 ```agda
@@ -195,21 +195,22 @@ infix 1 trns
 {-# NON_TERMINATING #-}
 trns : {A B : Set} → (A → B) → Term A → Term B
 trns func term with term
-...     | (` v)            = (` (func v))          
-...     | ($ i)            = ($ i)          
-...     | (t `+ t₁)        = (trns func t `+ trns func t₁)      
-...     | (t `* t₁)        = (trns func t `* trns func t₁)      
+...     | (` v)            = (` (func v))        
+...     | ($ i)            = ($ i)        
+...     | (t `+ t₁)        = (trns func t `+ trns func t₁)    
+...     | (t `* t₁)        = (trns func t `* trns func t₁)    
 ...     | `P[ t , t₁ ]     = `P[ trns func t , trns func t₁ ]   
 ...     | `C[ t , t₁ ]     = `C[ trns func t , trns func t₁ ]   
 ...     | (`Σ[ i ∈ l ] t)  = (`Σ[ i ∈ map func l ] trns func t)
 ...     | (`Π[ i ∈ l ] t)  = (`Π[ i ∈ map func l ] trns func t)
-...     | [ t ]`!          = [ trns func t ]`!        
+...     | [ t ]`!          = [ trns func t ]`!      
 
 
 
 
 ```
-## Reasoning 
+
+## Reasoning
 
 ```agda
 
@@ -226,4 +227,4 @@ trns func term with term
 
 
 
-```    
+```
