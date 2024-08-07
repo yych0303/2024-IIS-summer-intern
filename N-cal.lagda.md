@@ -1,8 +1,7 @@
 # N-calculus
 
 ## main frame
-...
-
+```c
   Term A -- trns funcAB -> Term B
     |                        |
     |                        |
@@ -10,7 +9,7 @@ eval ringA               eval ringB
     |                        |
     V                        V
     A ------- funcAB ------> B
-
+```
 
 
 data Term (Val : Set ℓ) : Set ℓ
