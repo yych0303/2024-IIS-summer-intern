@@ -1,4 +1,17 @@
-## Interface of commutative ring
+### Interface of commutative ring
+
+## Main frame
+
+```block
+  Term R        Term R
+    |             |
+    |             |
+eval ringR    eval ringR
+    |             |
+    V             V
+    A ---- ≃ ---- B
+
+```
 
 ```agda
 module CommutativeRing where
@@ -62,4 +75,4 @@ module Properties {ℓ : Level} (ring : Ring {ℓ}) where
   -- zero-identity+r : ∀ {x : R} → (R0 R+ x) ≃ x
   -- zero-identity+r {x} = {!   !}
 
-```
+``` 
