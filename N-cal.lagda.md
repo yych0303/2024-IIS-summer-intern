@@ -1,7 +1,8 @@
 # N-calculus
 
-## main frame
-```c
+## Main frame
+
+```block
   Term A -- trns funcAB -> Term B
     |                        |
     |                        |
@@ -9,25 +10,10 @@ eval ringA               eval ringB
     |                        |
     V                        V
     A ------- funcAB ------> B
+
 ```
 
 
-data Term (Val : Set ℓ) : Set ℓ
-  `_ | $_ | _`+_ | _`*_ | `Σ[_∈_]_ | `Π[_∈_]_ | 
-  [_]`! | `P[_,_] | `C[_,_] 
-
--- Substitution
-[_:=_]_ : {ℓ : Level} {Val : Set ℓ} → Idx → Val → Term Val → Term Val
-
-
-### Interface of commuttative ring
-record Ring (R : Type) : Type
-
-### Evaluate Term R to R
-eval : (ring : Ring {ℓ}) → Term (R ring) → (R ring)
-
-### Translate Term A to Term B
-trns : {A B : Set} → (A → B) → Term A → Term B
 
 
 
@@ -73,6 +59,10 @@ data Term (Val : Set ℓ) : Set ℓ where
   `C[_,_]     : Term Val → Term Val → Term Val
 
 
+```
+### Substitution
+
+```agda
 
 
 -- [:=] ---------------------------------------------------------------------
@@ -90,7 +80,10 @@ data Term (Val : Set ℓ) : Set ℓ where
 [ i := v ] `P[ t , t₁ ]             = `P[ [ i := v ] t , [ i := v ] t₁ ]
 [ i := v ] `C[ t , t₁ ]             = `C[ [ i := v ] t , [ i := v ] t₁ ]
 
+```
+### Interface of commuttative ring
 
+```agda
 
 
 -- Ring (Set) : Set -------------------------------------------------------
@@ -146,6 +139,10 @@ record Ring {ℓ : Level} : Set (lsuc ℓ) where
 open Ring
 
 
+```
+### Evaluate Term R to R
+
+```agda
 
 -- eval : Ring → Term R → R ----------------------
 
@@ -182,6 +179,10 @@ eval ring term with term
 ...     | (`Π[ i ∈ l ] t)  = rpi     ring l (λ v → eval ring ([ i := v ] t))
 ...     | [ t ]`!          = r!      ring (eval ring t)
 
+```
+### Translate Term A to Term B
+
+```agda
 
 -- trns : (R → B) → Term R → Term B-----------------------------------------------------------------
 
