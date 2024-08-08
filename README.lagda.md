@@ -1,6 +1,6 @@
 
 ## Main frame
-```s
+```n
 [Interface]             Term A <-------- trns ---------> Term B    ta ≈ᴬ ta'<--- trnsPf ---> tb ≈ᴮ tb'
     |                     |               ~                |          |            ~            |
     | implements          |              func              |          |           func          |

@@ -45,7 +45,7 @@ open import N-cal
 
 -- Ring ℕ ---------------------------------------------------------------------
 open import Data.Nat using (ℕ; zero; suc; _+_; _*_; _≟_)
-open import Relation.Binary.PropositionalEquality using (_≡_; refl; sym; trans)
+open import Relation.Binary.PropositionalEquality using (_≡_; refl; sym; trans; cong)
 open import Data.Nat.Properties
 
 ringℕ : Ring
@@ -87,16 +87,38 @@ ringℕ = record
       ht (suc x) = refl
 
       h0 : (x : ℕ) → (x ≡ 0) ↔ (rh x ≡ 0)
-      h0 = {!   !}
+      h0 0 = record
+        { to   = λ p → cong rh p
+        ; from = λ p → refl
+        }
+      h0 (suc x) = record
+        { to   = λ p → cong rh p
+        ; from = λ p → ⊥-elim (contradiction p)
+        }
+        where
+          contradiction : 1 ≡ 0 → ⊥
+          contradiction ()
       hn0 : (x : ℕ) → ¬ (x ≡ 0) → rh x ≡ 1
       hn0 zero = λ x → ⊥-elim (x refl)
       hn0 (suc x) = λ _ → refl
       t01 : (x : ℕ) → ((x ≡ 0) ⊎ (x ≡ 1)) ↔ (rt x ≡ 0)
-      t01 = {!   !}
-      as+ : {x y z : ℕ} → x + y + z ≡ x + (y + z)
-      as+ {x} {y} {z} = +-assoc x y z
-      as* : {x y z : ℕ} → x * y * z ≡ x * (y * z)
-      as* {x} {y} {z} = *-assoc x y z
+      t01 zero    = record
+        { to   = λ p → refl
+        ; from = λ p → _⊎_.inj₁ refl
+        }
+      t01 (suc x) = record
+        { to   = tof x 
+        ; from = λ p → _⊎_.inj₂ (cong suc p)
+        }
+        where
+          contradiction : (x : ℕ) → suc (suc x) ≡ 1 → ⊥
+          contradiction zero = λ () 
+          contradiction (suc x) = λ ()    
+          proof : (x : ℕ) → suc x ≡ 1 → x ≡ 0
+          proof 0 p = refl
+          proof (suc x) p = ⊥-elim (contradiction x p)
+          tof : (x : ℕ) → (suc x ≡ 0 ⊎ suc x ≡ 1 → x ≡ 0)
+          tof x (_⊎_.inj₂ y) = proof x y
 
       
 evalℕ : Term ℕ → ℕ
@@ -104,23 +126,23 @@ evalℕ = eval ringℕ
 
 
 -- Ring (List ℕ) -----------------------------------------------
-
+open import Relation.Nullary using (yes; no)
 
 ringListℕ : Ring
 ringListℕ = record  
   { R               = List ℕ          
   ; R0              = []        
   ; R1              = [ 0 ]     
-  ; Rhead           = {!   !}     
-  ; Rtail           = {!   !}   
+  ; Rhead           = λ {[] → [] ; (x ∷ _) → [ 0 ]}     
+  ; Rtail           = λ {[] → [] ; (_ ∷ xs) → xs}   
   ; _R+_            = r+          
   ; _R*_            = r*                
-  ; _≃_             = {!   !}    
-  ; isDecEquivR0    = {!   !}
-  ; refl            = {!   !}          
-  ; trans           = {!   !}         
-  ; sym             = {!   !}
-  ; head-tail       = {!   !}
+  ; _≃_             = _≡_    
+  ; isDecEquivR0    = λ {[] → yes refl ; (x ∷ xs) → no λ ()}
+  ; refl            = refl          
+  ; trans           = λ x y → trans x y         
+  ; sym             = λ x → sym x
+  ; head-tail       = ht
   ; head-0          = {!   !}
   ; head-n0         = {!   !} 
   ; tail-01         = {!   !}
@@ -135,11 +157,11 @@ ringListℕ = record
     where
       r0    = []
       r1    = [ 0 ]
-      rpre  : List ℕ → List ℕ 
-      rpre []      = []
-      rpre (x ∷ l) = l
-      r+    = λ xs ys → xs ++ (map ((length xs) +_) ys)
+      r+    = λ xs ys → (map ((length ys) +_) xs) ++ ys
       r*    = λ xs ys → foldl (λ acc x → (r+ ys acc)) r0 xs
+      ht : {!   !}
+      ht [] = refl
+      ht (x ∷ x₁) = {!   !}
 
 
 evalListℕ : Term (List ℕ) → List ℕ
@@ -161,12 +183,12 @@ ringSt A = record
   ; Rtail           = rt   
   ; _R+_            = r+
   ; _R*_            = r*
-  ; _≃_             = {!   !}    
-  ; isDecEquivR0     = {!   !}
-  ; refl            = {!   !}          
-  ; trans           = {!   !}         
-  ; sym             = {!   !}   
-  ; head-tail       = {!   !}
+  ; _≃_             = λ x y → length x ≡ length y    
+  ; isDecEquivR0    = λ x → 0 ≟ length x
+  ; refl            = refl          
+  ; trans           = λ x y → trans x y         
+  ; sym             = λ x → sym x  
+  ; head-tail       = λ x → cong length (ht x)
   ; head-0          = {!   !}
   ; head-n0         = {!   !} 
   ; tail-01         = {!   !}
@@ -194,6 +216,10 @@ ringSt A = record
       r+ = _++_
       r* : {A : Set} → St A → St A → St A
       r* = λ xs ys → concatMap (λ x → map (x ++_) ys ) xs
+
+      ht : (x : List (List A)) → r+ (rh x) (rt x) ≡ x
+      ht [] = refl
+      ht (x ∷ x₁) = refl
 
 evalSt : {A : Set} → Term (St A) → St A
 evalSt {A} = eval (ringSt A)
@@ -258,5 +284,5 @@ funcℕListℕ = [_]ᶜ
 
 
 
-   
-   
+       
+       
