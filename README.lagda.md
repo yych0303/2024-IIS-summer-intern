@@ -1,6 +1,20 @@
 
 ## Main frame
 
+[Interface]             Term A <-------- trns ---------> Term B    ta ≈ᴬ ta'<--- trnsPf ---> tb ≈ᴮ tb'
+    |                     |               ~                |          |            ~            |
+    | implements          |              func              |          |         Embedding       |
+    V                     |                                |          |                         |
+[abstract]                |     Ring   Embedding           |          |                         |
+    |                     |       |        |               |          |                         |
+    | inherits            |       ∈        ~               |          ≡                         ≡
+    V                     |       |        |               |          |                         |
+[concrete]              eval <~ ringA <- conv -> ringB ~> eval        |                         |
+    |                     |    /                      \    |          |                         |
+    | instantiates        |   /                        \   |          |        Embedding        |
+    V                     V  /                          \  V          V            ~            V
+[ Object ]              a : A <--------- func ---------> b : B     a ≃ᴬ a' <----- path ----> b ≃ᴮ b'
+
 
 ## Commutative Ring
 
