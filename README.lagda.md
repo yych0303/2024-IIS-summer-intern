@@ -1,9 +1,9 @@
 
 ## Main frame
-```bl
+
 [Interface]             Term A <-------- trns ---------> Term B    ta ≈ᴬ ta'<--- trnsPf ---> tb ≈ᴮ tb'
     |                     |               ~                |          |            ~            |
-    | implements          |              func              |          |         Embedding       |
+    | implements          |              func              |          |           func          |
     V                     |                                |          |                         |
 [abstract]                |     Ring   Embedding           |          |                         |
     |                     |       |        |               |          |                         |
@@ -15,7 +15,22 @@
     V                     V  /                          \  V          V            ~            V
 [ Object ]              a : A <--------- func ---------> b : B     a ≃ᴬ a' <----- path ----> b ≃ᴮ b'
 
-```
+
+### Files
+
+TremReasoning! 1
+
+Translator!trnsPf 2
+N-cal#
+
+CommutativeRing#
+EmbeddingConv!conv 1
+
+?path 0
+
+Rings! 7
+
+
 ## Commutative Ring
 
 

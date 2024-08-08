@@ -46,15 +46,15 @@ open import N-cal
 -- Ring ℕ ---------------------------------------------------------------------
 open import Data.Nat using (ℕ; zero; suc; _+_; _*_; _≟_)
 open import Relation.Binary.PropositionalEquality using (_≡_; refl; sym; trans)
-
+open import Data.Nat.Properties
 
 ringℕ : Ring
 ringℕ = record
   { R               = ℕ        
   ; R0              = 0        
   ; R1              = 1          
-  ; Rhead           = {!   !}     
-  ; Rtail           = {!   !}       
+  ; Rhead           = rh   
+  ; Rtail           = rt       
   ; _R+_            = _+_        
   ; _R*_            = _*_            
   ; _≃_             = _≡_     
@@ -62,23 +62,43 @@ ringℕ = record
   ; refl            = refl          
   ; trans           = trans         
   ; sym             = sym 
-  ; head-tail       = {!   !}
-  ; head-0          = {!   !}
-  ; head-n0         = {!   !} 
-  ; tail-01         = {!   !}
-  ; zero-identity+  = refl
-  ; one-identity*   = {!   !}
-  ; comm+           = {!   !}
-  ; comm*           = {!   !}
-  ; assoc+          = {!   !}
-  ; assoc*          = {!   !}
-  ; distrib         = {!   !} 
+  ; head-tail       = ht
+  ; head-0          = h0
+  ; head-n0         = hn0 
+  ; tail-01         = t01
+  ; zero-identity+  = λ x → refl
+  ; one-identity*   = *-identityˡ
+  ; comm+           = +-comm
+  ; comm*           = *-comm
+  ; assoc+          = +-assoc
+  ; assoc*          = *-assoc
+  ; distrib         = *-distribˡ-+ 
   }
     where
-      rpre : ℕ → ℕ
-      rpre 0       = 0
-      rpre (suc x) = x  
+      rh : ℕ → ℕ
+      rh 0       = 0
+      rh (suc x) = 1  
+      rt : ℕ → ℕ
+      rt 0       = 0
+      rt (suc x) = x  
 
+      ht : (x : ℕ) → rh x + rt x ≡ x
+      ht zero = refl
+      ht (suc x) = refl
+
+      h0 : (x : ℕ) → (x ≡ 0) ↔ (rh x ≡ 0)
+      h0 = {!   !}
+      hn0 : (x : ℕ) → ¬ (x ≡ 0) → rh x ≡ 1
+      hn0 zero = λ x → ⊥-elim (x refl)
+      hn0 (suc x) = λ _ → refl
+      t01 : (x : ℕ) → ((x ≡ 0) ⊎ (x ≡ 1)) ↔ (rt x ≡ 0)
+      t01 = {!   !}
+      as+ : {x y z : ℕ} → x + y + z ≡ x + (y + z)
+      as+ {x} {y} {z} = +-assoc x y z
+      as* : {x y z : ℕ} → x * y * z ≡ x * (y * z)
+      as* {x} {y} {z} = *-assoc x y z
+
+      
 evalℕ : Term ℕ → ℕ
 evalℕ = eval ringℕ
 
@@ -238,5 +258,5 @@ funcℕListℕ = [_]ᶜ
 
 
 
- 
-  
+   
+   
