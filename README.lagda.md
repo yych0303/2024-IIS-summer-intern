@@ -1,6 +1,6 @@
 
 ## Main frame
-
+```bl
 [Interface]             Term A <-------- trns ---------> Term B    ta ≈ᴬ ta'<--- trnsPf ---> tb ≈ᴮ tb'
     |                     |               ~                |          |            ~            |
     | implements          |              func              |          |         Embedding       |
@@ -15,7 +15,7 @@
     V                     V  /                          \  V          V            ~            V
 [ Object ]              a : A <--------- func ---------> b : B     a ≃ᴬ a' <----- path ----> b ≃ᴮ b'
 
-
+```
 ## Commutative Ring
 
 
