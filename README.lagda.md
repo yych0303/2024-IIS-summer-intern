@@ -1,6 +1,6 @@
 
 ## Main frame
-
+```s
 [Interface]             Term A <-------- trns ---------> Term B    ta ≈ᴬ ta'<--- trnsPf ---> tb ≈ᴮ tb'
     |                     |               ~                |          |            ~            |
     | implements          |              func              |          |           func          |
@@ -15,7 +15,7 @@
     V                     V  /                          \  V          V            ~            V
 [ Object ]              a : A <--------- func ---------> b : B     a ≃ᴬ a' <----- path ----> b ≃ᴮ b'
 
-
+```
 ### Files
 
 TremReasoning! 1
