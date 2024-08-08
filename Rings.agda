@@ -6,8 +6,9 @@ module Rings where
 record
 { R               = ?              
 ; R0              = r0             
-; R1              = r1             
-; Rpre            = rpre           
+; R1              = r1     
+; Rhead           = ?     
+; Rtail           = ?        
 ; _R+_            = _r+_           
 ; _R*_            = _r*_           
 ; RIdx            = λ _ → ?          
@@ -15,8 +16,11 @@ record
 ; isDecEquivR0    = ?    
 ; refl            = ?          
 ; trans           = ?         
-; sym             = ?           
-; zero-pre-one    = ?
+; sym             = ?
+; head-tail       = ?
+; head-0          = ?
+; head-n0         = ? 
+; tail-01         = ? 
 ; zero-identity+  = ?
 ; one-identity*   = ?
 ; comm+           = ?
@@ -48,16 +52,20 @@ ringℕ : Ring
 ringℕ = record
   { R               = ℕ        
   ; R0              = 0        
-  ; R1              = 1        
-  ; Rpre            = rpre        
+  ; R1              = 1          
+  ; Rhead           = {!   !}     
+  ; Rtail           = {!   !}       
   ; _R+_            = _+_        
   ; _R*_            = _*_            
   ; _≃_             = _≡_     
   ; isDecEquivR0    = λ x → 0 ≟ x    
   ; refl            = refl          
   ; trans           = trans         
-  ; sym             = sym           
-  ; zero-pre-one    = refl
+  ; sym             = sym 
+  ; head-tail       = {!   !}
+  ; head-0          = {!   !}
+  ; head-n0         = {!   !} 
+  ; tail-01         = {!   !}
   ; zero-identity+  = refl
   ; one-identity*   = {!   !}
   ; comm+           = {!   !}
@@ -82,16 +90,20 @@ ringListℕ : Ring
 ringListℕ = record  
   { R               = List ℕ          
   ; R0              = []        
-  ; R1              = [ 0 ]          
-  ; Rpre            = rpre
+  ; R1              = [ 0 ]     
+  ; Rhead           = {!   !}     
+  ; Rtail           = {!   !}   
   ; _R+_            = r+          
   ; _R*_            = r*                
   ; _≃_             = {!   !}    
   ; isDecEquivR0    = {!   !}
   ; refl            = {!   !}          
   ; trans           = {!   !}         
-  ; sym             = {!   !}           
-  ; zero-pre-one    = {!   !}
+  ; sym             = {!   !}
+  ; head-tail       = {!   !}
+  ; head-0          = {!   !}
+  ; head-n0         = {!   !} 
+  ; tail-01         = {!   !}
   ; zero-identity+  = {!   !}
   ; one-identity*   = {!   !}
   ; comm+           = {!   !}
@@ -124,16 +136,20 @@ ringSt : Set → Ring
 ringSt A = record
   { R               = St A
   ; R0              = r0
-  ; R1              = r1
-  ; Rpre            = rpre
+  ; R1              = r1  
+  ; Rhead           = rh     
+  ; Rtail           = rt   
   ; _R+_            = r+
   ; _R*_            = r*
   ; _≃_             = {!   !}    
   ; isDecEquivR0     = {!   !}
   ; refl            = {!   !}          
   ; trans           = {!   !}         
-  ; sym             = {!   !}           
-  ; zero-pre-one    = {!   !}
+  ; sym             = {!   !}   
+  ; head-tail       = {!   !}
+  ; head-0          = {!   !}
+  ; head-n0         = {!   !} 
+  ; tail-01         = {!   !}
   ; zero-identity+  = {!   !}
   ; one-identity*   = {!   !}
   ; comm+           = {!   !}
@@ -147,9 +163,12 @@ ringSt A = record
       r0 = []
       r1 : {A : Set} → St A
       r1 = [ [] ]
-      rpre : (List (List A)) → List (List A)
-      rpre [] = []
-      rpre (x ∷ xs) = xs
+      rh : (List (List A)) → List (List A)
+      rh [] = []
+      rh (x ∷ _) = [ x ]
+      rt : (List (List A)) → List (List A)
+      rt [] = []
+      rt (_ ∷ xs) = xs
 
       r+ : {A : Set} → St A → St A → St A
       r+ = _++_

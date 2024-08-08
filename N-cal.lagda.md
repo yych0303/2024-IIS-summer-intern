@@ -1,15 +1,16 @@
-# N-calculus
+# N-calculus Interface of ring
 
 ## Main frame
 
 ```block
-  Term A -- trns funcAB -> Term B
-    |                        |
-    |                        |
-eval ringA               eval ringB
-    |                        |
-    V                        V
-    A ------- funcAB ------> B
+
+  Term R 
+    |       
+    |       
+eval ringR
+    |       
+    V                 
+    A 
 
 ```
 
@@ -98,14 +99,14 @@ module _ {ℓ : Level} (ring : Ring {ℓ}) where
     rC x y with isDecEquivR0 x | isDecEquivR0 y
     ...                 | _     | yes _ = R1
     ...                 | yes _ | _     = R0 
-    ...                 | _     | _     = (R1 R* (rC (Rpre x) (Rpre y))) R+ (rC (Rpre x) (y))
+    ...                 | _     | _     = (Rhead x R* (rC (Rtail x) (Rtail y))) R+ (rC (Rtail x) (y))
 
     rP : R → R → R
     {-# NON_TERMINATING #-}
     rP x y with isDecEquivR0 x | isDecEquivR0 y
     ...                 | _     | yes _ = R1
     ...                 | yes _ | _     = R0 
-    ...                 | _     | _     = x R* (rP (Rpre x) (Rpre y))
+    ...                 | _     | _     = x R* (rP (Rtail x) (Rtail y))
 
     r! : R → R
     r! r =  rP r r 
@@ -127,10 +128,7 @@ module _ {ℓ : Level} (ring : Ring {ℓ}) where
 
 ```
 
-## Translate Term A to Term B
-
 ```agda
-
 -- trns : (R → B) → Term R → Term B-----------------------------------------------------------------
 
 infix 1 trns
@@ -152,12 +150,3 @@ trns func term with term
 
 
 ```
-
-## Term Reasoning
-
-```agda
-
-
-
-```
-      
