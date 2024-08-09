@@ -59,3 +59,38 @@ record Ring {ℓ : Level} : Set (lsuc ℓ) where
     distrib         : ∀ (x y z : R) → (x R* (y R+ z)) ≃ ((x R* y) R+ (x R* z))
 
 
+  {-
+
+  record
+  { R               = ?              
+  ; R0              = r0             
+  ; R1              = r1     
+  ; Rhead           = ?     
+  ; Rtail           = ?        
+  ; _R+_            = _r+_           
+  ; _R*_            = _r*_               
+  ; _≃_             = ?           
+  ; isDecEquivR0    = ?    
+  ; refl            = ?          
+  ; trans           = ?         
+  ; sym             = ?
+  ; head-tail       = ?
+  ; head-0          = ?
+  ; head-n0         = ? 
+  ; tail-01         = ? 
+  ; zero-identity+  = ?
+  ; one-identity*   = ?
+  ; comm+           = ?
+  ; comm*           = ?
+  ; assoc+          = ?
+  ; assoc*          = ?
+  ; distrib         = ? 
+  }
+    where
+      r0   = ?
+      r1   = ?
+      _r+_ = ?
+      _r*_ = ?    
+
+
+  -}

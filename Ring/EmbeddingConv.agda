@@ -25,12 +25,14 @@ open import Agda.Primitive
 open import Ring.Base
 
 
-module _ {ℓ : Level} (rA rB : Ring {ℓ}) where
+module _ {a b : Level} (rA : Ring {a} ) ( rB : Ring {b}) where
   open Ring
 
 
   private
+    A : Set a
     A = R rA
+    B : Set b
     B = R rB 
     R0A = R0 rA
     R0B = R0 rB
@@ -49,7 +51,7 @@ module _ {ℓ : Level} (rA rB : Ring {ℓ}) where
     _R*B_ = _R*_ rB
 
 
-  record Embedding : Set ℓ where
+  record Embedding : Set (a ⊔ b) where
     field
       -- Homomorphic
       EF : A → B
@@ -64,21 +66,23 @@ module _ {ℓ : Level} (rA rB : Ring {ℓ}) where
       E-≃    : ∀ {x y : A} → x ≃A y → (EF x) ≃B (EF y) 
   open Embedding    
 
+
+
 {-
   open import Agda.Builtin.Sigma
-  
-  conv : (Embedding) → Ring {ℓ} → Ring {ℓ}
+    
+  conv : (Embedding) → Ring {a} → Ring {b}
   conv embd rA = record
-    { R               = {!  !}              
-    ; R0              = r0             
-    ; R1              = r1     
+    { R               = {! Σ A (EF embd) !}              
+    ; R0              = R0B             
+    ; R1              = R1B     
     ; Rhead           = RhB     
     ; Rtail           = RtB        
-    ; _R+_            = _r+_           
-    ; _R*_            = _r*_                  
+    ; _R+_            = _R+B_           
+    ; _R*_            = _R*B_                  
     ; _≃_             = _≃B_           
     ; isDecEquivR0    = isDecEquivR0 rB    
-    ; refl            = E-≃ {!   !} {!   !}          
+    ; refl            = {!   !}          
     ; trans           = {!   !}         
     ; sym             = {!   !}
     ; head-tail       = {!   !}
@@ -94,16 +98,9 @@ module _ {ℓ : Level} (rA rB : Ring {ℓ}) where
     ; distrib         = {!   !} 
     }
       where
-        r0   = {!   !}
-        r1   = {!   !}
-        rpre = {!   !}
-        _r+_ = {!   !}
-        _r*_ = {!   !}    
+
 
 -}
-
-
-
       
 -- 
 --    
