@@ -1,28 +1,65 @@
-# Bridging Combinatorial and Computational Proofs: An Algebraic Approach with Agda
+# Bridging Combinatorial and Algebraic proof: An Algebraic Approach with Agda
 
 ## Abstract
 
 
+
+#### kws: 
+Commutative ring; Finset; Combinatorial reasoning; Double counting
+
 ## Motivation
 
-在解一個等式
+在證明一個組合恆等式(Combinatorial identity)上會有很多不同的闡述證明的方式，本文主要探討代數論證(Algebraic proof (or argument)）與組合論證（Combinatorial proof (or argument)）
+
+組合論證主要以兩種論證技巧
+Double counting: 透過兩種建構方式同一集合來論證恆等式
+bijective proof: 建立兩個集合的bijection論證恆等式
+
+代數論證則是透過代數運算的特性或定理論證恆等式
+
+，而在我的求學經驗中組合論證相較於代數論證往往更加簡潔，且易於理解
+
+我關注於兩者背後更深層且共同的代數結構，及建立兩種論證之間的等價 S ≃ S' ↔ n = n'，
+
+
+
+
+
+ex. ![image](https://hackmd.io/_uploads/ryuXteQq0.png)
+
 
 ## Main frame
 
 ```n
-[Interface]             Term A <-------- trns ---------> Term B    ta ≈ᴬ ta'<--- trnsPf ---> tb ≈ᴮ tb'
-    |                     |               ~                |          |            ~            |
-    | implements          |              func              |          |           func          |
-    V                     |                                |          |                         |
-[abstract]                |     Ring   Embedding           |          |                         |
-    |                     |       |        |               |          |                         |
-    | inherits            |       ∈        ~               |          ≡                         ≡
-    V                     |       |        |               |          |                         |
-[concrete]              eval <~ ringA <- conv -> ringB ~> eval        |                         |
-    |                     |    /                      \    |          |                         |
-    | instantiates        |   /                        \   |          |        Embedding        |
-    V                     V  /                          \  V          V            ~            V
-[ Object ]              a : A <--------- func ---------> b : B     a ≃ᴬ a' <----- path ----> b ≃ᴮ b'
+[Interface]             Term A <-------- trns ---------> Term B   
+    |                     |               ~                |      
+    | implements          |              func              |      
+    V                     |                                |      
+[abstract]                |     Ring   Embedding           |      
+    |                     |       |        |               |      
+    | inherits            |       ∈        ~               |      
+    V                     |       |        |               |      
+[concrete]              eval <~ ringA <- conv -> ringB ~> eval    
+    |                     |    /                      \    |      
+    | instantiates        |   /                        \   |      
+    V                     V  /                          \  V      
+[ Object ]              a : A <--------- func ---------> b : B    
+
+```
+```n
+[Interface]            ta ≈ᴬ ta'<--- trnsPf ---> tb ≈ᴮ tb'
+    |                     |            ~            |
+    | implements          |           func          |
+    V                     |                         |
+[abstract]                |                         |
+    |                     |                         |
+    | inherits            ≡                         ≡
+    V                     |                         |
+[concrete]                |                         |
+    |                     |                         |
+    | instantiates        |        Embedding        |
+    V                     V            ~            V
+[ Object ]             a ≃ᴬ a' <----- path ----> b ≃ᴮ b'
 
 ```
 
@@ -41,6 +78,16 @@ EmbeddingConv!conv 1
 Rings! 7
 
 ## Commutative Ring
+
+
+
+
+
+
+
+
+
+
 
 ## Evaluator, Translator
 
@@ -111,23 +158,7 @@ _≃ᴮ_ : Rel B
 # Reference
 
 
-在組合學上常常會有證明題會要我們用組合解釋來寫證明
-但似乎並不是非常正式（？）的方式
-ex. Give a combinatorial argument (no computations are needed) to establish this identity.
-我在想會不會有什麼方式可以從
-計算證明（or algebraic argument）
-isomorphic 到 {以集合論當媒介}
-組合證明（combinational argument ）
 
-‌
-
-(S \\cong S') \\cong (Fin n \\cong Fin m) \\to (n = m)
-
-
-S ≃ S' ↔ n = n'
-
-
-ref:
 
 1. [combinational arg.](https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://www.math.uvic.ca/faculty/gmacgill/guide/combargs.pdf&ved=2ahUKEwj4yZXLv72HAxU1j68BHVHkAfoQFnoECBQQBg&usg=AOvVaw3yRF1bK4iaNaju-5tZXOop "‌")
 2. [](https://en.m.wikipedia.org/wiki/Combinatorial_proof)[![](https://en.wikipedia.org/static/favicon/wikipedia.ico)Combinatorial proof](https://en.m.wikipedia.org/wiki/Combinatorial_proof)
@@ -138,32 +169,7 @@ ref:
 7. [Large-Scale Formal Proof for the Working Mathematician—Lessons Learnt from the ALEXANDRIA Project](https://link.springer.com/chapter/10.1007/978-3-031-42753-4_1 "‌")
 8. [Cubical Agda: A Dependently Typed Programming Language with Univalence and Higher Inductive Types](https://staff.math.su.se/anders.mortberg/papers/cubicalagda2.pdf "‌")
 
-kw:
-
-* Integral Domain ?
-* total ordered commutative ring
-* hott recursor
-* finset
-* wholemeal prog. (?)
-* comb. reasoning
-* The Basic Principle of Counting
-* double counting
-* [](https://en.wikipedia.org/wiki/Binomial_heap)[![](https://en.wikipedia.org/static/favicon/wikipedia.ico)Binomial heap](https://en.wikipedia.org/wiki/Binomial_heap)
-  (?)
-* Kuratowski-finite type
 
 ‌
 
-例題：
-
-* [](https://www.vaia.com/en-us/textbooks/math/a-first-course-in-probability-9th/combinatorial-analysis/q-111-the-following-identity-is-known-as-fermats-combinatori/)[![](https://website-cdn.studysmarter.de/sites/21/2024/07/StudySmarter-bg-icon.svg)Step by Step Solution](https://www.vaia.com/en-us/textbooks/math/a-first-course-in-probability-9th/combinatorial-analysis/q-111-the-following-identity-is-known-as-fermats-combinatori/)
-* [](https://www.chegg.com/homework-help/questions-and-answers/ross-te112-consider-following-combinatorial-identity-sum-k-1-n-k-left-begin-array-l-n-k-en-q101208070)[![](https://cdn.web.chegg.com/static/favicon.ico)Solved (Ross TE1.12) Consider the following combinatorial | Chegg.com](https://www.chegg.com/homework-help/questions-and-answers/ross-te112-consider-following-combinatorial-identity-sum-k-1-n-k-left-begin-array-l-n-k-en-q101208070)
-
 ‌
-
-agda:
-
-1. [](https://agda.github.io/agda-stdlib/v1.7.2/Agda.Primitive.html#804)[Agda.Primitive](https://agda.github.io/agda-stdlib/v1.7.2/Agda.Primitive.html#804)
-2. [](https://agda.github.io/agda-stdlib/master/Data.Fin.Base.html)[Data.Fin.Base](https://agda.github.io/agda-stdlib/master/Data.Fin.Base.html)
-3. [](https://unimath.github.io/agda-unimath/univalent-combinatorics.function-types.html)[![](https://unimath.github.io/agda-unimath/website/images/favicon.svg)Finite function types - agda-unimath](https://unimath.github.io/agda-unimath/univalent-combinatorics.function-types.html)
-4. [](https://agda.github.io/cubical/Cubical.Data.FinSet.Base.html)[Cubical.Data.FinSet.Base](https://agda.github.io/cubical/Cubical.Data.FinSet.Base.html)
