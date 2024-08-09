@@ -1,5 +1,5 @@
 {-# OPTIONS --allow-unsolved-metas #-}
-module Rings where
+module Rings.Rings where
 -- Rings
 {-
 
