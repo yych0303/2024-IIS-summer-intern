@@ -16,11 +16,11 @@ eval ringR
 module N-cal where
   
 open import Agda.Primitive
-open import CommutativeRing public
 open import Data.List.Base public
 open import Data.String using (String; _≟_)
 open import Relation.Nullary using (yes; no)
 
+open import Rings.CommutativeRing public
 ```
 
 ## Term

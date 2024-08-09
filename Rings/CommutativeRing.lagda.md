@@ -14,7 +14,7 @@ eval ringR    eval ringR
 ```
 
 ```agda
-module CommutativeRing where
+module Rings.CommutativeRing where
 
 open import Agda.Primitive
 -- open import Agda.Builtin.Equality

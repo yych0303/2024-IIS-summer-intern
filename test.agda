@@ -1,6 +1,12 @@
 open import N-cal
-open import Rings
+open import Rings.RingN
+open import Rings.RingLN
+open import Rings.RingSt
+open import Rings.RingType
+
 open import Translator
+open import Func
+
 open import Data.Nat
 
 -- ev -- sigma x ∈ {2, 3, 4} Cx , 2 = 10

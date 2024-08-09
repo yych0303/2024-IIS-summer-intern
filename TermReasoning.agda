@@ -21,7 +21,6 @@ module TermReasoning where
 
 open import N-cal
 open import Agda.Primitive
-open import CommutativeRing
 -- open import Relation.Binary.Core
 -- open import Relation.Binary.Bundles
 

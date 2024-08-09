@@ -7,9 +7,9 @@
 
 ```agda
 
-module EmbeddingConv where
+module Rings.EmbeddingConv where
 open import Agda.Primitive
-open import CommutativeRing
+open import Rings.CommutativeRing
 
 
 module _ {ℓ : Level} (rA rB : Ring {ℓ}) where
