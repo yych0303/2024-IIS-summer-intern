@@ -1,5 +1,5 @@
 {-# OPTIONS --allow-unsolved-metas #-}
-module Rings.Evaluator where
+module Rings.Eval where
 
 open import N-cal
 

@@ -5,7 +5,8 @@ open import Rings.RingSt
 open import Rings.RingType
 
 open import Translator
-open import Func
+open import Rings.Func
+open import Rings.Eval
 
 open import Data.Nat
 
