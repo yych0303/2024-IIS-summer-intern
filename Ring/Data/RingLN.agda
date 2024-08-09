@@ -1,11 +1,12 @@
 {-# OPTIONS --allow-unsolved-metas #-}
-module Rings.Data.RingLN where
+module Ring.Data.RingLN where
 
-open import Rings.CommutativeRing
+open import Ring.Base
+
 -- Ring (List ℕ) -----------------------------------------------
 open import Relation.Nullary using (yes; no)
 open import Relation.Binary.PropositionalEquality using (_≡_; refl; sym; trans; cong)
--- open import Data.Nat.Properties
+
 -- public
 open import Data.Nat using (ℕ; zero; suc; _+_; _*_; _≟_) public
 open import Data.List.Base public

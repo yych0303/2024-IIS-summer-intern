@@ -1,5 +1,5 @@
 
-module Rings.EmbeddingConv where
+module Ring.EmbeddingConv where
 {-
 
 
@@ -22,7 +22,7 @@ ringA : Ring --- conv embedAB ---> ringEFA : Ring
 
 -}
 open import Agda.Primitive
-open import Rings.CommutativeRing
+open import Ring.Base
 
 
 module _ {ℓ : Level} (rA rB : Ring {ℓ}) where

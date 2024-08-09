@@ -1,7 +1,7 @@
-module Terms.Translator where
+module Term.Translator where
 -- Translate Term A to Term B
 
-open import Terms.N-cal
+open import Term.Base
 
 -- trns : (R → B) → Term R → Term B-----------------------------------------------------------------
 

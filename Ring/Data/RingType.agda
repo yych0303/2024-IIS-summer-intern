@@ -1,7 +1,7 @@
 {-# OPTIONS --allow-unsolved-metas #-}
-module Rings.Data.RingType where
+module Ring.Data.RingType where
 
-open import Rings.CommutativeRing
+open import Ring.Base
 -- Ring Type ---------------------------------------------------- 
 {-
 

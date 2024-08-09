@@ -1,4 +1,4 @@
-module Terms.TermReasoning where
+module Term.TermReasoning where
 {-
 
   Term R -- trns funcRℕ -> Term ℕ
@@ -19,8 +19,10 @@ eval ringR               eval ringℕ
 
 -}
 
-open import Terms.N-cal
 open import Agda.Primitive
+open import Term.Base
+open import Term.Eval
+open import Ring.Base
 -- open import Relation.Binary.Core
 -- open import Relation.Binary.Bundles
 

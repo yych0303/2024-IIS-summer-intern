@@ -1,7 +1,8 @@
 {-# OPTIONS --allow-unsolved-metas #-}
-module Rings.Data.RingN where
+module Ring.Data.RingN where
 
-open import Rings.CommutativeRing
+open import Ring.Base
+
 -- Ring ℕ ---------------------------------------------------------------------
 open import Relation.Binary.PropositionalEquality using (_≡_; refl; sym; trans; cong)
 open import Data.Nat.Properties

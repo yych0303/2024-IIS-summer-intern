@@ -1,11 +1,13 @@
 {-# OPTIONS --allow-unsolved-metas #-}
-module Rings.Data.RingSt where
+module Ring.Data.RingSt where
 
-open import Rings.CommutativeRing
+open import Ring.Base
+
 -- Ring (St A) ---------------------------------------------------- 
 open import Relation.Nullary using (yes; no)
 open import Data.Nat using (ℕ; zero; suc; _+_; _*_; _≟_)
 open import Relation.Binary.PropositionalEquality using (_≡_; refl; sym; trans; cong)
+
 -- public
 open import Data.List.Base public
 

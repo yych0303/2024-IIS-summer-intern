@@ -1,7 +1,7 @@
-module Rings.Properties where
+module Ring.Properties where
 
 open import Agda.Primitive
-open import Rings.CommutativeRing
+open import Ring.Base
 
 
 module _ {ℓ : Level} (ring : Ring {ℓ}) where

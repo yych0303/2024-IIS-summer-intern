@@ -1,4 +1,4 @@
-module Rings.CommutativeRing where
+module Ring.Base where
 
 {-
   Term R        Term R

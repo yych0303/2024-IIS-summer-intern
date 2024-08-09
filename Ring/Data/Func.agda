@@ -1,11 +1,10 @@
 {-# OPTIONS --allow-unsolved-metas #-}
-module Rings.Func where
+module Ring.Data.Func where
 
-open import Rings.CommutativeRing
-open import Rings.Data.RingN
-open import Rings.Data.RingLN
-open import Rings.Data.RingSt
-open import Rings.Data.RingType
+open import Ring.Data.RingN
+open import Ring.Data.RingLN
+open import Ring.Data.RingSt
+open import Ring.Data.RingType
 
 
 -- func ------------------------------------------------------------------
