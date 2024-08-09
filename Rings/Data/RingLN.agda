@@ -1,5 +1,5 @@
 {-# OPTIONS --allow-unsolved-metas #-}
-module Rings.RingLN where
+module Rings.Data.RingLN where
 
 open import Rings.CommutativeRing
 -- Ring (List ℕ) -----------------------------------------------

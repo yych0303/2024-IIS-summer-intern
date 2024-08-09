@@ -1,5 +1,7 @@
-# N-calculus Interface of ring
+module Terms.N-cal where
 
+{-
+-- N-calculus Interface of ring
 ```block
 
   Term R 
@@ -9,11 +11,7 @@ eval ringR
     |       
     V                 
     A 
-
-```
-
-```agda
-module N-cal where
+-}
   
 open import Agda.Primitive
 open import Data.List.Base public
@@ -21,11 +19,7 @@ open import Data.String using (String; _≟_)
 open import Relation.Nullary using (yes; no)
 
 open import Rings.CommutativeRing public
-```
 
-## Term
-
-```agda
 
 -- Term --------------------------------------------------------------
 
@@ -51,13 +45,7 @@ data Term {ℓ : Level} (Val : Set ℓ) : Set ℓ where
   `P[_,_]     : Term Val → Term Val → Term Val
   `C[_,_]     : Term Val → Term Val → Term Val
 
-
-```
-
-### Substitution
-
-```agda
-
+-- Substitution
 
 -- [:=] ---------------------------------------------------------------------
 
@@ -74,10 +62,9 @@ data Term {ℓ : Level} (Val : Set ℓ) : Set ℓ where
 [ i := v ] `P[ t , t₁ ]     = `P[ [ i := v ] t , [ i := v ] t₁ ]
 [ i := v ] `C[ t , t₁ ]     = `C[ [ i := v ] t , [ i := v ] t₁ ]
 
-```
-## Evaluate Term R to R
 
-```agda
+
+-- Evaluate Term R to R
 -- eval : Ring → Term R → R ----------------------
 
 module _ {ℓ : Level} (ring : Ring {ℓ}) where
@@ -123,5 +110,3 @@ module _ {ℓ : Level} (ring : Ring {ℓ}) where
   ...          | (`Σ[ i ∈ l ] t)  = rsigma l (λ v → eval ([ i := v ] t))
   ...          | (`Π[ i ∈ l ] t)  = rpi l (λ v → eval ([ i := v ] t))
   ...          | [ t ]`!          = r! (eval t)
-
-```

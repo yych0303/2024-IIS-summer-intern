@@ -1,9 +1,7 @@
-# Translate Term A to Term B
+module Terms.Translator where
+-- Translate Term A to Term B
 
-```agda
-module Translator where
-
-open import N-cal
+open import Terms.N-cal
 
 -- trns : (R → B) → Term R → Term B-----------------------------------------------------------------
 
@@ -25,4 +23,3 @@ trns func term with term
 
 
 
-```

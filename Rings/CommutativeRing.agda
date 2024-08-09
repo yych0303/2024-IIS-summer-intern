@@ -1,8 +1,6 @@
-### Interface of commutative ring
+module Rings.CommutativeRing where
 
-## Main frame
-
-```block
+{-
   Term R        Term R
     |             |
     |             |
@@ -11,10 +9,8 @@ eval ringR    eval ringR
     V             V
     r ---- ≃ ---- r'
 
-```
+-}
 
-```agda
-module Rings.CommutativeRing where
 
 open import Agda.Primitive
 -- open import Agda.Builtin.Equality
@@ -63,17 +59,3 @@ record Ring {ℓ : Level} : Set (lsuc ℓ) where
     distrib         : ∀ (x y z : R) → (x R* (y R+ z)) ≃ ((x R* y) R+ (x R* z))
 
 
-```
-## Properties
-
-```agda
-
-
-
-module Properties {ℓ : Level} (ring : Ring {ℓ}) where
-  open Ring ring
-
-  -- zero-identity+r : ∀ {x : R} → (R0 R+ x) ≃ x
-  -- zero-identity+r {x} = {!   !}
---  head-01         : ∀ {x : R} → ((x ≃ R0) ⊎ (x ≃ R1)) ↔ (Rhead x ≃ x) 
-``` 

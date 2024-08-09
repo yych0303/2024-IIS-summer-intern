@@ -2,10 +2,10 @@
 module Rings.Func where
 
 open import Rings.CommutativeRing
-open import Rings.RingN
-open import Rings.RingLN
-open import Rings.RingSt
-open import Rings.RingType
+open import Rings.Data.RingN
+open import Rings.Data.RingLN
+open import Rings.Data.RingSt
+open import Rings.Data.RingType
 
 
 -- func ------------------------------------------------------------------

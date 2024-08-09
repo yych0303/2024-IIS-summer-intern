@@ -1,14 +1,16 @@
-open import N-cal
-open import Rings.RingN
-open import Rings.RingLN
-open import Rings.RingSt
-open import Rings.RingType
-
-open import Translator
-open import Rings.Func
-open import Rings.Eval
-
 open import Data.Nat
+
+open import Terms.N-cal
+open import Terms.Eval
+open import Terms.Translator
+
+open import Rings.Data.RingN
+open import Rings.Data.RingLN
+open import Rings.Data.RingSt
+open import Rings.Data.RingType
+
+open import Rings.Func
+
 
 -- ev -- sigma x ∈ {2, 3, 4} Cx , 2 = 10
 ev = `Σ[ "x"  ∈  (2 ∷ 3 ∷ 4 ∷ []) ] `C[ $ "x" , ` 2 ] 

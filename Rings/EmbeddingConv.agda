@@ -1,13 +1,26 @@
 
-```block
-
-
-
-```
-
-```agda
-
 module Rings.EmbeddingConv where
+{-
+
+
+ringA ringB : Ring
+
+embedAB : Embedding ringA ringB
+
+
+-- range of EF
+B = Σ A (Embedding.EF embedAB)
+
+funcAB = Embedding.EF embedAB
+
+conv : {rA rB : Ring} →  (Embedding rA rB) → Ring → Ring
+
+
+[abstract]   
+ringA : Ring --- conv embedAB ---> ringEFA : Ring
+
+
+-}
 open import Agda.Primitive
 open import Rings.CommutativeRing
 
@@ -51,32 +64,6 @@ module _ {ℓ : Level} (rA rB : Ring {ℓ}) where
       E-≃    : ∀ {x y : A} → x ≃A y → (EF x) ≃B (EF y) 
   open Embedding    
 
-```
-
-```block
-
-
-ringA ringB : Ring
-
-embedAB : Embedding ringA ringB
-
-
--- range of EF
-B = Σ A (Embedding.EF embedAB)
-
-funcAB = Embedding.EF embedAB
-
-conv : {rA rB : Ring} →  (Embedding rA rB) → Ring → Ring
-
-
-[abstract]   
-ringA : Ring --- conv embedAB ---> ringEFA : Ring
-
-
-
-```
-
-```agda
 {-
   open import Agda.Builtin.Sigma
   
@@ -114,7 +101,6 @@ ringA : Ring --- conv embedAB ---> ringEFA : Ring
         _r*_ = {!   !}    
 
 -}
-```
 
 
 
