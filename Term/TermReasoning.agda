@@ -15,7 +15,7 @@ eval ringR               eval ringℕ
   ringR                    ringℕ
     |                        |
     V                        V 
-  a ≃ b - _=[funcRℕ]_⇒ -> n ≡ m
+  a ~ b - _=[funcRℕ]_⇒ -> n ≡ m
 
 -}
 
@@ -36,7 +36,7 @@ module _ {ℓ : Level} (ring : Ring {ℓ}) where
   infix 0 _≈_
 
   _≈_ : Term R → Term R → Set ℓ
-  _≈_ ta tb = eval ring ta ≃ eval ring tb
+  _≈_ ta tb = eval ring ta ~ eval ring tb
   
   
   ≈-refl : ∀ {ta : Term R}

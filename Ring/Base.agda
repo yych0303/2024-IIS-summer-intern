@@ -7,7 +7,7 @@ module Ring.Base where
 eval ringR    eval ringR
     |             |
     V             V
-    r ---- ≃ ---- r'
+    r ---- ~ ---- r'
 
 -}
 
@@ -38,25 +38,25 @@ record Ring {ℓ : Level} : Set (lsuc ℓ) where
     _R*_            : R → R → R   
 --    RIdx          : Idx → R
     -- Equivalence relation ----
-    _≃_             : Rel R ℓ
-    isDecEquivR0    : ∀ (x : R) → Dec (R0 ≃ x)
-    refl            : ∀ {x : R} → x ≃ x
-    trans           : ∀ {x y z : R} → x ≃ y → y ≃ z → x ≃ z
-    sym             : ∀ {x y : R} → x ≃ y → y ≃ x
+    _~_             : Rel R ℓ
+    isDecEquivR0    : ∀ (x : R) → Dec (R0 ~ x)
+    refl            : ∀ {x : R} → x ~ x
+    trans           : ∀ {x y z : R} → x ~ y → y ~ z → x ~ z
+    sym             : ∀ {x y : R} → x ~ y → y ~ x
 
     -- head-tail properties ---------
-    head-tail       : ∀ (x : R) → (Rhead x R+ Rtail x) ≃ x
-    head-0          : ∀ (x : R) → (x ≃ R0) ↔ (Rhead x ≃ R0)
-    head-n0         : ∀ (x : R) → (¬(x ≃ R0)) → (Rhead x ≃ R1) 
-    tail-01         : ∀ (x : R) → ((x ≃ R0) ⊎ (x ≃ R1)) ↔ (Rtail x ≃ R0)
+    head-tail       : ∀ (x : R) → (Rhead x R+ Rtail x) ~ x
+    head-0          : ∀ (x : R) → (x ~ R0) ↔ (Rhead x ~ R0)
+    head-n0         : ∀ (x : R) → (¬(x ~ R0)) → (Rhead x ~ R1) 
+    tail-01         : ∀ (x : R) → ((x ~ R0) ⊎ (x ~ R1)) ↔ (Rtail x ~ R0)
     -- Commutative Ring properties ---------  
-    zero-identity+  : ∀ (x : R)     → (R0 R+ x) ≃ x
-    one-identity*   : ∀ (x : R)     → (R1 R* x) ≃ x
-    comm+           : ∀ (x y : R)   → (x R+ y) ≃ (y R+ x)
-    comm*           : ∀ (x y : R)   → (x R* y) ≃ (y R* x)
-    assoc+          : ∀ (x y z : R) → ((x R+ y) R+ z) ≃ (x R+ (y R+ z))
-    assoc*          : ∀ (x y z : R) → ((x R* y) R* z) ≃ (x R* (y R* z))
-    distrib         : ∀ (x y z : R) → (x R* (y R+ z)) ≃ ((x R* y) R+ (x R* z))
+    zero-identity+  : ∀ (x : R)     → (R0 R+ x) ~ x
+    one-identity*   : ∀ (x : R)     → (R1 R* x) ~ x
+    comm+           : ∀ (x y : R)   → (x R+ y) ~ (y R+ x)
+    comm*           : ∀ (x y : R)   → (x R* y) ~ (y R* x)
+    assoc+          : ∀ (x y z : R) → ((x R+ y) R+ z) ~ (x R+ (y R+ z))
+    assoc*          : ∀ (x y z : R) → ((x R* y) R* z) ~ (x R* (y R* z))
+    distrib         : ∀ (x y z : R) → (x R* (y R+ z)) ~ ((x R* y) R+ (x R* z))
 
 
   {-
@@ -69,7 +69,7 @@ record Ring {ℓ : Level} : Set (lsuc ℓ) where
   ; Rtail           = ?        
   ; _R+_            = _r+_           
   ; _R*_            = _r*_               
-  ; _≃_             = ?           
+  ; _~_             = ?           
   ; isDecEquivR0    = ?    
   ; refl            = ?          
   ; trans           = ?         

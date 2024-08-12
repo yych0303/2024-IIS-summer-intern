@@ -50,7 +50,7 @@ ex. ![image](https://hackmd.io/_uploads/ryuXteQq0.png)
     |                     |                         |
     | instantiates        |        Embedding        |
     V                     V            ~            V
-[ Object ]             a ≃ᴬ a' <----- path ----> b ≃ᴮ b'
+[ Object ]             a ~ᴬ a' <----- path ----> b ~ᴮ b'
 
 ```
 
@@ -129,8 +129,8 @@ ringA : Ring --- conv embedAB ---> ringB' : Ring
 
 _≈ᴬ_ : Rel (Term A)
 _≈ᴮ_ : Rel (Term B)
-_≃ᴬ_ : Rel A
-_≃ᴮ_ : Rel B
+_~ᴬ_ : Rel A
+_~ᴮ_ : Rel B
 
 [Interface]
  ta ≈ᴬ ta' --- trnsPf embedAB ---> tb ≈ᴮ tb'
@@ -139,7 +139,7 @@ _≃ᴮ_ : Rel B
     ≡                                 ≡
     |                                 |
     V                                 V
-  a ≃ᴬ a' ----- path embedAB -----> b ≃ᴮ b'
+  a ~ᴬ a' ----- path embedAB -----> b ~ᴮ b'
 [concrete]
 
 
