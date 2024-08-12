@@ -1,6 +1,6 @@
 module Ring.Data.RingN where
 
-open import Ring.Base public
+open import Ring.Base
 
 -- Ring ℕ ---------------------------------------------------------------------
 open import Relation.Binary.PropositionalEquality using (_≡_; refl; sym; trans; cong)

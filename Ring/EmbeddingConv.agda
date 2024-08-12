@@ -22,7 +22,7 @@ ringA : Ring --- conv embedAB ---> ringEFA : Ring
 
 -}
 open import Agda.Primitive
-open import Ring.Base
+open import Ring.Base public
 
 
 module _ {a b : Level} (rA : Ring {a} ) ( rB : Ring {b}) where

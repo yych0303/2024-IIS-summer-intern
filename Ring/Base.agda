@@ -80,23 +80,23 @@ record Ring {ℓ : Level} : Set (lsuc ℓ) where
   ; ~-R0            = ?    
   ; ~-refl          = ?          
   ; ~-trans         = ?         
-  ; sym             = ?
-  ; head-tail       = ?
-  ; head-0          = ?
-  ; head-n0         = ? 
-  ; tail-01         = ?
-  ; head-~          = ?  
-  ; tail-~          = ?   
-  ; +-identityˡ     = ?
-  ; *-identityˡ     = ?
-  ; +-comm          = ?
-  ; *-comm          = ?
-  ; +-assoc         = ?
-  ; *-assoc         = ?
-  ; *-zeroˡ         = ?
-  ; *-distribˡ-+    = ?
-  ; +-axeqˡ         = ?
-  ; *-axeqˡ         = ?
+  ; ~-sym           = ?
+  ; Rhead-tail      = ?
+  ; Rhead-0         = ?
+  ; Rhead-n0        = ? 
+  ; Rtail-01        = ?
+  ; Rhead-~         = ?  
+  ; Rtail-~         = ?   
+  ; R+-identityˡ    = ?
+  ; R*-identityˡ    = ?
+  ; R+-comm         = ?
+  ; R*-comm         = ?
+  ; R+-assoc        = ?
+  ; R*-assoc        = ?
+  ; R*-zeroˡ        = ?
+  ; R*-distribˡ-    = ?
+  ; R+-axeqˡ        = ?
+  ; R*-axeqˡ        = ?
   }
 
   -}
