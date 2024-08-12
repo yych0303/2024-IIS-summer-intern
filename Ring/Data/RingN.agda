@@ -1,7 +1,6 @@
-{-# OPTIONS --allow-unsolved-metas #-}
 module Ring.Data.RingN where
 
-open import Ring.Base
+open import Ring.Base public
 
 -- Ring ℕ ---------------------------------------------------------------------
 open import Relation.Binary.PropositionalEquality using (_≡_; refl; sym; trans; cong)
@@ -20,21 +19,26 @@ ringℕ = record
   ; _R+_            = _+_        
   ; _R*_            = _*_            
   ; _~_             = _≡_     
-  ; isDecEquivR0    = λ x → 0 ≟ x    
-  ; refl            = refl          
-  ; trans           = trans         
-  ; sym             = sym 
-  ; head-tail       = ht
-  ; head-0          = h0
-  ; head-n0         = hn0 
-  ; tail-01         = t01
-  ; zero-identity+  = λ x → refl
-  ; one-identity*   = *-identityˡ
-  ; comm+           = +-comm
-  ; comm*           = *-comm
-  ; assoc+          = +-assoc
-  ; assoc*          = *-assoc
-  ; distrib         = *-distribˡ-+ 
+  ; ~-R0            = λ x → 0 ≟ x    
+  ; ~-refl          = refl          
+  ; ~-trans         = trans         
+  ; ~-sym           = sym 
+  ; Rhead-tail       = ht
+  ; Rhead-0          = h0
+  ; Rhead-n0         = hn0 
+  ; Rtail-01         = t01
+  ; Rhead-~          = λ p → cong rh p  
+  ; Rtail-~          = λ p → cong rt p  
+  ; R+-identityˡ     = λ x → refl
+  ; R*-identityˡ     = *-identityˡ
+  ; R+-comm          = +-comm
+  ; R*-comm          = *-comm
+  ; R+-assoc         = +-assoc
+  ; R*-assoc         = *-assoc
+  ; R*-zeroˡ         = λ x → refl
+  ; R*-distribˡ-+    = *-distribˡ-+ 
+  ; R+-axeqˡ         = +ae
+  ; R*-axeqˡ         = *ae
   }
     where
       rh : ℕ → ℕ
@@ -82,4 +86,7 @@ ringℕ = record
           tof : (x : ℕ) → (suc x ≡ 0 ⊎ suc x ≡ 1 → x ≡ 0)
           tof x (_⊎_.inj₂ y) = proof x y
 
-   
+      +ae : ∀ (x y z : ℕ) → x ≡ y → (z + x) ≡ (z + y)
+      +ae _ _ z p = cong (z +_) p
+      *ae : ∀ (x y z : ℕ) → x ≡ y → z * x ≡ z * y
+      *ae _ _ z p = cong (z *_) p
