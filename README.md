@@ -2,24 +2,15 @@
 
 ## Abstract
 
+在證明組合恆等式時，有多種不同的方式可以闡述證明，其中包括代數論證和組合論證。組合論證主要依賴於雙重計數（Double counting）和對應論證（bijective proof）兩種技術，前者透過兩種方式構造同一集合來證明恆等式，後者則透過建立兩個集合之間的一一對應來論證。代數論證則依賴於代數運算的特性或定理來證明恆等式。
 
+本文探討如何使用Agda來驗證代數論證與組合論證之間的等價性，通過抽象出兩者的共同代數結構，並證明在Agda中保持這些證明正確性所需的條件，進而建立兩種論證方式之間的等價性 S ≃ S' ↔ n = n'，
 
 #### kws: 
-Commutative ring; Finset; Combinatorial reasoning; Double counting
+Agda; Commutative ring; Finset; Combinatorial reasoning; Double counting
 
 ## Motivation
-
-在證明一個組合恆等式(Combinatorial identity)上會有很多不同的闡述證明的方式，本文主要探討代數論證(Algebraic proof (or argument)）與組合論證（Combinatorial proof (or argument)）
-
-組合論證主要以兩種論證技巧
-Double counting: 透過兩種建構方式同一集合來論證恆等式
-bijective proof: 建立兩個集合的bijection論證恆等式
-
-代數論證則是透過代數運算的特性或定理論證恆等式
-
-，而在我的求學經驗中組合論證相較於代數論證往往更加簡潔，且易於理解
-
-我關注於兩者背後更深層且共同的代數結構，及建立兩種論證之間的等價 S ≃ S' ↔ n = n'，
+在學習過程中，組合論證因其直觀的組合意義而更容易理解和構建，而代數證明往往需要通過大量輔助引理的堆砌。為了驗證這兩種證明方法的等價性，本研究希望通過Agda抽象出兩者的共同代數結構，從而系統化地構建組合證明的正確性並探討其等價關係。
 
 
 
