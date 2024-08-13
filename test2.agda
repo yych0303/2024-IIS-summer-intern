@@ -1,5 +1,6 @@
 open import Ring.EmbeddingConv
 open import Ring.Data.RingN
+open import Ring.Data.RingSt
 open import Ring.Data.RingType
 
 open import Term.Base
@@ -23,6 +24,12 @@ fea = ` (funcℕListℕ 4) `* ` (funcℕListℕ 2)
 sss = eval ringListℕ fev
 
 
+
+St2+4 = ` (funcℕStℕ 2) `+ ` (funcℕStℕ 4)
+St4*2 = ` (funcℕStℕ 4) `* ` (funcℕStℕ 2)
+StC53 = `C[ ` funcℕStℕ 5 , ` funcℕStℕ 3 ]
+
+ssxs = eval (ringSt ℕ) StC53
 
 
 
@@ -69,3 +76,4 @@ h = {!   !}
 
 
 
+ 

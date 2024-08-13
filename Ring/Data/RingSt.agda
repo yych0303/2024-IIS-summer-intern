@@ -7,6 +7,8 @@ open import Ring.Base
 open import Relation.Nullary using (yes; no)
 open import Data.Nat using (ℕ; zero; suc; _+_; _*_; _≟_)
 open import Relation.Binary.PropositionalEquality using (_≡_; refl; sym; trans; cong)
+open import Data.List
+
 
 -- public
 open import Data.List.Base public
@@ -23,15 +25,17 @@ ringSt A = record
   ; Rtail           = rt   
   ; _R+_            = r+
   ; _R*_            = r*
-  ; _~_             = {!   !}             
-  ; ~-R0            = dec  
+  ; _~_             = λ x y → length x ≡ length y             
+  ; ~-R0            = λ { [] → true ; _ → false }  
   ; ~-refl          = {!   !}          
   ; ~-trans         = {!   !}         
   ; ~-sym           = {!   !}
   ; Rhead-tail      = {!   !}
-  ; Rhead-0         = {!   !}
+  ; Rhead-0h        = {!   !}
+  ; Rhead-h0        = {!   !}
   ; Rhead-n0        = {!   !} 
-  ; Rtail-01        = {!   !}
+  ; Rtail-01t       = {!   !} 
+  ; Rtail-t01       = {!   !}
   ; Rhead-~         = {!   !}  
   ; Rtail-~         = {!   !}   
   ; R+-identityˡ    = {!   !}

@@ -26,15 +26,15 @@ module _ {ℓ : Level} (ring : Ring {ℓ}) where
     rC : R → R → R
     {-# NON_TERMINATING #-}
     rC x y with ~-R0 x | ~-R0 y
-    ...       | _      | yes _ = R1
-    ...       | yes _  | _     = R0 
+    ...       | _      | true  = R1
+    ...       | true   | _     = R0 
     ...       | _      | _     = (Rhead x R* (rC (Rtail x) (Rtail y))) R+ (rC (Rtail x) (y))
 
     rP : R → R → R
     {-# NON_TERMINATING #-}
     rP x y with ~-R0 x | ~-R0 y
-    ...       | _      | yes _ = R1
-    ...       | yes _  | _     = R0 
+    ...       | _      | true  = R1
+    ...       | true   | _     = R0 
     ...       | _      | _     = x R* (rP (Rtail x) (Rtail y))
 
     r! : R → R

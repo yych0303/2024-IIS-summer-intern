@@ -10,7 +10,8 @@ open import Data.Fin.Base
 -- func ------------------------------------------------------------------
 
 funcℕStℕ : ℕ → St ℕ
-funcℕStℕ = λ n → map [_] (iterate suc 0 n)
+funcℕStℕ zero = []
+funcℕStℕ (suc n) = [ n ] ∷  funcℕStℕ n 
 
 funcℕListℕ : ℕ → List ℕ
 

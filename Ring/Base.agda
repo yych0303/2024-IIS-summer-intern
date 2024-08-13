@@ -11,6 +11,8 @@ eval ringR    eval ringR
 
 -}
 
+data Bool : Set where
+ true false : Bool
 
 open import Agda.Primitive
 -- open import Agda.Builtin.Equality
@@ -39,7 +41,7 @@ record Ring {ℓ : Level} : Set (lsuc ℓ) where
 --    RIdx          : Idx → R
     -- Equivalence relation ----
     _~_             : R → R → Set
-    ~-R0            : ∀ (x : R) → Dec (R0 ~ x)
+    ~-R0            : ∀ (x : R) → Bool
     ~-refl          : ∀ {x : R} → x ~ x
     ~-trans         : ∀ {x y z : R} → x ~ y → y ~ z → x ~ z
     ~-sym           : ∀ {x y : R} → x ~ y → y ~ x

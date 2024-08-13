@@ -19,28 +19,28 @@ ringℕ = record
   ; _R+_            = _+_        
   ; _R*_            = _*_            
   ; _~_             = _≡_     
-  ; ~-R0            = λ x → 0 ≟ x    
+  ; ~-R0            = λ { 0 → true ; _ → false }    
   ; ~-refl          = refl          
   ; ~-trans         = trans         
   ; ~-sym           = sym 
-  ; Rhead-tail       = ht
-  ; Rhead-0h         = 0h 
-  ; Rhead-h0         = h0
-  ; Rhead-n0         = hn0 
-  ; Rtail-01t        = 01t 
-  ; Rtail-t01        = t01
-  ; Rhead-~          = λ p → cong rh p  
-  ; Rtail-~          = λ p → cong rt p  
-  ; R+-identityˡ     = λ x → refl
-  ; R*-identityˡ     = *-identityˡ
-  ; R+-comm          = +-comm
-  ; R*-comm          = *-comm
-  ; R+-assoc         = +-assoc
-  ; R*-assoc         = *-assoc
-  ; R*-zeroˡ         = λ x → refl
-  ; R*-distribˡ-+    = *-distribˡ-+ 
-  ; R+-axeqˡ         = +ae
-  ; R*-axeqˡ         = *ae
+  ; Rhead-tail      = ht
+  ; Rhead-0h        = 0h 
+  ; Rhead-h0        = h0
+  ; Rhead-n0        = hn0 
+  ; Rtail-01t       = 01t 
+  ; Rtail-t01       = t01
+  ; Rhead-~         = λ p → cong rh p  
+  ; Rtail-~         = λ p → cong rt p  
+  ; R+-identityˡ    = λ x → refl
+  ; R*-identityˡ    = *-identityˡ
+  ; R+-comm         = +-comm
+  ; R*-comm         = *-comm
+  ; R+-assoc        = +-assoc
+  ; R*-assoc        = *-assoc
+  ; R*-zeroˡ        = λ x → refl
+  ; R*-distribˡ-+   = *-distribˡ-+ 
+  ; R+-axeqˡ        = +ae
+  ; R*-axeqˡ        = *ae
   }
     where
       rh : ℕ → ℕ
@@ -54,15 +54,12 @@ ringℕ = record
       ht zero = refl
       ht (suc x) = refl
 
-      h0 : (x : ℕ) → (x ≡ 0) ↔ (rh x ≡ 0)
-      h0 0 = record
-        { to   = λ p → cong rh p
-        ; from = λ p → refl
-        }
-      h0 (suc x) = record
-        { to   = λ p → cong rh p
-        ; from = λ p → ⊥-elim (contradiction p)
-        }
+      0h : (x : ℕ) → (x ≡ 0) → (rh x ≡ 0)
+      0h 0 = λ p → cong rh p
+      0h (suc x) = λ p → cong rh p
+      h0 : (x : ℕ) → (rh x ≡ 0) → (x ≡ 0)
+      h0 0 = λ p → refl
+      h0 (suc x) = λ p → ⊥-elim (contradiction p)
         where
           contradiction : 1 ≡ 0 → ⊥
           contradiction ()
