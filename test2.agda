@@ -6,7 +6,7 @@ open import Ring.Data.RingType
 open import Term.Base
 open import Term.Eval
 
-open import Data.Fin.Base
+-- open import Data.Fin.Base
 open import Ring.Data.Func
 
 open import Term.Trns
@@ -54,14 +54,23 @@ en = ` (2) `+ ` (4)
 embNN : Embedding ringℕ ringℕ
 embNN = record
   { EF = λ x → x
-  ; E0 = {!   !}
-  ; E1 = {!   !}
-  ; Eh = {!   !}
-  ; Et = {!   !} 
-  ; E+ = {!   !}  
-  ; E* = {!   !}
-  ; E~ = {!   !}
+  ; E0 = refl
+  ; E1 = refl
+  ; Eh = refl
+  ; Et = refl 
+  ; E+ = refl  
+  ; E* = refl
+  ; E~ = λ p → p
   }
+
+open Embedding
+open import Data.Nat
+
+postulate
+  p : ∀ (u v w : ℕ) → (u + v) ≡ w
+
+q : ∀ (u v w : ℕ) → u + v ≡ w 
+q = λ u v w → E~ embNN (p u v w) 
 
 module _ where
 
