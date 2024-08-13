@@ -1,18 +1,5 @@
 module Term.Base where
-
-{-
--- N-calculus Interface of ring
-```block
-
-  Term R 
-    |       
-    |       
-eval ringR
-    |       
-    V                 
-    A 
--}
-  
+    
 open import Agda.Primitive
 open import Data.List.Base public
 open import Data.String using (String; _≟_)

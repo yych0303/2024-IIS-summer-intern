@@ -21,12 +21,6 @@ open import Relation.Nullary using (Dec; ¬_) public
 open import Data.Sum using (_⊎_) public
 open import Data.Empty public
 
-record _↔_ {ℓ : Level} (A B : Set ℓ) : Set ℓ where
-  field
-    to      : A → B
-    from    : B → A
-
-
 -- Commutative Ring
 record Ring {ℓ : Level} : Set (lsuc ℓ) where
   field

@@ -1,4 +1,3 @@
-
 module Ring.EmbeddingConv where
 {-
 
