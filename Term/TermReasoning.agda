@@ -30,7 +30,7 @@ private
   variable 
     c ℓ : Level
 
-module RS {ℓ : Level} (ring : Ring {ℓ}) where
+module ≈-Reasoning {ℓ : Level} (ring : Ring {ℓ}) where
   open Ring ring
 
   infix 0 _≈_
@@ -57,31 +57,28 @@ module RS {ℓ : Level} (ring : Ring {ℓ}) where
     → ta ≈ tc
   ≈-trans ta≈tb tb≈ta = ~-trans ta≈tb tb≈ta
 
+  infix  1 ≈-begin_
+  infixr 2 _≈⟨_⟩_
+  infix  3 _≈-∎
 
-  module ≈-Reasoning where
+  ≈-begin_ : ∀ {ta tb tc : Term R}
+    → ta ≈ tb
+      -----
+    → ta ≈ tb
+  ≈-begin ta≈tb = ta≈tb
 
-    infix  1 ≈-begin_
-    infixr 2 _≈⟨_⟩_
-    infix  3 _≈-∎
+  _≈⟨_⟩_ : ∀ (ta : Term R) {tb tc : Term R}
+    → ta ≈ tb
+    → tb ≈ tc
+      -----
+    → ta ≈ tc
+  ta ≈⟨ ta≈tb ⟩ tb≈tc = ≈-trans ta≈tb tb≈tc
 
-    ≈-begin_ : ∀ {ta tb tc : Term R}
-      → ta ≈ tb
-        -----
-      → ta ≈ tb
-    ≈-begin ta≈tb = ta≈tb
+  _≈-∎ : ∀ (ta : Term R)
+      -----
+    → ta ≈ ta
+  ta ≈-∎ = ≈-refl
 
-    _≈⟨_⟩_ : ∀ (ta : Term R) {tb tc : Term R}
-      → ta ≈ tb
-      → tb ≈ tc
-        -----
-      → ta ≈ tc
-    ta ≈⟨ ta≈tb ⟩ tb≈tc = ≈-trans ta≈tb tb≈tc
-
-    _≈-∎ : ∀ (ta : Term R)
-        -----
-      → ta ≈ ta
-    ta ≈-∎ = ≈-refl
-
-  open ≈-Reasoning
+open ≈-Reasoning
 
   

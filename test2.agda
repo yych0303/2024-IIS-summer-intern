@@ -57,15 +57,39 @@ embNN = record
   ; E~ = {!   !}
   }
 
-open import Term.TermReasoning
+module _ where
 
-open RS ringType
+  open import Term.TermReasoning 
+  open ≈-Reasoning ringℕ
+  open import Data.Nat.Properties
+  
+  ngv = ` (2) `+ ` (4)
+  nga = ` (4) `+ ` (2)
 
-gv = ` (funcℕType 2) `+ ` (funcℕType 4)
-ga = ` (funcℕType 4) `+ ` (funcℕType 2)
+  nh : ` (2) `+ ` (4) ≈ ` (4) `+ ` (2)
+--  nh = 
+--    ≈-begin
+--      (` (2) `+ ` (4)) 
+--    ≈⟨ {! +-comm  !} ⟩ 
+--      (` (4) `+ ` (2))  
+--    ≈-∎
 
-h : gv ≈ ga 
-h = {!   !}
+
+
+
+module _ where
+
+  open import Term.TermReasoning
+  open ≈-Reasoning ringType
+
+  gv = ` (funcℕType 2) `+ ` (funcℕType 4)
+  ga = ` (funcℕType 4) `+ ` (funcℕType 2)
+
+--  h : gv ≈ ga 
+--  h = ≈-begin {! gv !} ≈⟨ {!   !} ⟩ {!ga  !}  ≈-∎
+
+
+
 
 
 

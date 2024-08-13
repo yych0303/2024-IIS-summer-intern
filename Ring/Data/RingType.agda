@@ -1,4 +1,4 @@
--- {-# OPTIONS --allow-unsolved-metas #-}
+{-# OPTIONS --allow-unsolved-metas #-}
 module Ring.Data.RingType where
 
 open import Ring.Base 
