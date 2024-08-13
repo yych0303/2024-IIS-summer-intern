@@ -19,11 +19,37 @@ ex. ![image](https://hackmd.io/_uploads/ryuXteQq0.png)
 
 
 
+## Introduction
 
 
-### Main frame
 
-```n
+## Main frame
+
+
+### Term, Eval, Trns
+
+```
+
+ringA ringB : Ring
+
+[Interface]
+    Term A -- trns funcAB -> Term B
+      |                        |
+      |                        |
+  eval ringA               eval ringB
+      |                        |
+      V                        V
+      A ------- funcAB ------> B
+[concrete]
+
+---------------------------------------------
+
+```
+
+### Term
+### Embedding
+
+```
 [Interface]             Term A <-------- trns ---------> Term B   
     |                     |               ~                |      
     | implements          |              func              |      
@@ -39,7 +65,14 @@ ex. ![image](https://hackmd.io/_uploads/ryuXteQq0.png)
 [ Object ]              a : A <--------- func ---------> b : B    
 
 ```
-```n
+
+
+
+
+
+
+
+```
 [Interface]            ta ≈ᴬ ta'<--- trnsPf ---> tb ≈ᴮ tb'
     |                     |            ~            |
     | implements          |           func          |
@@ -56,41 +89,15 @@ ex. ![image](https://hackmd.io/_uploads/ryuXteQq0.png)
 
 ```
 
-## Introduction
 
-### Term
-
-為了能夠紀錄數字的結構，我建立了Term，紀錄包含+, *, C, P, ,! ,Σ ,Π運算
-
-```agda
-module Term.Base where
-
-.
-.
-.
-
-private Idx : Set
-Idx = String
-
-data Term {ℓ : Level} (Val : Set ℓ) : Set ℓ where
-  `_          : Val → Term Val
-  $_          : Idx → Term Val
-  _`+_        : Term Val → Term Val → Term Val
-  _`*_        : Term Val → Term Val → Term Val
-  `Σ[_∈_]_    : Idx → List Val → Term Val → Term Val
-  `Π[_∈_]_    : Idx → List Val → Term Val → Term Val
-  [_]`!       : Term Val → Term Val
-  `P[_,_]     : Term Val → Term Val → Term Val
-  `C[_,_]     : Term Val → Term Val → Term Val
-
-```
+# Agda
 
 
-### Ring 
-為了保證提供的Carrier R 與自然數有相同運算結構及性質，其中
+## Ring 
+為了保證提供的Carrier R 與自然數有相同運算結構及性質，需要證明R/~ 為一交換環，其中為了能構造出C, P, !，會額外要求提供函數Rhead, Rtail，意味著Carrier R存在一種以元素R0為root的樹狀結構，而元素到root的路徑長正為元素的測度(size, length)。
 
 
-```agda
+```agda=
 module Ring.Base where
 
 .
@@ -143,11 +150,88 @@ record Ring {ℓ : Level} : Set (lsuc ℓ) where
 ```
 
 
+
+### Ring Properties
+
+而在上述結構的其他性質
+
+```agda=
+module Ring.Properties where
+
+.
+.
+.
+
+
+module _ {ℓ : Level} (ring : Ring {ℓ}) where
+  open Ring ring  
+  
+  -- Commutative Ring properties ---------  
+  R+-identityʳ : ∀ (x : R) → (x R+ R0) ~ x
+  R+-identityʳ x = ~-trans (R+-comm x R0) (R+-identityˡ x)
+  
+  R*-identityʳ : ∀ (x : R) → (x R* R1) ~ x
+  R*-identityʳ x = ~-trans (R*-comm x R1) (R*-identityˡ x)
+  
+  R*-zeroʳ : ∀ (x : R) → (x R* R0) ~ R0
+  R*-zeroʳ x = ~-trans (R*-comm x R0) (R*-zeroˡ x)
+  
+  -- Axioms of equality
+  R+-axeqʳ : ∀ (x y z : R) → x ~ y → (x R+ z) ~ (y R+ z)
+  R+-axeqʳ x y z p = ~-trans (R+-comm x z) (~-trans (R+-axeqˡ x y z p) (R+-comm z y))
+
+  R*-axeqʳ : ∀ (x y z : R) → x ~ y → (x R* z) ~ (y R* z)
+  R*-axeqʳ x y z p = ~-trans (R*-comm x z) (~-trans (R*-axeqˡ x y z p) (R*-comm z y))
+  
+  R+-axeq : ∀ (x y s t : R) → x ~ y → s ~ t → (x R+ s) ~ (y R+ t)
+  R+-axeq x y s t p q =  ~-trans (R+-axeqʳ x y s p) (R+-axeqˡ s t y q)
+  
+  R*-axeq : ∀ (x y s t : R) → x ~ y → s ~ t → (x R* s) ~ (y R* t)
+  R*-axeq x y s t p q =  ~-trans (R*-axeqʳ x y s p) (R*-axeqˡ s t y q)
+ 
+  -- Commutative Ring properties ---------  
+  R*-distribʳ-+ : ∀ (x y z : R) → ((x R+ y) R* z) ~ ((x R* z) R+ (y R* z))
+  R*-distribʳ-+ x y z = ~-trans (~-trans (R*-comm (x R+ y) z) (R*-distribˡ-+ z x y) ) (R+-axeq (z R* x) (x R* z) (z R* y) (y R* z) (R*-comm z x) (R*-comm z y))
+ 
+```
+
+
+
+## Term
+
+為了能夠紀錄數字的結構，我建立了Term，紀錄包含+, *, Σ ,Π, !, P, C 運算
+
+```agda=
+module Term.Base where
+
+.
+.
+.
+
+private Idx : Set
+Idx = String
+
+data Term {ℓ : Level} (Val : Set ℓ) : Set ℓ where
+  `_          : Val → Term Val
+  $_          : Idx → Term Val
+  _`+_        : Term Val → Term Val → Term Val
+  _`*_        : Term Val → Term Val → Term Val
+  `Σ[_∈_]_    : Idx → List Val → Term Val → Term Val
+  `Π[_∈_]_    : Idx → List Val → Term Val → Term Val
+  [_]`!       : Term Val → Term Val
+  `P[_,_]     : Term Val → Term Val → Term Val
+  `C[_,_]     : Term Val → Term Val → Term Val
+
+```
+
+
+
 ### Eval
 
-這個函數目的是將Term A 還原成 A
+此函數主要是將一ta : Term A，還原成A中元素，需要提供Carrier R = A 的Ring ringA
 
-```agda
+
+```agda=
 module Term.Eval where
 
 .
@@ -201,34 +285,151 @@ module _ {ℓ : Level} (ring : Ring {ℓ}) where
 
 ```
 
+### Trns
 
 
 
 
+```agda=
+module Term.Trns where
+-- Translate Term A to Term B
 
+open import Term.Base
 
-## Evaluator, Translator
+-- trns : (R → B) → Term R → Term B-----------------------------------------------------------------
 
-```block
+infix 1 trns
 
-ringA ringB : Ring
-
-[Interface]
-    Term A -- trns funcAB -> Term B
-      |                        |
-      |                        |
-  eval ringA               eval ringB
-      |                        |
-      V                        V
-      A ------- funcAB ------> B
-[concrete]
-
----------------------------------------------
-
+{-# NON_TERMINATING #-}
+trns : {A B : Set} → (A → B) → Term A → Term B
+trns func term with term
+...               | (` v)            = (` (func v))        
+...               | ($ i)            = ($ i)        
+...               | (t `+ t₁)        = (trns func t `+ trns func t₁)    
+...               | (t `* t₁)        = (trns func t `* trns func t₁)    
+...               | `P[ t , t₁ ]     = `P[ trns func t , trns func t₁ ]   
+...               | `C[ t , t₁ ]     = `C[ trns func t , trns func t₁ ]   
+...               | (`Σ[ i ∈ l ] t)  = (`Σ[ i ∈ map func l ] trns func t)
+...               | (`Π[ i ∈ l ] t)  = (`Π[ i ∈ map func l ] trns func t)
+...               | [ t ]`!          = [ trns func t ]`!      
 
 ```
 
 ## Embedding
+要轉換證明需要先證明所用的函數是Embedding，即保持運算(Homomorphic)與保持關係。
+
+
+```agda=
+module Ring.EmbeddingConv where
+
+.
+.
+.
+
+module _ {a b : Level} (rA : Ring {a} ) ( rB : Ring {b}) where
+  open Ring
+
+  open import Data.Product
+  open import Data.Sum.Base
+  -- open import Relation.Binary.PropositionalEquality using (_≡_; refl; sym; trans; cong)
+  open import Ring.Properties
+    
+
+  record Embedding : Set (a ⊔ b) where
+    field
+      -- Homomorphic
+      EF : R rA → R rB
+      E0 : _~_ rB (EF (R0 rA)) (R0 rB) 
+      E1 : _~_ rB (EF (R1 rA)) (R1 rB) 
+      Eh : ∀ {x : R rA} → _~_ rB (EF (Rhead rA x)) (Rhead rB (EF x)) 
+      Et : ∀ {x : R rA} → _~_ rB (EF (Rtail rA x)) (Rtail rB (EF x)) 
+      E+ : ∀ {x y : R rA} → _~_ rB (EF (_R+_ rA x y)) (_R+_ rB (EF x) (EF y)) 
+      E* : ∀ {x y : R rA} → _~_ rB (EF (_R*_ rA x y)) (_R*_ rB (EF x) (EF y))
+
+      -- Embedding
+      E~ : ∀ {x y : R rA} → _~_ rA x y → _~_ rB (EF x) (EF y) 
+  open Embedding    
+
+```
+
+
+
+### conv
+
+給定一Embedding，可以利用conv函數建構出Range的Ring structure
+
+```agda=
+.
+.
+.
+
+  private
+    A : Set a
+    A = R rA
+    B : Set b
+    B = R rB 
+    R0A = R0 rA
+    R0B = R0 rB
+    R1A = R1 rA
+    R1B = R1 rB
+    RhA = Rhead rA
+    RhB = Rhead rB
+    RtA = Rtail rA
+    RtB = Rtail rB
+    
+    _~A_ = _~_ rA
+    _~B_ = _~_ rB
+    _R+A_ = _R+_ rA
+    _R+B_ = _R+_ rB
+    _R*A_ = _R*_ rA
+    _R*B_ = _R*_ rB
+
+  conv : (Embedding) → Ring {a} → Ring {a ⊔ b}
+  conv embd rA = record
+    { R               = Σ[ y ∈ B ] Σ[ x ∈ A ] (EF embd x ~B y) 
+    ; R0              = R0B , R0A , E0 embd             
+    ; R1              = R1B , R1A , E1 embd    
+    ; Rhead           = λ (y , x , p) → RhB y , RhA x , ~-trans rB (Eh embd) (Rhead-~ rB p)
+    ; Rtail           = λ (y , x , p) → RtB y , RtA x , ~-trans rB (Et embd) (Rtail-~ rB p)
+    ; _R+_            = λ (y , x , p) (y' , x' , p') → (y R+B y') , (x R+A x') , ~-trans rB (E+ embd) (R+-axeq rB _ _ _ _ p p')           
+    ; _R*_            = λ (y , x , p) (y' , x' , p') → (y R*B y') , (x R*A x') , ~-trans rB (E* embd) (R*-axeq rB _ _ _ _ p p')
+    ; _~_             = λ (y , _ , _) (y' , _ , _) → (y ~B y') -- _~B_           
+    ; ~-R0            = λ (y , _ , _) → ~-R0 rB y -- isDecEquivR0 rB    
+    
+    ; ~-refl          = ~-refl rB          
+    ; ~-trans         = ~-trans rB         
+    ; ~-sym           = ~-sym rB
+
+    ; Rhead-tail      = λ r → Rhead-tail rB (proj₁ r)
+    
+    ; Rhead-0h        = λ r → Rhead-0h rB (proj₁ r)
+    ; Rhead-h0        = λ r → Rhead-h0 rB (proj₁ r) 
+    ; Rhead-n0        = λ r f → Rhead-n0 rB (proj₁ r) f  
+    ; Rtail-01t       = λ r → Rtail-01t rB (proj₁ r)
+    ; Rtail-t01       = λ r → Rtail-t01 rB (proj₁ r) 
+     
+    ; Rhead-~          = Rhead-~ rB
+    ; Rtail-~          = Rtail-~ rB
+
+    ; R+-identityˡ     = λ r → R+-identityˡ rB (proj₁ r)
+    ; R*-identityˡ     = λ r → R*-identityˡ rB (proj₁ r)
+    ; R+-comm          = λ r r' → R+-comm  rB (proj₁ r) (proj₁ r')
+    ; R*-comm          = λ r r' → R*-comm rB (proj₁ r) (proj₁ r')
+    ; R+-assoc         = λ r r' r'' → R+-assoc rB (proj₁ r) (proj₁ r') (proj₁ r'')
+    ; R*-assoc         = λ r r' r'' → R*-assoc rB (proj₁ r) (proj₁ r') (proj₁ r'')
+    ; R*-distribˡ-+    = λ r r' r'' → R*-distribˡ-+ rB (proj₁ r) (proj₁ r') (proj₁ r'') 
+    ; R*-zeroˡ         = λ r → R*-zeroˡ rB (proj₁ r)
+    ; R+-axeqˡ         = λ r r' r'' p → R+-axeqˡ rB (proj₁ r) (proj₁ r') (proj₁ r'') p
+    ; R*-axeqˡ         = λ r r' r'' p → R*-axeqˡ rB (proj₁ r) (proj₁ r') (proj₁ r'') p
+    }
+```
+
+
+
+## Translate proof
+
+
+# old
 
 ```block
 -------------------------------------------
@@ -246,8 +447,6 @@ ringA : Ring --- conv embedAB ---> ringB' : Ring
 
 
 ```
-
-## Translate proof
 
 ```block
 
