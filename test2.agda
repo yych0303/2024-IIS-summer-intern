@@ -11,13 +11,15 @@ open import Ring.Data.Func
 
 open import Term.Trns
 
-variable
-  X Y : Set
 
 
 
 -- LN
 open import Ring.Data.RingLN
+open Ring (ringSt ℕ)
+
+pfs :  funcℕStℕ 2 ~ funcℕStℕ 2
+pfs = {!   !}
 
 fev = ` (funcℕListℕ 2) `+ ` (funcℕListℕ 4)
 fea = ` (funcℕListℕ 4) `* ` (funcℕListℕ 2)
@@ -31,7 +33,11 @@ StC53 = `C[ ` funcℕStℕ 5 , ` funcℕStℕ 3 ]
 
 ssxs = eval (ringSt ℕ) StC53
 
+open Ring ringType
 
+
+pf :  funcℕType 2 ~ funcℕType 2
+pf = {!   !}
 
 ev = ` (funcℕType 2) `+ ` (funcℕType 4)
 ea = ` (funcℕType 4) `+ ` (funcℕType 2)
@@ -39,7 +45,7 @@ T = Ring._~_ ringType (eval ringType ev) (eval ringType ea)
 
 r : Ring._~_ ringType (eval ringType ev) (eval ringType ea)
 
-r = {!   !}
+r = record { to = {! [ ? , ? ]  !} ; from = {!   !} ; from∘to = {!   !} ; to∘from = {!   !} }
 
 
 en = ` (2) `+ ` (4)
@@ -66,7 +72,7 @@ module _ where
   ngv = ` (2) `+ ` (4)
   nga = ` (4) `+ ` (2)
 
-  nh : ` (2) `+ ` (4) ≈ ` (4) `+ ` (2)
+  -- nh : ` (2) `+ ` (4) ≈ ` (4) `+ ` (2)
 --  nh = 
 --    ≈-begin
 --      (` (2) `+ ` (4)) 
@@ -100,4 +106,4 @@ module _ where
 
 
 
- 
+  

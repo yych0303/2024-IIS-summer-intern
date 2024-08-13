@@ -4,18 +4,18 @@ module Ring.Data.RingType where
 open import Ring.Base 
 -- Ring Type ---------------------------------------------------- 
 
-
-open import Data.Fin using (Fin; toℕ; Fin′; cast; fromℕ; join; splitAt) renaming (suc to fsuc ; zero to fzero)
-open import Data.Sum using (_⊎_; inj₁; inj₂; [_,_] )
-open import Data.Product using (_×_; proj₁; proj₂) -- renaming (_,_ to ⟨_,_⟩)
-import Relation.Binary.PropositionalEquality as Eq
-open Eq using (_≡_; refl; cong; cong-app; trans)
-
+open import Agda.Primitive
 open import Level using (_⊔_)
 open import Data.Nat using (ℕ; zero; suc; _+_)
-open import Data.Product
-open import Agda.Primitive
 open import Function using (_∘_)
+
+open import Data.Fin using (Fin; toℕ; Fin′; cast; fromℕ; join; splitAt) renaming (suc to fsuc ; zero to fzero)
+
+open import Data.Sum using (_⊎_; inj₁; inj₂; [_,_] ) public
+import Relation.Binary.PropositionalEquality as Eq
+open Eq using (_≡_; refl; cong; cong-app; trans) public
+
+open import Data.Product public
 
 infix 0 _≃_
 record _≃_ {a b : Level} (A : Set a) (B : Set b) : Set (a ⊔ b) where
@@ -26,6 +26,7 @@ record _≃_ {a b : Level} (A : Set a) (B : Set b) : Set (a ⊔ b) where
     to∘from : ∀ (y : B) → to (from y) ≡ y
 open _≃_
 
+Type = Σ[ X ∈ Set ] Σ[ n ∈ ℕ ] (Fin n ≃ X)
 
 ringType : Ring
 ringType = record 

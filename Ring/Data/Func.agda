@@ -37,7 +37,7 @@ open import Data.Product
 open import Agda.Primitive
 open import Function using (_∘_)
 
-funcℕType : ℕ → Σ[ X ∈ Set ] Σ[ n ∈ ℕ ] (Fin n ≃ X) 
+funcℕType : ℕ → (Σ[ X ∈ Set ] Σ[ n ∈ ℕ ] (Fin n ≃ X)) 
 funcℕType n = Fin n , n , record  { to = λ z → z
                                   ; from = λ z → z
                                   ; from∘to = λ x → refl
