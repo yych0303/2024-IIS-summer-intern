@@ -1,5 +1,5 @@
 {-# OPTIONS --allow-unsolved-metas #-}
--- module Ring.Data.RingType where
+module Ring.Data.RingTypecopy where
 
 open import Ring.Base 
 -- Ring Type ---------------------------------------------------- 
@@ -25,17 +25,30 @@ record _≃_ {a b : Level} (A : Set a) (B : Set b) : Set (a ⊔ b) where
     to∘from : ∀ (y : B) → to (from y) ≡ y
 open _≃_
 
+infix 0 _≲_
+record _≲_ (A : Set) (B : Set) : Set where
+  field
+    to   : A → B
+    from : B → A
+    from∘to : ∀ (x : A) → from (to x) ≡ x
+open _≲_
+
+-- postulate
+
+F : Set → Set
+F (A ⊎ B) = A
+F _ = Fin 0
 
 ringType : Ring
 ringType = record 
-  { R               = Σ[ X ∈ Set ] Σ[ n ∈ ℕ ] (Fin n ≃ X)         
-  ; R0              = (Fin 0) , (zero , record { to = λ z → z ; from = λ z → z ; from∘to = λ x → refl ; to∘from = λ y → refl })             
-  ; R1              = (Fin 1) , (1 , record { to = λ z → z ; from = λ z → z ; from∘to = λ x → refl ; to∘from = λ y → refl }) --r1     
-  ; Rhead           = rh
+  { R               = Set      
+  ; R0              = Fin 0 -- Fin 0
+  ; R1              = Fin 1 -- Fin 1 -- (Fin 1) , (1 , record { to = λ z → z ; from = λ z → z ; from∘to = λ x → refl ; to∘from = λ y → refl }) --r1     
+  ; Rhead           = λ X → {! F X  !} -- rh
   ; Rtail           = {!   !} --rt        
   ; _R+_            = {!   !}         
   ; _R*_            = {!   !}             
-  ; _~_             = λ rX rY → proj₁ rX ≃ proj₁ rY           
+  ; _~_             = {!   !} -- λ rX rY → proj₁ rX ≃ proj₁ rY           
   ; ~-R0            = {!   !}    
   ; ~-refl          = {!   !}          
   ; ~-trans         = {!   !}         

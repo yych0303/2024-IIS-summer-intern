@@ -23,22 +23,27 @@ ringSt A = record
   ; Rtail           = rt   
   ; _R+_            = r+
   ; _R*_            = r*
-  ; _~_             = λ x y → length x ≡ length y    
-  ; isDecEquivR0    = λ x → 0 ≟ length x
-  ; refl            = refl          
-  ; trans           = λ x y → trans x y         
-  ; sym             = λ x → sym x  
-  ; head-tail       = λ x → cong length (ht x)
-  ; head-0          = {!   !}
-  ; head-n0         = {!   !} 
-  ; tail-01         = {!   !}
-  ; zero-identity+  = {!   !}
-  ; one-identity*   = {!   !}
-  ; comm+           = {!   !}
-  ; comm*           = {!   !}
-  ; assoc+          = {!   !}
-  ; assoc*          = {!   !}
-  ; distrib         = {!   !} 
+  ; _~_             = {!   !}             
+  ; ~-R0            = dec  
+  ; ~-refl          = {!   !}          
+  ; ~-trans         = {!   !}         
+  ; ~-sym           = {!   !}
+  ; Rhead-tail      = {!   !}
+  ; Rhead-0         = {!   !}
+  ; Rhead-n0        = {!   !} 
+  ; Rtail-01        = {!   !}
+  ; Rhead-~         = {!   !}  
+  ; Rtail-~         = {!   !}   
+  ; R+-identityˡ    = {!   !}
+  ; R*-identityˡ    = {!   !}
+  ; R+-comm         = {!   !}
+  ; R*-comm         = {!   !}
+  ; R+-assoc        = {!   !}
+  ; R*-assoc        = {!   !}
+  ; R*-zeroˡ        = {!   !}
+  ; R*-distribˡ-+   = {!   !}
+  ; R+-axeqˡ        = {!   !}
+  ; R*-axeqˡ        = {!   !} 
   }  
     where
       r0 : {A : Set} → St A
@@ -60,3 +65,6 @@ ringSt A = record
       ht : (x : List (List A)) → r+ (rh x) (rt x) ≡ x
       ht [] = refl
       ht (x ∷ x₁) = refl
+
+      dec : (x : List (List A)) → Dec (zero ≡ foldr (λ _ → suc) zero x)
+      dec x = {!   !}  

@@ -25,17 +25,17 @@ module _ {ℓ : Level} (ring : Ring {ℓ}) where
 
     rC : R → R → R
     {-# NON_TERMINATING #-}
-    rC x y with isDecEquivR0 x | isDecEquivR0 y
-    ...                 | _     | yes _ = R1
-    ...                 | yes _ | _     = R0 
-    ...                 | _     | _     = (Rhead x R* (rC (Rtail x) (Rtail y))) R+ (rC (Rtail x) (y))
+    rC x y with ~-R0 x | ~-R0 y
+    ...       | _      | yes _ = R1
+    ...       | yes _  | _     = R0 
+    ...       | _      | _     = (Rhead x R* (rC (Rtail x) (Rtail y))) R+ (rC (Rtail x) (y))
 
     rP : R → R → R
     {-# NON_TERMINATING #-}
-    rP x y with isDecEquivR0 x | isDecEquivR0 y
-    ...                 | _     | yes _ = R1
-    ...                 | yes _ | _     = R0 
-    ...                 | _     | _     = x R* (rP (Rtail x) (Rtail y))
+    rP x y with ~-R0 x | ~-R0 y
+    ...       | _      | yes _ = R1
+    ...       | yes _  | _     = R0 
+    ...       | _      | _     = x R* (rP (Rtail x) (Rtail y))
 
     r! : R → R
     r! r =  rP r r 

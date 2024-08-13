@@ -94,7 +94,7 @@ record Ring {ℓ : Level} : Set (lsuc ℓ) where
   ; R+-assoc        = ?
   ; R*-assoc        = ?
   ; R*-zeroˡ        = ?
-  ; R*-distribˡ-    = ?
+  ; R*-distribˡ-+   = ?
   ; R+-axeqˡ        = ?
   ; R*-axeqˡ        = ?
   }

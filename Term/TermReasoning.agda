@@ -35,27 +35,27 @@ module _ {ℓ : Level} (ring : Ring {ℓ}) where
 
   infix 0 _≈_
 
-  _≈_ : Term R → Term R → Set ℓ
+  _≈_ : Term R → Term R → Set
   _≈_ ta tb = eval ring ta ~ eval ring tb
   
   
   ≈-refl : ∀ {ta : Term R}
       -----
     → ta ≈ ta
-  ≈-refl {ta} = refl {eval ring ta}
+  ≈-refl {ta} = ~-refl {eval ring ta}
 
   ≈-sym : ∀ {ta tb : Term R}
     → ta ≈ tb
       -----
     → tb ≈ ta
-  ≈-sym ta≈tb = sym ta≈tb
+  ≈-sym ta≈tb = ~-sym ta≈tb
 
   ≈-trans : ∀ {ta tb tc : Term R}
     → ta ≈ tb
     → tb ≈ tc
       -----
     → ta ≈ tc
-  ≈-trans ta≈tb tb≈ta = trans ta≈tb tb≈ta
+  ≈-trans ta≈tb tb≈ta = ~-trans ta≈tb tb≈ta
 
 
   module ≈-Reasoning where

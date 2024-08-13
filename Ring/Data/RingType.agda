@@ -5,16 +5,17 @@ open import Ring.Base
 -- Ring Type ---------------------------------------------------- 
 
 
-open import Data.Fin using (Fin; toℕ; Fin′; cast; fromℕ) renaming (suc to fsuc ; zero to fzero)
-open import Data.Sum using (_⊎_; inj₁; inj₂) renaming ([_,_] to case-⊎)
+open import Data.Fin using (Fin; toℕ; Fin′; cast; fromℕ; join; splitAt) renaming (suc to fsuc ; zero to fzero)
+open import Data.Sum using (_⊎_; inj₁; inj₂; [_,_] )
 open import Data.Product using (_×_; proj₁; proj₂) -- renaming (_,_ to ⟨_,_⟩)
 import Relation.Binary.PropositionalEquality as Eq
 open Eq using (_≡_; refl; cong; cong-app)
 
 open import Level using (_⊔_)
-open import Data.Nat using (ℕ; zero; suc)
+open import Data.Nat using (ℕ; zero; suc; _+_)
 open import Data.Product
 open import Agda.Primitive
+open import Function using (_∘_)
 
 infix 0 _≃_
 record _≃_ {a b : Level} (A : Set a) (B : Set b) : Set (a ⊔ b) where
@@ -33,7 +34,7 @@ ringType = record
   ; R1              = (Fin 1) , (1 , record { to = λ z → z ; from = λ z → z ; from∘to = λ x → refl ; to∘from = λ y → refl }) --r1     
   ; Rhead           = rh
   ; Rtail           = {!   !} --rt        
-  ; _R+_            = {!   !}         
+  ; _R+_            = λ (X , n , p) (Y , m , q) → (X ⊎ Y) , n + m , record { to = [ inj₁ ∘ to p , inj₂ ∘ to q ] ∘ splitAt n ; from = join n m ∘ [ inj₁ ∘ from p , inj₂ ∘ from q ] ; from∘to = {!   !} ; to∘from = {!   !} }         
   ; _R*_            = {!   !}             
   ; _~_             = λ rX rY → proj₁ rX ≃ proj₁ rY           
   ; ~-R0            = {!   !}    
