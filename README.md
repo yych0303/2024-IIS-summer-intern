@@ -15,11 +15,13 @@ Agda; Commutative ring; Finset; Combinatorial reasoning; Double counting
 
 
 
-
 ex. ![image](https://hackmd.io/_uploads/ryuXteQq0.png)
 
 
-## Main frame
+
+
+
+### Main frame
 
 ```n
 [Interface]             Term A <-------- trns ---------> Term B   
@@ -50,29 +52,154 @@ ex. ![image](https://hackmd.io/_uploads/ryuXteQq0.png)
     |                     |                         |
     | instantiates        |        Embedding        |
     V                     V            ~            V
-[ Object ]             a ~ᴬ a' <----- path ----> b ~ᴮ b'
+[ Object ]             a ≃ᴬ a' <----- path ----> b ≃ᴮ b'
 
 ```
 
-### Files
+## Introduction
 
-TremReasoning! 1
+### Term
 
-Translator!trnsPf 2
-N-cal#
+為了能夠紀錄數字的結構，我建立了Term，紀錄包含+, *, C, P, ,! ,Σ ,Π運算
 
-CommutativeRing#
-EmbeddingConv!conv 1
+```agda
+module Term.Base where
 
-?path 0
+.
+.
+.
 
-Rings! 7
+private Idx : Set
+Idx = String
 
-## Commutative Ring
+data Term {ℓ : Level} (Val : Set ℓ) : Set ℓ where
+  `_          : Val → Term Val
+  $_          : Idx → Term Val
+  _`+_        : Term Val → Term Val → Term Val
+  _`*_        : Term Val → Term Val → Term Val
+  `Σ[_∈_]_    : Idx → List Val → Term Val → Term Val
+  `Π[_∈_]_    : Idx → List Val → Term Val → Term Val
+  [_]`!       : Term Val → Term Val
+  `P[_,_]     : Term Val → Term Val → Term Val
+  `C[_,_]     : Term Val → Term Val → Term Val
+
+```
 
 
+### Ring 
+為了保證提供的Carrier R 與自然數有相同運算結構及性質，其中
 
 
+```agda
+module Ring.Base where
+
+.
+.
+.
+
+-- Commutative Ring
+record Ring {ℓ : Level} : Set (lsuc ℓ) where
+  field
+    R               : Set ℓ
+    R0              : R
+    R1              : R
+    Rhead            : R → R
+    Rtail            : R → R
+    -- Operations -------------
+    _R+_            : R → R → R
+    _R*_            : R → R → R   
+--    RIdx          : Idx → R
+    -- Equivalence relation ----
+    _~_             : R → R → Set
+    ~-R0            : ∀ (x : R) → Bool
+    ~-refl          : ∀ {x : R} → x ~ x
+    ~-trans         : ∀ {x y z : R} → x ~ y → y ~ z → x ~ z
+    ~-sym           : ∀ {x y : R} → x ~ y → y ~ x
+    
+    -- head-tail properties ---------
+    Rhead-tail       : ∀ (x : R) → (Rhead x R+ Rtail x) ~ x
+    Rhead-0h         : ∀ (x : R) → (x ~ R0) → (Rhead x ~ R0)
+    Rhead-h0         : ∀ (x : R) → (Rhead x ~ R0) → (x ~ R0)
+    Rhead-n0         : ∀ (x : R) → (¬(x ~ R0)) → (Rhead x ~ R1) 
+    Rtail-01t        : ∀ (x : R) → ((x ~ R0) ⊎ (x ~ R1)) → (Rtail x ~ R0)
+    Rtail-t01        : ∀ (x : R) → (Rtail x ~ R0) → ((x ~ R0) ⊎ (x ~ R1))
+
+    Rhead-~          : ∀ {x y : R} → (x ~ y) → (Rhead x ~ Rhead y)
+    Rtail-~          : ∀ {x y : R} → (x ~ y) → (Rtail x ~ Rtail y)
+    
+    -- Commutative Ring properties ---------  
+    R+-identityˡ     : ∀ (x : R)     → (R0 R+ x) ~ x
+    R*-identityˡ     : ∀ (x : R)     → (R1 R* x) ~ x
+    R+-comm          : ∀ (x y : R)   → (x R+ y) ~ (y R+ x)
+    R*-comm          : ∀ (x y : R)   → (x R* y) ~ (y R* x)
+    R+-assoc         : ∀ (x y z : R) → ((x R+ y) R+ z) ~ (x R+ (y R+ z))
+    R*-assoc         : ∀ (x y z : R) → ((x R* y) R* z) ~ (x R* (y R* z))
+    R*-zeroˡ         : ∀ (x : R)     → (R0 R* x) ~ R0
+    R*-distribˡ-+    : ∀ (x y z : R) → (x R* (y R+ z)) ~ ((x R* y) R+ (x R* z))
+    
+    -- Axioms of equality
+    R+-axeqˡ         : ∀ (x y z : R)   → x ~ y → (z R+ x) ~ (z R+ y)
+    R*-axeqˡ         : ∀ (x y z : R)   → x ~ y → (z R* x) ~ (z R* y)
+```
+
+
+### Eval
+
+這個函數目的是將Term A 還原成 A
+
+```agda
+module Term.Eval where
+
+.
+.
+.
+
+module _ {ℓ : Level} (ring : Ring {ℓ}) where
+  open Ring ring
+
+  private 
+    rsigma : List R → (R → R) → R
+    rsigma []      F = R0  
+    rsigma (i ∷ l) F = (F i) R+ (rsigma l F)
+
+    rpi : List R → (R → R) → R
+    rpi []      F = R1  
+    rpi (i ∷ l) F = (F i) R* (rsigma l F)
+
+    rC : R → R → R
+    {-# NON_TERMINATING #-}
+    rC x y with ~-R0 x | ~-R0 y
+    ...       | _      | true  = R1
+    ...       | true   | _     = R0 
+    ...       | _      | _     = (Rhead x R* (rC (Rtail x) (Rtail y))) R+ (rC (Rtail x) (y))
+
+    rP : R → R → R
+    {-# NON_TERMINATING #-}
+    rP x y with ~-R0 x | ~-R0 y
+    ...       | _      | true  = R1
+    ...       | true   | _     = R0 
+    ...       | _      | _     = x R* (rP (Rtail x) (Rtail y))
+
+    r! : R → R
+    r! r =  rP r r 
+
+  infix 1 eval
+
+  {-# NON_TERMINATING #-}
+  eval : Term R → R
+  eval term with term
+  ...          | (` v)            = v
+  ...          | ($ i)            = R0   -- not possible
+  ...          | (t `+ t₁)        = (eval t) R+ (eval t₁)
+  ...          | (t `* t₁)        = (eval t) R* (eval t₁)
+  ...          | `P[ t , t₁ ]     = rP (eval t) (eval t₁)
+  ...          | `C[ t , t₁ ]     = rC (eval t) (eval t₁)
+  ...          | (`Σ[ i ∈ l ] t)  = rsigma l (λ v → eval ([ i := v ] t))
+  ...          | (`Π[ i ∈ l ] t)  = rpi l (λ v → eval ([ i := v ] t))
+  ...          | [ t ]`!          = r! (eval t)
+
+
+```
 
 
 
@@ -129,8 +256,8 @@ ringA : Ring --- conv embedAB ---> ringB' : Ring
 
 _≈ᴬ_ : Rel (Term A)
 _≈ᴮ_ : Rel (Term B)
-_~ᴬ_ : Rel A
-_~ᴮ_ : Rel B
+_≃ᴬ_ : Rel A
+_≃ᴮ_ : Rel B
 
 [Interface]
  ta ≈ᴬ ta' --- trnsPf embedAB ---> tb ≈ᴮ tb'
@@ -139,16 +266,31 @@ _~ᴮ_ : Rel B
     ≡                                 ≡
     |                                 |
     V                                 V
-  a ~ᴬ a' ----- path embedAB -----> b ~ᴮ b'
+  a ≃ᴬ a' ----- path embedAB -----> b ≃ᴮ b'
 [concrete]
 
 
 
 ```
 
+
+
+### Files
+
+TremReasoning! 1
+
+Translator!trnsPf 2
+N-cal#
+
+CommutativeRing#
+EmbeddingConv!conv 1
+
+?path 0
+
+Rings! 7
+
+
 # Reference
-
-
 
 
 1. [combinational arg.](https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://www.math.uvic.ca/faculty/gmacgill/guide/combargs.pdf&ved=2ahUKEwj4yZXLv72HAxU1j68BHVHkAfoQFnoECBQQBg&usg=AOvVaw3yRF1bK4iaNaju-5tZXOop "‌")
