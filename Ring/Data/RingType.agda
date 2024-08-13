@@ -1,4 +1,4 @@
-{-# OPTIONS --allow-unsolved-metas #-}
+-- {-# OPTIONS --allow-unsolved-metas #-}
 module Ring.Data.RingType where
 
 open import Ring.Base 
@@ -9,7 +9,7 @@ open import Data.Fin using (Fin; toℕ; Fin′; cast; fromℕ; join; splitAt) re
 open import Data.Sum using (_⊎_; inj₁; inj₂; [_,_] )
 open import Data.Product using (_×_; proj₁; proj₂) -- renaming (_,_ to ⟨_,_⟩)
 import Relation.Binary.PropositionalEquality as Eq
-open Eq using (_≡_; refl; cong; cong-app)
+open Eq using (_≡_; refl; cong; cong-app; trans)
 
 open import Level using (_⊔_)
 open import Data.Nat using (ℕ; zero; suc; _+_)
@@ -33,13 +33,13 @@ ringType = record
   ; R0              = (Fin 0) , (zero , record { to = λ z → z ; from = λ z → z ; from∘to = λ x → refl ; to∘from = λ y → refl })             
   ; R1              = (Fin 1) , (1 , record { to = λ z → z ; from = λ z → z ; from∘to = λ x → refl ; to∘from = λ y → refl }) --r1     
   ; Rhead           = rh
-  ; Rtail           = {!   !} --rt        
+  ; Rtail           = rt        
   ; _R+_            = λ (X , n , p) (Y , m , q) → (X ⊎ Y) , n + m , record { to = [ inj₁ ∘ to p , inj₂ ∘ to q ] ∘ splitAt n ; from = join n m ∘ [ inj₁ ∘ from p , inj₂ ∘ from q ] ; from∘to = {!   !} ; to∘from = {!   !} }         
   ; _R*_            = {!   !}             
   ; _~_             = λ rX rY → proj₁ rX ≃ proj₁ rY           
-  ; ~-R0            = {!   !}    
-  ; ~-refl          = {!   !}          
-  ; ~-trans         = {!   !}         
+  ; ~-R0            = λ { ( _ , 0 , _ ) → true ; _ → false }    
+  ; ~-refl          = record { to = λ z → z ; from = λ z → z ; from∘to = λ x₁ → refl ; to∘from = λ y → refl }         
+  ; ~-trans         = λ p q → record { to = (to q) ∘ (to p) ; from = (from p) ∘ (from q) ; from∘to = {!   !} ; to∘from = {!   !} }         
   ; ~-sym           = {!   !}
   ; Rhead-tail      = {!   !}
   ; Rhead-0h        = {!   !}
@@ -65,10 +65,11 @@ ringType = record
       r1    = Fin 1
       _r+_ = _⊎_
       _r*_ = _×_
-      rh : (x : Σ Set (λ z → Σ ℕ (λ z₁ → Fin z₁ ≃ z))) → Σ Set (λ z → Σ ℕ (λ z₁ → Fin z₁ ≃ z))
-      rh (X , zero , p)  = (X , zero , p)
-      rh (X , suc n , p) = (Σ[ x ∈ X ] Σ[ m ∈ Fin n ] to p (fsuc m) ≡ x) , (n , record { to = λ x → (to p (fsuc x)) , (x , cong (λ y → to p (fsuc y)) refl) ; from = λ ( x , m , p ) → m ; from∘to = λ x → refl ; to∘from = λ ( x , m , p ) → {! p  !}})
-      rt   = {!   !}
+
+      rh   = {!   !}
+      rt : (x : Σ Set (λ z → Σ ℕ (λ z₁ → Fin z₁ ≃ z))) → Σ Set (λ z → Σ ℕ (λ z₁ → Fin z₁ ≃ z))
+      rt (X , zero , p)  = (X , zero , p)
+      rt (X , suc n , p) = (Σ[ x ∈ X ] Σ[ m ∈ Fin n ] to p (fsuc m) ≡ x) , (n , record { to = λ x → (to p (fsuc x)) , (x , cong (λ y → to p (fsuc y)) refl) ; from = λ ( x , m , p ) → m ; from∘to = λ x → refl ; to∘from = λ ( x , m , p ) → {!   !}})
 
 
 
@@ -78,4 +79,4 @@ c = Fin 4 , (4 , record { to = λ z → z ; from = λ z → z ; from∘to = λ x
 
 d : Σ[ x ∈ ℕ ] Fin x
 d = {!   !} , {!   !}      
-   
+     
