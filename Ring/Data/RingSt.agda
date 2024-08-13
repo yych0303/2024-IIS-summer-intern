@@ -26,7 +26,7 @@ record _≅_ (x y : St A) : Set where
   field
     to   : List A → List A
     from : List A → List A
-    from∘to : ?
+    from∘to : 
     to∘from : ∀ (y : B) → to (from y) ≡ y
 open _≅_
 -}

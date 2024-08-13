@@ -109,8 +109,6 @@ module _ {a b : Level} (rA : Ring {a} ) ( rB : Ring {b}) where
     ; R+-axeqˡ         = λ r r' r'' p → R+-axeqˡ rB (proj₁ r) (proj₁ r') (proj₁ r'') p
     ; R*-axeqˡ         = λ r r' r'' p → R*-axeqˡ rB (proj₁ r) (proj₁ r') (proj₁ r'') p
     }
-     -- where
-
 
 {-
 open import Ring.Data.RingN

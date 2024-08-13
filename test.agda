@@ -2,7 +2,7 @@ open import Data.Nat
 
 open import Term.Base
 open import Term.Eval
-open import Term.Translator
+open import Term.Trns
 
 open import Ring.Data.RingN
 open import Ring.Data.RingLN

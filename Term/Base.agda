@@ -11,8 +11,8 @@ open import Relation.Nullary using (yes; no)
 
 infix  5 `Σ[_∈_]_ `Π[_∈_]_ 
 infixl 6 `C[_,_]  `P[_,_]
-infixl 7  _`*_
 infixl 7  _`+_
+infixl 8  _`*_
 infix  9  [_:=_]_
 infixl 9  [_]`!
 infix  9  `_ $_
