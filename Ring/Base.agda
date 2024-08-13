@@ -46,9 +46,11 @@ record Ring {ℓ : Level} : Set (lsuc ℓ) where
     
     -- head-tail properties ---------
     Rhead-tail       : ∀ (x : R) → (Rhead x R+ Rtail x) ~ x
-    Rhead-0          : ∀ (x : R) → (x ~ R0) ↔ (Rhead x ~ R0)
+    Rhead-0h         : ∀ (x : R) → (x ~ R0) → (Rhead x ~ R0)
+    Rhead-h0         : ∀ (x : R) → (Rhead x ~ R0) → (x ~ R0)
     Rhead-n0         : ∀ (x : R) → (¬(x ~ R0)) → (Rhead x ~ R1) 
-    Rtail-01         : ∀ (x : R) → ((x ~ R0) ⊎ (x ~ R1)) ↔ (Rtail x ~ R0)
+    Rtail-01t        : ∀ (x : R) → ((x ~ R0) ⊎ (x ~ R1)) → (Rtail x ~ R0)
+    Rtail-t01        : ∀ (x : R) → (Rtail x ~ R0) → ((x ~ R0) ⊎ (x ~ R1))
 
     Rhead-~          : ∀ {x y : R} → (x ~ y) → (Rhead x ~ Rhead y)
     Rtail-~          : ∀ {x y : R} → (x ~ y) → (Rtail x ~ Rtail y)
@@ -81,10 +83,12 @@ record Ring {ℓ : Level} : Set (lsuc ℓ) where
   ; ~-refl          = ?          
   ; ~-trans         = ?         
   ; ~-sym           = ?
-  ; Rhead-tail      = ?
-  ; Rhead-0         = ?
-  ; Rhead-n0        = ? 
-  ; Rtail-01        = ?
+  ; Rhead-tail      = ? 
+  ; Rhead-0h        = ? 
+  ; Rhead-h0        = ? 
+  ; Rhead-n0        = ?  
+  ; Rtail-01t       = ? 
+  ; Rtail-t01       = ? 
   ; Rhead-~         = ?  
   ; Rtail-~         = ?   
   ; R+-identityˡ    = ?

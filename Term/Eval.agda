@@ -48,7 +48,7 @@ module _ {ℓ : Level} (ring : Ring {ℓ}) where
   ...          | (` v)            = v
   ...          | ($ i)            = R0   -- not possible
   ...          | (t `+ t₁)        = (eval t) R+ (eval t₁)
-  ...          | (t `* t₁)        = (eval t) R+ (eval t₁)
+  ...          | (t `* t₁)        = (eval t) R* (eval t₁)
   ...          | `P[ t , t₁ ]     = rP (eval t) (eval t₁)
   ...          | `C[ t , t₁ ]     = rC (eval t) (eval t₁)
   ...          | (`Σ[ i ∈ l ] t)  = rsigma l (λ v → eval ([ i := v ] t))

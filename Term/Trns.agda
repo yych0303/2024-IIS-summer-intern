@@ -1,4 +1,4 @@
-module Term.Translator where
+module Term.Trns where
 -- Translate Term A to Term B
 
 open import Term.Base

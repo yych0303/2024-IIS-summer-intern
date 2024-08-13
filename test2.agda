@@ -5,8 +5,37 @@ open import Ring.Data.RingType
 open import Term.Base
 open import Term.Eval
 
+open import Data.Fin.Base
+open import Ring.Data.Func
+
+open import Term.Trns
+
+variable
+  X Y : Set
 
 
+
+-- LN
+open import Ring.Data.RingLN
+
+fev = ` (funcℕListℕ 2) `+ ` (funcℕListℕ 4)
+fea = ` (funcℕListℕ 4) `* ` (funcℕListℕ 2)
+sss = eval ringListℕ fev
+
+
+
+
+
+ev = ` (funcℕType 2) `+ ` (funcℕType 4)
+ea = ` (funcℕType 4) `+ ` (funcℕType 2)
+T = Ring._~_ ringType (eval ringType ev) (eval ringType ea)
+
+r : Ring._~_ ringType (eval ringType ev) (eval ringType ea)
+
+r = {!   !}
+
+
+en = ` (2) `+ ` (4)
 
 
 embNN : Embedding ringℕ ringℕ
@@ -20,4 +49,23 @@ embNN = record
   ; E* = {!   !}
   ; E~ = {!   !}
   }
+
+open import Term.TermReasoning
+
+open RS ringType
+
+gv = ` (funcℕType 2) `+ ` (funcℕType 4)
+ga = ` (funcℕType 4) `+ ` (funcℕType 2)
+
+h : gv ≈ ga 
+h = {!   !}
+
+
+
+
+
+
+
+
+
 

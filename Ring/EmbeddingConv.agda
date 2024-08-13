@@ -88,10 +88,14 @@ module _ {a b : Level} (rA : Ring {a} ) ( rB : Ring {b}) where
     ; ~-trans         = ~-trans rB         
     ; ~-sym           = ~-sym rB
 
-    ; Rhead-tail       = λ r → Rhead-tail rB (proj₁ r)
-    ; Rhead-0          = λ r → Rhead-0 rB (proj₁ r)
-    ; Rhead-n0         = λ r f → Rhead-n0 rB (proj₁ r) f 
-    ; Rtail-01         = λ r → Rtail-01 rB (proj₁ r) 
+    ; Rhead-tail      = λ r → Rhead-tail rB (proj₁ r)
+    
+    ; Rhead-0h        = λ r → Rhead-0h rB (proj₁ r)
+    ; Rhead-h0        = λ r → Rhead-h0 rB (proj₁ r) 
+    ; Rhead-n0        = λ r f → Rhead-n0 rB (proj₁ r) f  
+    ; Rtail-01t       = λ r → Rtail-01t rB (proj₁ r)
+    ; Rtail-t01       = λ r → Rtail-t01 rB (proj₁ r) 
+     
     ; Rhead-~          = Rhead-~ rB
     ; Rtail-~          = Rtail-~ rB
 

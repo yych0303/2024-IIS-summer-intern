@@ -23,14 +23,14 @@ open import Agda.Primitive
 open import Term.Base
 open import Term.Eval
 open import Ring.Base
--- open import Relation.Binary.Core
+-- open import Relation.Binary.Cores
 -- open import Relation.Binary.Bundles
 
 private    
   variable 
     c ℓ : Level
 
-module _ {ℓ : Level} (ring : Ring {ℓ}) where
+module RS {ℓ : Level} (ring : Ring {ℓ}) where
   open Ring ring
 
   infix 0 _≈_
