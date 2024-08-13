@@ -66,11 +66,15 @@ embNN = record
 open Embedding
 open import Data.Nat
 
+f : ℕ → ℕ
+f = {!   !}
 postulate
-  p : ∀ (u v w : ℕ) → (u + v) ≡ w
+  p : ∀ (u w : ℕ) → f u ≡ w
 
-q : ∀ (u v w : ℕ) → u + v ≡ w 
-q = λ u v w → E~ embNN (p u v w) 
+q : ∀ (u v w : ℕ) → f u ≡ w 
+q = λ u v w → E~ embNN (p u w) 
+
+
 
 module _ where
 
