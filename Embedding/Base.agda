@@ -25,7 +25,7 @@ module _ {a b : Level} (rA : Ring {a} ) ( rB : Ring {b}) where
       E* : ∀ (x y : R rA) → _~_ rB (EF (_R*_ rA x y)) (_R*_ rB (EF x) (EF y))
 
       -- Embedding
-      E~ : ∀ {x y : R rA} → _~_ rA x y → _~_ rB (EF x) (EF y) 
+      E~ : ∀ (x y : R rA) → _~_ rA x y → _~_ rB (EF x) (EF y) 
   open Embedding    
 
 
