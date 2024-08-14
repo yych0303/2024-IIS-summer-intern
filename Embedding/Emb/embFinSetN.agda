@@ -1,3 +1,4 @@
+{-# OPTIONS --allow-unsolved-metas #-}
 module Embedding.Emb.embFinSetN where
 
 open import Embedding.Base

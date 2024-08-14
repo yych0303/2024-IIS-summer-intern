@@ -76,10 +76,10 @@ ringFinSet : Ring
 ringFinSet = record 
   { R               = FinSet --       
   ; R0              = record { Carrier = Fin 0 ; list = [] ; proof = λ () ; minimal = {!   !} }             
-  ; R1              = record { Carrier = Fin 1 ; list = [ fzero ] ; proof = λ { fzero → here } ; minimal = {!   !} }--     
+  ; R1              = record { Carrier = Fin 1 ; list = [ fzero ] ; proof = λ { fzero → here } ; minimal = λ l p → {!  !} }--     
   ; Rhead           = {!   !} --
   ; Rtail           = {!   !} --       
-  ; _R+_            = λ x y → record { Carrier = Carrier x ⊎ Carrier y ; list = (map inj₁ (list x)) ++ (map inj₂ (list y)) ; proof = λ { (inj₁ z) → left (congm inj₁ (proof x z)) ; (inj₂ z) → right (congm inj₂ (proof y z))} ; minimal = {!   !}  }         
+  ; _R+_            = λ x y → record { Carrier = Carrier x ⊎ Carrier y ; list = (map inj₁ (list x)) ++ (map inj₂ (list y)) ; proof = λ { (inj₁ z) → left (congm inj₁ (proof x z)) ; (inj₂ z) → right (congm inj₂ (proof y z))} ; minimal = λ l p → {!   !}  }         
   ; _R*_            = λ x y → record { Carrier = Carrier x × Carrier y ; list = cartesianProduct (list x) (list y) ; proof = {!   !} ; minimal = {!   !} }             
   ; _~_             = λ x y → Carrier x ≃ Carrier y           
   ; ~-R0            = {!   !}
