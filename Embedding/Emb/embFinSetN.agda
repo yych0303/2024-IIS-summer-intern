@@ -1,3 +1,5 @@
+module Embedding.Emb.embFinSetN where
+
 open import Embedding.Base
 
 open import Data.Nat.Base using (_≤_)
@@ -8,7 +10,7 @@ open import Data.List using (List; map)
 open import Relation.Binary.PropositionalEquality.Core using (cong₂)
 open import Ring.Data.RingN
 -- open import Ring.Data.RingSt
-open import Ring.Data.RingKu
+open import Ring.Data.RingFinSet
 
 open import Data.List.Properties
 
@@ -42,8 +44,8 @@ private
       
   
 
-embTN : Embedding ringType ringℕ
-embTN = record
+embFinSetN : Embedding ringFinSet ringℕ
+embFinSetN = record
   { EF = λ x → length (list x)                                       
   ; E0 = refl                                       
   ; E1 = refl                                       

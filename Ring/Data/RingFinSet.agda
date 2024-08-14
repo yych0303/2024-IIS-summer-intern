@@ -1,5 +1,5 @@
 {-# OPTIONS --allow-unsolved-metas #-}
-module Ring.Data.RingKu where
+module Ring.Data.RingFinSet where
 
 open import Ring.Base 
 -- Ring Type ---------------------------------------------------- 
@@ -73,8 +73,8 @@ open import Data.Sum using (_⊎_; inj₁; inj₂) public
 
 open import Data.Fin using (Fin; toℕ; Fin′; cast; fromℕ; join; splitAt) renaming (suc to fsuc ; zero to fzero)
 open import Data.Fin.Properties
-ringType : Ring
-ringType = record 
+ringFinSet : Ring
+ringFinSet = record 
   { R               = FinSet --       
   ; R0              = record { Carrier = Fin 0 ; list = [] ; proof = λ () ; minimal = {!   !} }             
   ; R1              = record { Carrier = Fin 1 ; list = [ fzero ] ; proof = λ { fzero → here } ; minimal = {!   !} }--     
