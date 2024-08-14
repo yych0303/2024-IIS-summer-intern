@@ -38,19 +38,22 @@ data _∈_ {i : Level} {A : Set i} (a : A) : (x : List A) → Set i where
   here  : a ∈ [ a ]
   left  : ∀ {x y} → (a∈x : a ∈ x) → a ∈ (x ++ y)
   right : ∀ {x y} → (a∈y : a ∈ y) → a ∈ (x ++ y)
-  
 
-  
+
 congm : ∀ {i : Level} {A B : Set i} {b : B} {s : List B} → (f : B → A) → (b∈s : b ∈ s) → (f b) ∈ (map f s)
 congm {b = b} {s = .([ b ])} f here = here
 congm {b = b} {s = .(x ++ y)} f (left {x = x} {y = y} b∈x) =  subst (_∈_ (f b)) (sym (map-++ f x y)) (left {x = map f x} {y = map f y} (congm f b∈x))
 congm {b = b} {s = .(x ++ y)} f (right {x = x} {y = y} b∈y) = subst (_∈_ (f b)) (sym (map-++ f x y)) (right {x = map f x} {y = map f y} (congm f b∈y))
+
+
+open import Data.Nat
 
 record FinSet {i : Level} : Set (lsuc i) where
   field
     Carrier : Set i
     list : List Carrier
     proof : (x : Carrier) → x ∈ list
+    minimal : (l : List Carrier) → ((x : Carrier) → x ∈ l) → length list ≤ length l
 open FinSet
 
 
@@ -64,16 +67,16 @@ open import Data.Fin.Properties
 ringType : Ring
 ringType = record 
   { R               = FinSet --       
-  ; R0              = record { Carrier = Fin 0 ; list = [] ; proof = λ () }             
-  ; R1              = record { Carrier = Fin 1 ; list = [ fzero ] ; proof = λ { fzero → here } } --     
+  ; R0              = record { Carrier = Fin 0 ; list = [] ; proof = λ () ; minimal = {!   !} }             
+  ; R1              = record { Carrier = Fin 1 ; list = [ fzero ] ; proof = λ { fzero → here } ; minimal = {!   !} } --     
   ; Rhead           = {!   !} --
   ; Rtail           = {!   !} --       
-  ; _R+_            = λ x y → record { Carrier = Carrier x ⊎ Carrier y ; list = (map inj₁ (list x)) ++ (map inj₂ (list y)) ; proof = λ { (inj₁ z) → left (congm inj₁ (proof x z)) ; (inj₂ z) → right (congm inj₂ (proof y z))} }         
-  ; _R*_            = λ x y → record { Carrier = Carrier x × Carrier y ; list = cartesianProduct (list x) (list y) ; proof = {!   !} }             
+  ; _R+_            = λ x y → record { Carrier = Carrier x ⊎ Carrier y ; list = (map inj₁ (list x)) ++ (map inj₂ (list y)) ; proof = λ { (inj₁ z) → left (congm inj₁ (proof x z)) ; (inj₂ z) → right (congm inj₂ (proof y z))} ; minimal = {!   !}  }         
+  ; _R*_            = λ x y → record { Carrier = Carrier x × Carrier y ; list = cartesianProduct (list x) (list y) ; proof = {!   !} ; minimal = {!   !} }             
   ; _~_             = λ x y → Carrier x ≃ Carrier y           
-  ; ~-R0            = {!   !} --λ { ( _ , 0 , _ ) → true ; _ → false }    
-  ; ~-refl          = {!   !} --record { to = λ z → z ; from = λ z → z ; from∘to = λ x₁ → refl ; to∘from = λ y → refl }         
-  ; ~-trans         = {!   !} --λ p q → record { to = (to q) ∘ (to p) ; from = (from p) ∘ (from q) ; from∘to = {!   !} ; to∘from = {!   !} }         
+  ; ~-R0            = {!   !}
+  ; ~-refl          = {!   !}         
+  ; ~-trans         = {!   !}        
   ; ~-sym           = {!   !}
   ; Rhead-tail      = {!   !}
   ; Rhead-0h        = {!   !}

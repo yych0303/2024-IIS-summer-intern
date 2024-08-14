@@ -24,7 +24,16 @@ embNN = record
 
 
 
+open import Level
 
-
+length-eq : ∀ {i : Level} {A B : Set i} {x y : FinSet} (p : Carrier x ≃ Carrier y) → length (list x) ≡ length (list y)
+length-eq {x = x} {y = y} p = 
+  begin
+    length (list x)
+  ≡⟨ cong (length ∘ map (to p)) (refl {x = list x}) ⟩
+    length (map (to p) (list x))
+  ≡⟨ length-map (to p) (list x) ⟩
+    length (list y)
+  ∎
 
   
