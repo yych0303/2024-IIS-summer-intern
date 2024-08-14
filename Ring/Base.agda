@@ -17,9 +17,9 @@ data Bool : Set where
 open import Agda.Primitive
 -- open import Agda.Builtin.Equality
 open import Relation.Binary.Core using (Rel)
-open import Relation.Nullary using (Dec; ¬_) public
-open import Data.Sum using (_⊎_) public
-open import Data.Empty public
+open import Relation.Nullary using (Dec; ¬_)
+open import Data.Sum using (_⊎_)
+
 
 -- Commutative Ring
 record Ring {ℓ : Level} : Set (lsuc ℓ) where

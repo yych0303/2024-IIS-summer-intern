@@ -9,15 +9,11 @@ open import Level using (_⊔_)
 open import Data.Nat using (ℕ; zero; suc; _+_)
 open import Function using (_∘_)
 
-open import Data.Fin using (Fin; toℕ; Fin′; cast; fromℕ; join; splitAt) renaming (suc to fsuc ; zero to fzero)
-
-open import Data.List
 
 -- open import Data.Sum using (_⊎_; inj₁; inj₂; [_,_] ) public
 import Relation.Binary.PropositionalEquality as Eq
-open Eq using (_≡_; refl; cong; cong-app; trans) public
+open Eq using (_≡_; refl; cong; cong-app; trans; subst; sym) public
 
-open import Data.Product public
 
 infix 0 _≃_
 record _≃_ {a b : Level} (A : Set a) (B : Set b) : Set (a ⊔ b) where
@@ -28,30 +24,53 @@ record _≃_ {a b : Level} (A : Set a) (B : Set b) : Set (a ⊔ b) where
     to∘from : ∀ (y : B) → to (from y) ≡ y
 open _≃_
 
+open import Level
+
+
+
+
+open import Data.List
+open import Data.List.Properties
+infix 7 _∈_
+
+
+data _∈_ {i : Level} {A : Set i} (a : A) : (x : List A) → Set i where
+  here  : a ∈ [ a ]
+  left  : ∀ {x y} → (a∈x : a ∈ x) → a ∈ (x ++ y)
+  right : ∀ {x y} → (a∈y : a ∈ y) → a ∈ (x ++ y)
+  
+
+  
+congm : ∀ {i : Level} {A B : Set i} {b : B} {s : List B} → (f : B → A) → (b∈s : b ∈ s) → (f b) ∈ (map f s)
+congm {b = b} {s = .([ b ])} f here = here
+congm {b = b} {s = .(x ++ y)} f (left {x = x} {y = y} b∈x) =  subst (_∈_ (f b)) (sym (map-++ f x y)) (left {x = map f x} {y = map f y} (congm f b∈x))
+congm {b = b} {s = .(x ++ y)} f (right {x = x} {y = y} b∈y) = subst (_∈_ (f b)) (sym (map-++ f x y)) (right {x = map f x} {y = map f y} (congm f b∈y))
+
+record FinSet {i : Level} : Set (lsuc i) where
+  field
+    Carrier : Set i
+    list : List Carrier
+    proof : (x : Carrier) → x ∈ list
+open FinSet
+
+
+
+open import Data.Product using (_×_)
+open import Data.Sum using (_⊎_; inj₁; inj₂)
 -- Membership relation
 
-data _∈′_ {A : Set ℓ} (a : A) : (x : K A) → Set ℓ where
-  here  : a ∈′ [ a ]
-  left  : ∀ {x y} → (a∈x : a ∈′ x) → a ∈′ x ∪ y
-  right : ∀ {x y} → (a∈y : a ∈′ y) → a ∈′ x ∪ y
-  sq    : ∀ {x}   → isProp (a ∈′ x)
-  
-_∈_ : (a : A) → K A → hProp
-a ∈ x = a ∈′ x , sq
-
-
-Type = Σ[ A ∈ Set ] Σ[ l ∈ List A ] ((a : A) → a ∈ l)
-
+open import Data.Fin using (Fin; toℕ; Fin′; cast; fromℕ; join; splitAt) renaming (suc to fsuc ; zero to fzero)
+open import Data.Fin.Properties
 ringType : Ring
 ringType = record 
-  { R               = {!  Σ[ A  ] !} --       
-  ; R0              = {!   !} --             
-  ; R1              = {!   !} --     
+  { R               = FinSet --       
+  ; R0              = record { Carrier = Fin 0 ; list = [] ; proof = λ () }             
+  ; R1              = record { Carrier = Fin 1 ; list = [ fzero ] ; proof = λ { fzero → here } } --     
   ; Rhead           = {!   !} --
   ; Rtail           = {!   !} --       
-  ; _R+_            = {!   !} --λ (X , n , p) (Y , m , q) → (X ⊎ Y) , n + m , record { to = [ inj₁ ∘ to p , inj₂ ∘ to q ] ∘ splitAt n ; from = join n m ∘ [ inj₁ ∘ from p , inj₂ ∘ from q ] ; from∘to = {!   !} ; to∘from = {!   !} }         
-  ; _R*_            = {!   !} --{!   !}             
-  ; _~_             = {!   !} --λ rX rY → proj₁ rX ≃ proj₁ rY           
+  ; _R+_            = λ x y → record { Carrier = Carrier x ⊎ Carrier y ; list = (map inj₁ (list x)) ++ (map inj₂ (list y)) ; proof = λ { (inj₁ z) → left (congm inj₁ (proof x z)) ; (inj₂ z) → right (congm inj₂ (proof y z))} }         
+  ; _R*_            = λ x y → record { Carrier = Carrier x × Carrier y ; list = cartesianProduct (list x) (list y) ; proof = {!   !} }             
+  ; _~_             = λ x y → Carrier x ≃ Carrier y           
   ; ~-R0            = {!   !} --λ { ( _ , 0 , _ ) → true ; _ → false }    
   ; ~-refl          = {!   !} --record { to = λ z → z ; from = λ z → z ; from∘to = λ x₁ → refl ; to∘from = λ y → refl }         
   ; ~-trans         = {!   !} --λ p q → record { to = (to q) ∘ (to p) ; from = (from p) ∘ (from q) ; from∘to = {!   !} ; to∘from = {!   !} }         
@@ -75,23 +94,7 @@ ringType = record
   ; R+-axeqˡ        = {!   !}
   ; R*-axeqˡ        = {!   !}
   }
-    where
-      r0    = Fin 0
-      r1    = Fin 1
-      _r+_ = _⊎_
-      _r*_ = _×_
-
-      rh   = {!   !}
-      rt : (x : Σ Set (λ z → Σ ℕ (λ z₁ → Fin z₁ ≃ z))) → Σ Set (λ z → Σ ℕ (λ z₁ → Fin z₁ ≃ z))
-      rt (X , zero , p)  = (X , zero , p)
-      rt (X , suc n , p) = (Σ[ x ∈ X ] Σ[ m ∈ Fin n ] to p (fsuc m) ≡ x) , (n , record { to = λ x → (to p (fsuc x)) , (x , cong (λ y → to p (fsuc y)) refl) ; from = λ ( x , m , p ) → m ; from∘to = λ x → refl ; to∘from = λ ( x , m , p ) → {!   !}})
+      
 
 
 
-
-c : Σ[ X ∈ Set ] Σ[ n ∈ ℕ ] (Fin n ≃ X)
-c = Fin 4 , (4 , record { to = λ z → z ; from = λ z → z ; from∘to = λ x → refl ; to∘from = λ y → refl })
-
-d : Σ[ x ∈ ℕ ] Fin x
-d = {!   !} , {!   !}      
-     
