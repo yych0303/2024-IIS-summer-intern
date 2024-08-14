@@ -39,10 +39,10 @@ module _ {a b : Level} (rA : Ring {a} ) ( rB : Ring {b}) where
       EF : R rA → R rB
       E0 : _~_ rB (EF (R0 rA)) (R0 rB) 
       E1 : _~_ rB (EF (R1 rA)) (R1 rB) 
-      Eh : ∀ {x : R rA} → _~_ rB (EF (Rhead rA x)) (Rhead rB (EF x)) 
-      Et : ∀ {x : R rA} → _~_ rB (EF (Rtail rA x)) (Rtail rB (EF x)) 
-      E+ : ∀ {x y : R rA} → _~_ rB (EF (_R+_ rA x y)) (_R+_ rB (EF x) (EF y)) 
-      E* : ∀ {x y : R rA} → _~_ rB (EF (_R*_ rA x y)) (_R*_ rB (EF x) (EF y))
+      Eh : ∀ (x : R rA) → _~_ rB (EF (Rhead rA x)) (Rhead rB (EF x)) 
+      Et : ∀ (x : R rA) → _~_ rB (EF (Rtail rA x)) (Rtail rB (EF x)) 
+      E+ : ∀ (x y : R rA) → _~_ rB (EF (_R+_ rA x y)) (_R+_ rB (EF x) (EF y)) 
+      E* : ∀ (x y : R rA) → _~_ rB (EF (_R*_ rA x y)) (_R*_ rB (EF x) (EF y))
 
       -- Embedding
       E~ : ∀ {x y : R rA} → _~_ rA x y → _~_ rB (EF x) (EF y) 
@@ -76,10 +76,10 @@ module _ {a b : Level} (rA : Ring {a} ) ( rB : Ring {b}) where
     { R               = Σ[ y ∈ B ] Σ[ x ∈ A ] (EF embd x ~B y) 
     ; R0              = R0B , R0A , E0 embd             
     ; R1              = R1B , R1A , E1 embd    
-    ; Rhead           = λ (y , x , p) → RhB y , RhA x , ~-trans rB (Eh embd) (Rhead-~ rB p)
-    ; Rtail           = λ (y , x , p) → RtB y , RtA x , ~-trans rB (Et embd) (Rtail-~ rB p)
-    ; _R+_            = λ (y , x , p) (y' , x' , p') → (y R+B y') , (x R+A x') , ~-trans rB (E+ embd) (R+-axeq rB _ _ _ _ p p')           
-    ; _R*_            = λ (y , x , p) (y' , x' , p') → (y R*B y') , (x R*A x') , ~-trans rB (E* embd) (R*-axeq rB _ _ _ _ p p')
+    ; Rhead           = λ (y , x , p) → RhB y , RhA x , ~-trans rB (Eh embd x) (Rhead-~ rB p)
+    ; Rtail           = λ (y , x , p) → RtB y , RtA x , ~-trans rB (Et embd x) (Rtail-~ rB p)
+    ; _R+_            = λ (y , x , p) (y' , x' , p') → (y R+B y') , (x R+A x') , ~-trans rB (E+ embd x x') (R+-axeq rB _ _ _ _ p p')           
+    ; _R*_            = λ (y , x , p) (y' , x' , p') → (y R*B y') , (x R*A x') , ~-trans rB (E* embd x x') (R*-axeq rB _ _ _ _ p p')
     ; _~_             = λ (y , _ , _) (y' , _ , _) → (y ~B y') -- _~B_           
     ; ~-R0            = λ (y , _ , _) → ~-R0 rB y -- isDecEquivR0 rB    
     

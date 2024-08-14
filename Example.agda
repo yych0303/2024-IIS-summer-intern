@@ -1,5 +1,5 @@
 open import Term.Base
-open import Term.Eval
+open import Term.Evaluate
 open import Ring.Data.RingN
 
 
@@ -18,8 +18,8 @@ open import Ring.Data.RingSt
 ex3 = `C[ ` ([ 4 ] ∷ [ 3 ] ∷ [ 2 ] ∷ [ 1 ] ∷ [ 0 ] ∷ []) , ` ([ 2 ] ∷ [ 1 ] ∷ [ 0 ] ∷ []) ] 
 ex3st = eval (ringSt ℕ) ex3
 
-open import Term.Trns
-open import Ring.Data.Func -- funcℕStℕ
+open import Term.Translate
+open import Embedding.Func -- funcℕStℕ
 
 
 -- C 5 3 as list of list by translator

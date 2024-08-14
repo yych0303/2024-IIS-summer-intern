@@ -1,10 +1,12 @@
-open import Ring.EmbeddingConv
+open import Embedding.Base
 
 
-
+open import Relation.Binary.PropositionalEquality.Core using (cong₂)
 open import Ring.Data.RingN
 -- open import Ring.Data.RingSt
 open import Ring.Data.RingKu
+
+open import Data.List.Properties
 
 open FinSet
 
@@ -15,21 +17,11 @@ embNN = record
   ; E1 = refl                                       
   ; Eh = {!   !}                                       
   ; Et = {!   !}                                        
-  ; E+ = {!   !}                                         
+  ; E+ = λ x y → trans (length-++ (map inj₁ (list x)) {map inj₂ (list y)}) (cong₂ _+_ (length-map inj₁ (list x)) (length-map inj₂ (list y)))                              
   ; E* = {!   !}                                       
   ; E~ = λ p → {!   !}                                       
   }
 
-
-
-
-open import Term.Base
-open import Term.Eval
-
--- open import Data.Fin.Base
-open import Ring.Data.Func
-
-open import Term.Trns
 
 
 

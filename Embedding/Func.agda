@@ -1,5 +1,5 @@
 {-# OPTIONS --allow-unsolved-metas #-}
-module Ring.Data.Func where
+module Embedding.Func where
 
 open import Ring.Data.RingN
 open import Ring.Data.RingLN

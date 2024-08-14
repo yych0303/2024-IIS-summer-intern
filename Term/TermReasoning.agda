@@ -20,9 +20,9 @@ eval ringR               eval ringℕ
 -}
 
 open import Agda.Primitive
-open import Term.Base
-open import Term.Eval
 open import Ring.Base
+open import Term.Base
+open import Term.Evaluate
 -- open import Relation.Binary.Cores
 -- open import Relation.Binary.Bundles
 

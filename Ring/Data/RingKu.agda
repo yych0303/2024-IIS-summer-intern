@@ -56,7 +56,7 @@ open FinSet
 
 
 open import Data.Product using (_×_)
-open import Data.Sum using (_⊎_; inj₁; inj₂)
+open import Data.Sum using (_⊎_; inj₁; inj₂) public
 -- Membership relation
 
 open import Data.Fin using (Fin; toℕ; Fin′; cast; fromℕ; join; splitAt) renaming (suc to fsuc ; zero to fzero)

@@ -1,5 +1,5 @@
 {-# OPTIONS --allow-unsolved-metas #-}
-module Term.Eval where
+module Term.Evaluate where
 
 -- Evaluate Term R to R
 -- eval : Ring → Term R → R ----------------------

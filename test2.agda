@@ -1,15 +1,15 @@
-open import Ring.EmbeddingConv
+open import Embedding.Base
 open import Ring.Data.RingN
 open import Ring.Data.RingSt
 open import Ring.Data.RingType
 
 open import Term.Base
-open import Term.Eval
+open import Term.Evaluate
 
 -- open import Data.Fin.Base
-open import Ring.Data.Func
+open import Embedding.Func
 
-open import Term.Trns
+open import Term.Translate
 
 
 
@@ -50,7 +50,7 @@ r = record { to = {! [ ? , ? ]  !} ; from = {!   !} ; from∘to = {!   !} ; to�
 
 en = ` (2) `+ ` (4)
 
-
+{-
 embNN : Embedding ringℕ ringℕ
 embNN = record
   { EF = λ x → x
@@ -107,7 +107,7 @@ module _ where
 --  h : gv ≈ ga 
 --  h = ≈-begin {! gv !} ≈⟨ {!   !} ⟩ {!ga  !}  ≈-∎
 
-
+-}
 
 
 
