@@ -39,10 +39,6 @@ private
       proof-tx : (b : Carrier y) → b ∈ tx
       proof-tx b = substm (to∘from p b) (congm (to p) (proof x (from p b)))
   
-  length-eq : ∀ {i : Level} {x y : FinSet {i}} (p : Carrier x ≃ Carrier y) → length (list x) ≡ length (list y)
-  length-eq {x = x} {y = y} p = ≤-antisym (length-≤ {x = x} {y = y} p) (length-≥ {x = x} {y = y} p)
-      
-  
 
 embFinSetN : Embedding ringFinSet ringℕ
 embFinSetN = record
