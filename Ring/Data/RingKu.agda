@@ -6,6 +6,7 @@ open import Ring.Base
 
 open import Agda.Primitive
 open import Level using (_⊔_)
+open import Level
 open import Data.Nat using (ℕ; zero; suc; _+_)
 open import Function using (_∘_)
 
@@ -24,12 +25,11 @@ record _≃_ {a b : Level} (A : Set a) (B : Set b) : Set (a ⊔ b) where
     to∘from : ∀ (y : B) → to (from y) ≡ y
 open _≃_
 
-open import Level
 
 
 
 
-open import Data.List
+open import Data.List.Base public
 open import Data.List.Properties
 infix 7 _∈_
 

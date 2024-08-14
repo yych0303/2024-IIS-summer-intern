@@ -6,18 +6,18 @@ open import Ring.Data.RingN
 -- open import Ring.Data.RingSt
 open import Ring.Data.RingKu
 
+open FinSet
 
-
-embNN : Embedding ringℕ ringℕ
+embNN : Embedding ringType ringℕ
 embNN = record
-  { EF = λ x → x
-  ; E0 = refl
-  ; E1 = refl
-  ; Eh = refl
-  ; Et = refl 
-  ; E+ = refl  
-  ; E* = refl
-  ; E~ = λ p → p
+  { EF = λ x → length (list x)                                       
+  ; E0 = refl                                       
+  ; E1 = refl                                       
+  ; Eh = {!   !}                                       
+  ; Et = {!   !}                                        
+  ; E+ = {!   !}                                         
+  ; E* = {!   !}                                       
+  ; E~ = λ p → {!   !}                                       
   }
 
 
