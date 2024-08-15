@@ -64,12 +64,6 @@ substm refl a∈x = a∈x
 
 
 
-
-
-
-
-
-
 open import Data.Nat.Base
 
 
@@ -81,66 +75,3 @@ record FinSet {i : Level} : Set (lsuc i) where
     minimal : (l : List Carrier) → ((x : Carrier) → x ∈ l) → length list ≤ length l
 open FinSet public
 
-
-
-
-open import Data.Fin using (Fin) renaming (suc to fsuc ; zero to fzero)
-open import Data.Fin.Properties
-
-    
-open import Agda.Primitive
-open import Level
-
-
-
--- minimal
-
--- _ : ∀ {i : Level} (x : FinSet {i}) → (c : Carrier x) → (x ∈ list x ) ≃ Fin 1 
--- _ = ?
-
-
-
-
-dd : ∀ {i : Level} (X : FinSet {i}) → (a : Carrier X) → (a ∈ list X ) ≃ (Fin 1) 
-dd X a = record { to = λ _ → fzero ; from = λ _ → proof X a ; from∘to = λ x₁ → {! refl  !} ; to∘from = λ y → {!   !} }
-
-
-
-
-
-
-
-nonept : ∀ {i : Level} {A : Set i} {a : A} → (x : List A) → a ∈ x → ¬ (x ≡ []) 
-nonept [] ()
-nonept (x ∷ xs) _ = λ ()
-
-
-
--- Func N → FinSet
-
-L : (n : ℕ) → List (Fin n)
-L zero = []
-L (suc n) = fzero ∷ map fsuc (L n)
-
-P : (n : ℕ) → (x : Fin n) → x ∈ L n
-P zero = λ ()
-P (suc n) fzero = left here
-P (suc n) (fsuc x) = right (congm fsuc (P n x))
-
-length-∷ : ∀ {i : Level} {A : Set i} {x : A} → {xs : List A} → length (x ∷ xs) ≡ ℕ.suc (length xs)
-length-∷ = refl
-
-
-M : (n : ℕ) → (l : List (Fin n)) → ((x : Fin n) → x ∈ l) → length (L n) ≤ length l
-M zero = λ l _ → z≤n
-M (suc n) [] p = ⊥-elim ( nonept [] (p fzero) refl )
-M (suc n) (fzero ∷ l) p = s≤s {!   !}
-M (suc n) (fsuc x ∷ l) p = {! ≤-trans length-∷ ?  !}
-
-
-
-F : ℕ → FinSet { lzero }
-F = λ n → record { Carrier = Fin n ; list = L n ; proof = P n ; minimal = {!   !} }
-
- 
- 

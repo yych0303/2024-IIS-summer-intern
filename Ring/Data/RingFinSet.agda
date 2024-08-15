@@ -2,39 +2,29 @@
 module Ring.Data.RingFinSet where
 
 open import Ring.Base 
--- Ring Type ---------------------------------------------------- 
+-- Ring FinSet ---------------------------------------------------- 
 
-open import Agda.Primitive
-open import Level
-open import Data.Nat using (ℕ; zero; suc; _+_)
-open import Function using (_∘_)
+open import Level using (Level)
+open import Data.Nat using (ℕ; zero; suc; _+_; _≤_; z≤n)
 
 
 import Relation.Binary.PropositionalEquality as Eq
 open Eq using (_≡_; refl; cong; cong-app; trans; subst; sym) public
 
 
-open import FinSet public
-
-
-
-
 open import Data.List.Base public
 open import Data.List.Properties
 
 
--- finset -----------------------------------------------------------------
-open import Data.Nat
-
-
-
-open import Data.Product using (_×_)
-open import Data.Sum using (_⊎_; inj₁; inj₂) public
 
 open import Data.Fin using (Fin) renaming (suc to fsuc ; zero to fzero)
 open import Data.Fin.Properties
 
+open import Data.Product using (_×_)
+open import Data.Sum using (_⊎_; inj₁; inj₂) public
 
+-- Files -----------------------------------------------------------------
+open import FinSet public
 
 
 

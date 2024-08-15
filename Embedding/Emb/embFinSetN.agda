@@ -1,24 +1,29 @@
 {-# OPTIONS --allow-unsolved-metas #-}
 module Embedding.Emb.embFinSetN where
 
-open import Relation.Binary.PropositionalEquality
-open ≡-Reasoning
-open import Level
+
+-- import Reasoning ≡ ≤ ----------------------------------
+import Data.Nat.Properties as Np
+open Np.≤-Reasoning renaming (begin_ to ≤-begin_; _∎ to _≤-∎) hiding (step-≡-∣; step-≡-⟩)
+import Relation.Binary.PropositionalEquality as Eq
+open Eq.≡-Reasoning renaming (begin_ to ≡-begin_; _∎ to _≡-∎)
+
+open Eq using (cong₂) public -- _≡_; refl; cong; cong-app; trans; subst; sym; 
+
+
+
+open import Level using (Level)
 
 open import Data.Nat.Base -- using (_≤_)
 open import Data.Nat.Properties using (≤-refl; ≤-antisym; ≤-trans; ≤-reflexive )
 open import Data.List using (List; map)
 open import Data.List.Properties
 
+-- Files
 
-
-open import Embedding.Base
-open import Relation.Binary.PropositionalEquality.Core using (cong₂)
+open import Embedding.Base public
 open import Ring.Data.RingN
 open import Ring.Data.RingFinSet
-
-open FinSet
-
 
 
 
@@ -48,7 +53,7 @@ private
   length-cart : ∀ {a b c : Level} {A : Set a} {B : Set b} {C : Set c} → (f : A → B → C) (xs  : List A) → (ys  : List B) → length (cartesianProductWith f xs ys ) ≡ length xs * length ys
   length-cart f [] ys = refl
   length-cart f (x ∷ xs) ys = 
-      begin 
+      ≡-begin 
         length (cartesianProductWith f (x ∷ xs) ys)
       ≡⟨⟩
         length (map (f x) ys ++ cartesianProductWith f xs ys)
@@ -62,7 +67,7 @@ private
         (1 + length xs) * length ys
       ≡⟨⟩
         length (x ∷ xs) * length ys
-      ∎
+      ≡-∎
     
     
     --rewrite (length-++  (map (f x) ys) {cartesianProductWith f xs ys} ) | length-map (f x) ys  =  trans refl (trans {! cong (length ys +_) length-cart f xs ys  !} refl ) -- cong (length ys +_) length-cart f xs ys
@@ -80,4 +85,74 @@ embFinSetN = record
   }
 
 
+
+
+
+
+
+-- Func N → FinSet
+
+
+open import Data.Fin using (Fin) renaming (suc to fsuc ; zero to fzero)
+open import Data.Fin.Properties
+    
+open import Data.Empty using (⊥-elim)
+open import Agda.Primitive using (lzero)
+
+private
+  nonept : ∀ {i : Level} {A : Set i} {a : A} → (x : List A) → a ∈ x → ¬ (x ≡ []) 
+  nonept [] ()
+  nonept (x ∷ xs) _ = λ ()
+  
+  L : (n : ℕ) → List (Fin n)
+  L zero = []
+  L (suc n) = fzero ∷ map fsuc (L n)
+  
+  P : (n : ℕ) → (x : Fin n) → x ∈ L n
+  P zero = λ ()
+  P (suc n) fzero = left here
+  P (suc n) (fsuc x) = right (congm fsuc (P n x))
+  
+  length-∷ : ∀ {i : Level} {A : Set i} {x : A} → {xs : List A} → length (x ∷ xs) ≡ ℕ.suc (length xs)
+  length-∷ = refl
+  
+  M : (n : ℕ) → (l : List (Fin n)) → ((x : Fin n) → x ∈ l) → length (L n) ≤ length l
+  M zero = λ l _ → z≤n
+  M (suc n) [] p = ⊥-elim ( nonept [] (p fzero) refl )
+  M (suc n) (fzero ∷ l) p = s≤s {!   !}
+  M (suc n) (fsuc x ∷ l) p = 
+    ≤-begin
+      length (L (suc n))
+    ≤⟨ {!   !} ⟩
+      length (fsuc x ∷ l)
+    ≤-∎
+    
+    
+
+
+
+F : ℕ → FinSet { lzero }
+F = λ n → record { Carrier = Fin n ; list = L n ; proof = P n ; minimal = {!   !} }
+
+-- EFF : EF F n ≡ n
+open import Data.Nat using (ℕ; zero; suc; _+_)
+open Embedding embFinSetN
+
+EFF : ∀ (n : ℕ) → EF (F n) ≡ n
+EFF zero = refl
+EFF (suc n) =  
+  ≡-begin 
+    EF (F (suc n))
+  ≡⟨⟩
+    length (L (suc n))
+  ≡⟨⟩
+    length (fzero ∷ map fsuc (L n))
+  ≡⟨⟩
+    suc (length (map fsuc (L n)))
+  ≡⟨ cong suc (length-map fsuc ((L n))) ⟩
+    suc (length (L n))
+  ≡⟨ cong suc (EFF n) ⟩
+    suc n
+  ≡-∎
+ 
  
