@@ -11,8 +11,7 @@ eval ringR    eval ringR
 
 -}
 
-data Bool : Set where
- true false : Bool
+open import Agda.Builtin.Bool public
 
 open import Agda.Primitive
 -- open import Agda.Builtin.Equality

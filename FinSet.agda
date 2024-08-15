@@ -72,12 +72,32 @@ open import Data.Fin using (Fin) renaming (suc to fsuc ; zero to fzero)
 open import Data.Fin.Properties
 
     
+open import Agda.Primitive
+open import Level
+
+open import Embedding.Emb.embFinSetN using (_≃_)
+
+
+-- minimal
+
+_ : ∀ {i : Level} (x : FinSet {i}) → (c : Carrier x) → (x ∈ list x ) ≃ Fin 1 
+_ = ?
+
+
+
+
+
+
+
 
 
 nonept : ∀ {i : Level} {A : Set i} {a : A} → (x : List A) → a ∈ x → ¬ (x ≡ []) 
 nonept [] ()
 nonept (x ∷ xs) _ = λ ()
 
+
+
+-- Func N → FinSet
 
 L : (n : ℕ) → List (Fin n)
 L zero = []

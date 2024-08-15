@@ -25,24 +25,18 @@ record _≃_ {a b : Level} (A : Set a) (B : Set b) : Set (a ⊔ b) where
 open _≃_ public
 
 
-
-
-
 open import Data.List.Base public
 open import Data.List.Properties
+
+
+
+-- Membership relation
 infix 7 _∈_
 
 data _∈_ {i : Level} {A : Set i} (a : A) : (x : List A) → Set i where
   here  : a ∈ [ a ]
   left  : ∀ {x y} → (a∈x : a ∈ x) → a ∈ (x ++ y)
   right : ∀ {x y} → (a∈y : a ∈ y) → a ∈ (x ++ y)
-
-infix 7 _⊆_
-
-data _⊆_ {i : Level} {A : Set i} : (x y : List A) → Set i where
-  non  : ∀ {y} → [] ⊆ y 
-  addl : ∀ {x y : List A} {a : A} → (x⊆y : x ⊆ y) → {!   !} 
-  addr : {!   !}
 
     
 congm : ∀ {i : Level} {A B : Set i} {b : B} {s : List B} → (f : B → A) → (b∈s : b ∈ s) → (f b) ∈ (map f s)
@@ -54,38 +48,72 @@ substm : ∀ {i : Level} {A : Set i} {a aa : A} {x : List A} → a ≡ aa → (a
 substm refl a∈x = a∈x
 
 
+-------------------------------------------------
+
+{-
+infix 7 _⊆_
+data _⊆_ {i : Level} {A : Set i} : (x y : List A) → Set i where
+  non  : ∀ {y} → [] ⊆ y 
+  addl : ∀ {x y : List A} {a : A} → (x⊆y : x ⊆ y) → {!   !} 
+  addr : {!   !}
+-}
+
+-- finset -----------------------------------------------------------------
 open import Data.Nat
 
 record FinSet {i : Level} : Set (lsuc i) where
   field
     Carrier : Set i
     list : List Carrier
-    proof : (x : Carrier) → x ∈ list
-    minimal : (l : List Carrier) → ((x : Carrier) → x ∈ l) → length list ≤ length l
+    proof : (a : Carrier) → a ∈ list
+    minimal : (l : List Carrier) → ((a : Carrier) → a ∈ l) → length list ≤ length l
 open FinSet
-
 
 
 open import Data.Product using (_×_)
 open import Data.Sum using (_⊎_; inj₁; inj₂) public
--- Membership relation
 
 open import Data.Fin using (Fin) renaming (suc to fsuc ; zero to fzero)
 open import Data.Fin.Properties
+
+
+dd : ∀ {i : Level} (X : FinSet {i}) → (a : Carrier X) → (a ∈ list X ) ≃ (Fin 1) 
+dd X a = record { to = λ _ → fzero ; from = λ _ → proof X a ; from∘to = λ x₁ → {! refl  !} ; to∘from = λ y → {!   !} }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- ring ------------------------------------------------------
+
 ringFinSet : Ring
 ringFinSet = record 
   { R               = FinSet --       
-  ; R0              = record { Carrier = Fin 0 ; list = [] ; proof = λ () ; minimal = {!   !} }             
+  ; R0              = record { Carrier = Fin 0 ; list = [] ; proof = λ () ; minimal = λ l _ → z≤n }             
   ; R1              = record { Carrier = Fin 1 ; list = [ fzero ] ; proof = λ { fzero → here } ; minimal = λ l p → {!  !} }--     
   ; Rhead           = {!   !} --
   ; Rtail           = {!   !} --       
-  ; _R+_            = λ x y → record { Carrier = Carrier x ⊎ Carrier y ; list = (map inj₁ (list x)) ++ (map inj₂ (list y)) ; proof = λ { (inj₁ z) → left (congm inj₁ (proof x z)) ; (inj₂ z) → right (congm inj₂ (proof y z))} ; minimal = λ l p → {!   !}  }         
-  ; _R*_            = λ x y → record { Carrier = Carrier x × Carrier y ; list = cartesianProduct (list x) (list y) ; proof = {!   !} ; minimal = {!   !} }             
-  ; _~_             = λ x y → Carrier x ≃ Carrier y           
-  ; ~-R0            = {!   !}
-  ; ~-refl          = {!   !}         
-  ; ~-trans         = {!   !}        
-  ; ~-sym           = {!   !}
+  ; _R+_            = λ X Y → record { Carrier = Carrier X ⊎ Carrier Y ; list = (map inj₁ (list X)) ++ (map inj₂ (list Y)) ; proof = λ { (inj₁ z) → left (congm inj₁ (proof X z)) ; (inj₂ z) → right (congm inj₂ (proof Y z))} ; minimal = λ l p → {!   !}  }         
+  ; _R*_            = λ X Y → record { Carrier = Carrier X × Carrier Y ; list = cartesianProduct (list X) (list Y) ; proof = {!   !} ; minimal = {!   !} }             
+  ; _~_             = λ X Y → Carrier X ≃ Carrier Y           
+  ; ~-R0            = λ X → null (list X)
+  ; ~-refl          = record { to = λ z → z ; from = λ z → z ; from∘to = λ z → refl ; to∘from = λ z → refl }         
+  ; ~-trans         = λ P Q → record { to = λ a → to Q (to P a) ; from = λ c →  from P (from Q c) ; from∘to = λ a → trans (cong (from P) (from∘to Q _)) (trans (from∘to P _) refl) ; to∘from = λ c → trans (cong (to Q) (to∘from P _)) (trans (to∘from Q _) refl) }        
+  ; ~-sym           = λ P → record { to = from P ; from = to P ; from∘to = to∘from P ; to∘from = from∘to P }
   ; Rhead-tail      = {!   !}
   ; Rhead-0h        = {!   !}
   ; Rhead-h0        = {!   !}
@@ -109,3 +137,4 @@ ringFinSet = record
 
 
 
+    

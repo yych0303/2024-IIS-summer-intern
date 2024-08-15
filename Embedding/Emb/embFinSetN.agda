@@ -3,7 +3,7 @@ module Embedding.Emb.embFinSetN where
 
 open import Embedding.Base
 
-open import Data.Nat.Base using (_≤_)
+open import Data.Nat.Base -- using (_≤_)
 open import Data.Nat.Properties using (≤-refl; ≤-antisym; ≤-trans; ≤-reflexive )
 open import Data.List using (List; map)
 
@@ -21,36 +21,63 @@ open FinSet
 open import Level
 
 private
-  length-≤ : ∀ {i : Level} {x y : FinSet {i}} (p : Carrier x ≃ Carrier y) → length (list x) ≤ length (list y)
-  length-≤ {x = x} {y = y} p = ≤-trans (minimal x fy proof-fy) ( ≤-reflexive  (length-map (from p) (list y)) )
+  length-≤ : ∀ {i : Level} {X Y : FinSet {i}} (P : Carrier X ≃ Carrier Y) → length (list X) ≤ length (list Y)
+  length-≤ {X = X} {Y = Y} P = ≤-trans (minimal X fy proof-fy) ( ≤-reflexive  (length-map (from P) (list Y)) )
     where
-      fy : List (Carrier x)
-      fy = map (from p) (list y)
+      fy : List (Carrier X)
+      fy = map (from P) (list Y)
   
-      proof-fy : (a : Carrier x) → a ∈ fy
-      proof-fy a = substm (from∘to p a) (congm (from p) (proof y (to p a)))
+      proof-fy : (a : Carrier X) → a ∈ fy
+      proof-fy a = substm (from∘to P a) (congm (from P) (proof Y (to P a)))
   
       
-  length-≥ : ∀ {i : Level} {x y : FinSet {i}} (p : Carrier x ≃ Carrier y) → length (list y) ≤ length (list x)
-  length-≥ {x = x} {y = y} p = ≤-trans (minimal y tx proof-tx) ( ≤-reflexive  (length-map (to p) (list x)) )
+  length-≥ : ∀ {i : Level} {X Y : FinSet {i}} (P : Carrier X ≃ Carrier Y) → length (list Y) ≤ length (list X)
+  length-≥ {X = X} {Y = Y} P = ≤-trans (minimal Y tx proof-tx) ( ≤-reflexive  (length-map (to P) (list X)) )
     where
-      tx : List (Carrier y)
-      tx = map (to p) (list x)
+      tx : List (Carrier Y)
+      tx = map (to P) (list X)
   
-      proof-tx : (b : Carrier y) → b ∈ tx
-      proof-tx b = substm (to∘from p b) (congm (to p) (proof x (from p b)))
+      proof-tx : (b : Carrier Y) → b ∈ tx
+      proof-tx b = substm (to∘from P b) (congm (to P) (proof X (from P b)))
   
+
+  open import Relation.Binary.PropositionalEquality
+  open ≡-Reasoning
+
+
+  length-cart : ∀ {a b c : Level} {A : Set a} {B : Set b} {C : Set c} → (f : A → B → C) (xs  : List A) → (ys  : List B) → length (cartesianProductWith f xs ys ) ≡ length xs * length ys
+  length-cart f [] ys = refl
+  length-cart f (x ∷ xs) ys = 
+      begin 
+        length (cartesianProductWith f (x ∷ xs) ys)
+      ≡⟨⟩
+        length (map (f x) ys ++ cartesianProductWith f xs ys)
+      ≡⟨ length-++ (map (f x) ys) {cartesianProductWith f xs ys} ⟩
+        length (map (f x) ys) + length (cartesianProductWith f xs ys)
+      ≡⟨ cong (_+ length (cartesianProductWith f xs ys)) (length-map (f x) ys) ⟩
+        length ys + length (cartesianProductWith f xs ys)
+      ≡⟨ cong (length ys +_) (length-cart f xs ys) ⟩
+        length ys + length xs * length ys
+      ≡⟨⟩
+        (1 + length xs) * length ys
+      ≡⟨⟩
+        length (x ∷ xs) * length ys
+      ∎
+    
+    
+    --rewrite (length-++  (map (f x) ys) {cartesianProductWith f xs ys} ) | length-map (f x) ys  =  trans refl (trans {! cong (length ys +_) length-cart f xs ys  !} refl ) -- cong (length ys +_) length-cart f xs ys
 
 embFinSetN : Embedding ringFinSet ringℕ
 embFinSetN = record
-  { EF = λ x → length (list x)                                       
+  { EF = λ X → length (list X)                                       
   ; E0 = refl                                       
   ; E1 = refl                                       
   ; Eh = {!   !}                                       
   ; Et = {!   !}                                        
-  ; E+ = λ x y → trans (length-++ (map inj₁ (list x)) {map inj₂ (list y)}) (cong₂ _+_ (length-map inj₁ (list x)) (length-map inj₂ (list y)))                              
-  ; E* = {!   !}                                       
-  ; E~ = λ x y p → ≤-antisym (length-≤ {x = x} {y = y} p) (length-≥ {x = x} {y = y} p)                                     
+  ; E+ = λ X Y → trans (length-++ (map inj₁ (list X)) {map inj₂ (list Y)}) (cong₂ _+_ (length-map inj₁ (list X)) (length-map inj₂ (list Y)))                              
+  ; E* = λ X Y → length-cart _ (list X) (list Y)                                       
+  ; E~ = λ X Y P → ≤-antisym (length-≤ {X = X} {Y = Y} P) (length-≥ {X = X} {Y = Y} P)                                     
   }
 
 
+ 
