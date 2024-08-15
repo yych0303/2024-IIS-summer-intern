@@ -11,6 +11,22 @@ open Eq using (_≡_; refl; cong; cong-app; trans; subst; sym) public
 open import Data.List.Base public
 open import Data.List.Properties
 
+
+
+
+infix 0 _≃_
+record _≃_ {a b : Level} (A : Set a) (B : Set b) : Set (a ⊔ b) where
+  field
+    to   : A → B
+    from : B → A
+    from∘to : ∀ (x : A) → from (to x) ≡ x
+    to∘from : ∀ (y : B) → to (from y) ≡ y
+open _≃_ public
+
+
+
+
+
 infix 7 _∈_
 
 data _∈_ {i : Level} {A : Set i} (a : A) : (x : List A) → Set i where
@@ -63,7 +79,7 @@ record FinSet {i : Level} : Set (lsuc i) where
     list : List Carrier
     proof : (x : Carrier) → x ∈ list
     minimal : (l : List Carrier) → ((x : Carrier) → x ∈ l) → length list ≤ length l
-open FinSet
+open FinSet public
 
 
 
@@ -75,15 +91,18 @@ open import Data.Fin.Properties
 open import Agda.Primitive
 open import Level
 
-open import Embedding.Emb.embFinSetN using (_≃_)
 
 
 -- minimal
 
-_ : ∀ {i : Level} (x : FinSet {i}) → (c : Carrier x) → (x ∈ list x ) ≃ Fin 1 
-_ = ?
+-- _ : ∀ {i : Level} (x : FinSet {i}) → (c : Carrier x) → (x ∈ list x ) ≃ Fin 1 
+-- _ = ?
 
 
+
+
+dd : ∀ {i : Level} (X : FinSet {i}) → (a : Carrier X) → (a ∈ list X ) ≃ (Fin 1) 
+dd X a = record { to = λ _ → fzero ; from = λ _ → proof X a ; from∘to = λ x₁ → {! refl  !} ; to∘from = λ y → {!   !} }
 
 
 

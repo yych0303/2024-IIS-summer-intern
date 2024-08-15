@@ -1,24 +1,26 @@
 {-# OPTIONS --allow-unsolved-metas #-}
 module Embedding.Emb.embFinSetN where
 
-open import Embedding.Base
+open import Relation.Binary.PropositionalEquality
+open ≡-Reasoning
+open import Level
 
 open import Data.Nat.Base -- using (_≤_)
 open import Data.Nat.Properties using (≤-refl; ≤-antisym; ≤-trans; ≤-reflexive )
 open import Data.List using (List; map)
+open import Data.List.Properties
 
 
+
+open import Embedding.Base
 open import Relation.Binary.PropositionalEquality.Core using (cong₂)
 open import Ring.Data.RingN
--- open import Ring.Data.RingSt
 open import Ring.Data.RingFinSet
-
-open import Data.List.Properties
 
 open FinSet
 
 
-open import Level
+
 
 private
   length-≤ : ∀ {i : Level} {X Y : FinSet {i}} (P : Carrier X ≃ Carrier Y) → length (list X) ≤ length (list Y)
@@ -41,8 +43,6 @@ private
       proof-tx b = substm (to∘from P b) (congm (to P) (proof X (from P b)))
   
 
-  open import Relation.Binary.PropositionalEquality
-  open ≡-Reasoning
 
 
   length-cart : ∀ {a b c : Level} {A : Set a} {B : Set b} {C : Set c} → (f : A → B → C) (xs  : List A) → (ys  : List B) → length (cartesianProductWith f xs ys ) ≡ length xs * length ys
