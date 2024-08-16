@@ -20,7 +20,6 @@ open import Data.List.Properties
 
 
 
-
 infix 0 _≃_
 record _≃_ {a b : Level} (A : Set a) (B : Set b) : Set (a ⊔ b) where
   field
@@ -150,57 +149,62 @@ module _ {i : Level} {A : Set i} where
                (subset : (x : A) → (x ∈ l) → x ∈ list) → ((x : A) → (x ∈ remove a l _) → x ∈₁ remove a list _)
   proof-remove-ss = {!   !} -- not delete a
 
-  once-∷  : (a : A) → (x : List A)
-          → (once : (o : A) → o ∈ ([ a ] ++ x) → o ∈₁ ([ a ] ++ x))
-          → ((b : A) → b ∈ x → b ∈₁ x)
-  
-  once-∷ a x once b b∈x with once b (right {b} {[ a ]} {x} b∈x)
-  ...                       | here₁    = ? 
-  ...                      | left₁ {b} {[ a ]} {x} _  = ?
-  ...                      | right₁ {} {} _ = ?  
-  --once-∷ a .([ b ]) once b here = here₁
-  --once-∷ a .(x ++ y) once b (left {x} {y} b∈x) with once b (right {_} {(x ++ y)} (left {x} {y} b∈x))
-  --...                                             | here₁    = ? 
-  --...                                             | left₁ _  = ?
-  --...                                             | right₁ _ = ?  
-  --once-∷ a .(y ++ x) once b (right {y} {x} b∈x) = {!   !}
 
-  contain-∷ : (a : A) → (list : List A)
-            → (once : (a : A) → a ∈ (a ∷ list) → a ∈₁ (a ∷ list))
+--  sub∈₁ : (a : A) (x y : List A)
+--        → a ∈₁ (x ++ y)
+--        → 
+--[ a ] ++ l == a ∷ l
+  
+  once-remove : (x : List A)
+              → (once : (a : A) → a ∈ x → a ∈₁ x)
+              → (a : A) → (a∈x : a ∈ x)
+              → ((b : A) → (b∈x' : b ∈ (remove a x a∈x)) → b ∈₁ (remove a x a∈x))
+  once-remove .([ a ]) once a here b ()
+  once-remove .(x ++ y) once a (left {x} {y} a∈x) b b∈x'y with a∈x | b∈x'y
+  ...                      | here    | _  = {!   !}     -- [ a ] ++ x'++ y
+  ...                      | left _  | _  = {!   !}     --  
+  ...                      | right _ | _  = {!   !}
+  once-remove .(_ ++ _) once a (right a∈x) b b∈x' = {!   !}
+
+
+
+  once-∷ : (a₀ : A) (x : List A)
+        → (once : (a₁ : A) → a₁ ∈ (a₀ ∷ x) → a₁ ∈₁ (a₀ ∷ x))
+        → ((b : A) → b ∈ x → b ∈₁ x)
+  once-∷ a .([ b ]) once b here = here₁
+  once-∷ a .(x ++ y) once b (left {x} {y} b∈x) = {!   !}
+  once-∷ a .(y ++ x) once b (right {y} {x} b∈x) = {!   !}
+
+  contain-∷ : (a₀ : A) → (list : List A)
+            → (once : (a₁ : A) → a₁ ∈ (a₀ ∷ list) → a₁ ∈₁ (a₀ ∷ list))
             → (l : List A)
-            → (contain : (b : A) → (b ∈ (a ∷ list)) → b ∈ l)
-            → ((c : A) → (c ∈ list) → c ∈ (remove a l (contain a (left here))))
-  contain-∷ = {!   !}
-      
- --  proof-ss-minimal  : (list : List A)
- --                    → (once : (y : A) → y ∈ list → y ∈₁ list)
- --                    → (l : List A)
- --                    → (subset : (x : A) → (x ∈ l) → x ∈ list) → length list ≤ length l
- --  proof-ss-minimal = {!   !}
+            → (contain : (b : A) → (b ∈ (a₀ ∷ list)) → b ∈ l)
+            → ((c : A) → (c ∈ list) → c ∈ (remove a₀ l (contain a₀ (left here))))
+  contain-∷ a₀ list once l contain c x = {!   !}
+ 
 
   proof-minimal : (list : List A)
-                → (once : (a : A) → a ∈ list → a ∈₁ list)
+                → (once : (a₁ : A) → a₁ ∈ list → a₁ ∈₁ list)
                 → (l : List A)
                 → (contain : (b : A) → (b ∈ list) → b ∈ l)
-                → length list ≤ length l
-  proof-minimal [] O l C = z≤n
-  proof-minimal (a ∷ list) O l C = 
+                → length list ≤ length l       
+  proof-minimal [] once l contain = z≤n
+  proof-minimal (a ∷ list) once l contain = 
       ≤-begin
         length (a ∷ list)
       ≤⟨ ≤-reflexive (length-∷ a list) ⟩
         1 + (length list)
-      ≤⟨ s≤s (proof-minimal list {!   !} (remove a l (C a (left here))) {! contain-∷ a list O l C  !}) ⟩
-        1 + length (remove a l (C a (left here)))
-      ≤⟨ ≤length-remove a l ( C a (left here) ) ⟩
+      ≤⟨ s≤s (proof-minimal list once' l' contain') ⟩
+        1 + length l'
+      ≤⟨ ≤length-remove a l a∈l ⟩
         length l
       ≤-∎
-      
+      where
+        a∈l = contain a (left here)
+        l' = remove a l a∈l
+        once' = once-∷ a list once
+        contain' = contain-∷ a list once l contain
     
-    
-    -- {!  proof-minimal list !}
-
-
-
 
 
 open import Relation.Binary.Core using (Rel)
@@ -227,7 +231,7 @@ record FinSet {i : Level} : Set (lsuc i) where
   field
     Carrier : Set i
     list : List Carrier
-    proof : (x : Carrier) → x ∈ list
+    exist : (x : Carrier) → x ∈ list
     minimal : (l : List Carrier) → ((x : Carrier) → x ∈ l) → length list ≤ length l
     -- once : (x : Carrier) → x ∈ list → x ∈₁ list
 open FinSet public

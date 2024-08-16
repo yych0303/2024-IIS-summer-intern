@@ -33,12 +33,12 @@ open import FinSet public
 ringFinSet : Ring
 ringFinSet = record 
   { R               = FinSet --       
-  ; R0              = record { Carrier = Fin 0 ; list = [] ; proof = λ () ; minimal = λ l _ → z≤n }             
-  ; R1              = record { Carrier = Fin 1 ; list = [ fzero ] ; proof = λ { fzero → here } ; minimal = λ l p → {!  !} }--     
+  ; R0              = record { Carrier = Fin 0 ; list = [] ; exist = λ () ; minimal = λ l _ → z≤n }             
+  ; R1              = record { Carrier = Fin 1 ; list = [ fzero ] ; exist = λ { fzero → here } ; minimal = λ l p → {!  !} }--     
   ; Rhead           = {!   !} --
   ; Rtail           = {!   !} --       
-  ; _R+_            = λ X Y → record { Carrier = Carrier X ⊎ Carrier Y ; list = (map inj₁ (list X)) ++ (map inj₂ (list Y)) ; proof = λ { (inj₁ z) → left (congm inj₁ (proof X z)) ; (inj₂ z) → right (congm inj₂ (proof Y z))} ; minimal = λ l p → {!   !}  }         
-  ; _R*_            = λ X Y → record { Carrier = Carrier X × Carrier Y ; list = cartesianProduct (list X) (list Y) ; proof = {!   !} ; minimal = {!   !} }             
+  ; _R+_            = λ X Y → record { Carrier = Carrier X ⊎ Carrier Y ; list = (map inj₁ (list X)) ++ (map inj₂ (list Y)) ; exist = λ { (inj₁ z) → left (congm inj₁ (exist X z)) ; (inj₂ z) → right (congm inj₂ (exist Y z))} ; minimal = λ l p → {!   !}  }         
+  ; _R*_            = λ X Y → record { Carrier = Carrier X × Carrier Y ; list = cartesianProduct (list X) (list Y) ; exist = {!   !} ; minimal = {!   !} }             
   ; _~_             = λ X Y → Carrier X ≃ Carrier Y           
   ; ~-R0            = λ X → null (list X)
   ; ~-refl          = record { to = λ z → z ; from = λ z → z ; from∘to = λ z → refl ; to∘from = λ z → refl }         

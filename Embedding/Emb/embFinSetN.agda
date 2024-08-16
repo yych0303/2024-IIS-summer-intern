@@ -31,23 +31,23 @@ module _ where -- embFinSetN
   
   private
     length-≤ : ∀ {i : Level} {X Y : FinSet {i}} (P : Carrier X ≃ Carrier Y) → length (list X) ≤ length (list Y)
-    length-≤ {X = X} {Y = Y} P = ≤-trans (minimal X fy proof-fy) ( ≤-reflexive  (length-map (from P) (list Y)) )
+    length-≤ {X = X} {Y = Y} P = ≤-trans (minimal X fy exist-fy) ( ≤-reflexive  (length-map (from P) (list Y)) )
       where
         fy : List (Carrier X)
         fy = map (from P) (list Y)
     
-        proof-fy : (a : Carrier X) → a ∈ fy
-        proof-fy a = substm (from∘to P a) (congm (from P) (proof Y (to P a)))
+        exist-fy : (a : Carrier X) → a ∈ fy
+        exist-fy a = substm (from∘to P a) (congm (from P) (exist Y (to P a)))
     
         
     length-≥ : ∀ {i : Level} {X Y : FinSet {i}} (P : Carrier X ≃ Carrier Y) → length (list Y) ≤ length (list X)
-    length-≥ {X = X} {Y = Y} P = ≤-trans (minimal Y tx proof-tx) ( ≤-reflexive  (length-map (to P) (list X)) )
+    length-≥ {X = X} {Y = Y} P = ≤-trans (minimal Y tx exist-tx) ( ≤-reflexive  (length-map (to P) (list X)) )
       where
         tx : List (Carrier Y)
         tx = map (to P) (list X)
     
-        proof-tx : (b : Carrier Y) → b ∈ tx
-        proof-tx b = substm (to∘from P b) (congm (to P) (proof X (from P b)))
+        exist-tx : (b : Carrier Y) → b ∈ tx
+        exist-tx b = substm (to∘from P b) (congm (to P) (exist X (from P b)))
     
 
 
@@ -147,7 +147,7 @@ module _ where -- Func N → FinSet
       
 
   F : ℕ → FinSet { lzero }
-  F = λ n → record { Carrier = Fin n ; list = L n ; proof = P n ; minimal = {!   !} }
+  F = λ n → record { Carrier = Fin n ; list = L n ; exist = P n ; minimal = {!   !} }
 
   -- EFF : EF F n ≡ n
   open import Data.Nat using (ℕ; zero; suc; _+_)
