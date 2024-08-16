@@ -65,34 +65,29 @@ module _ {i : Level} {A : Set i} where
   remove a .(x ++ y) (left {x} {y} a∈x) = (remove a x a∈x) ++ y
   remove a .(y ++ x) (right {y} {x} a∈x) = y ++ (remove a x a∈x)
 
+  removeₐ : (a : A) → (x : List A) → (a∈ₐx : a ∈ₐ x) → List A
+  removeₐ a .(a ∷ x) (hereₐ {x = x}) = x
+  removeₐ a .(_ ∷ x) (thereₐ {x = x} a∈ₐx) = removeₐ a x a∈ₐx
 
+  ---
+
+
+
+  ∈ₐ-remove  : (x : List A)
+            → (a : A) → (a∈ₐx : a ∈ₐ x)
+            → ((b : A) → (b∈ₐx' : b ∈ₐ (remove a x (∈ₐ⇒∈ a∈ₐx))) → b ∈ₐ x)
+  ∈ₐ-remove .(a ∷ b ∷ x) a (hereₐ {x = b ∷ x}) b hereₐ                      = thereₐ hereₐ
+  ∈ₐ-remove .(a ∷ _ ∷ x) a hereₐ b (thereₐ {x = x} b∈ₐx')     = thereₐ (thereₐ b∈ₐx')
+  ∈ₐ-remove .(b ∷ _) a (thereₐ {b = b} a∈ₐx) b hereₐ                  = hereₐ
+  ∈ₐ-remove .(_ ∷ x) a (thereₐ {x = x} a∈ₐx) b (thereₐ b∈ₐx') = thereₐ (∈ₐ-remove x a a∈ₐx b b∈ₐx')
 
   ∈-remove  : (x : List A)
-              → (a : A) → (a∈x : a ∈ x)
-              → ((b : A) → (b∈x' : b ∈ (remove a x a∈x)) → b ∈ x)
-  ∈-remove .([ a ]) a here b b∈x' = left b∈x'
-  ∈-remove .(x ++ y) a (left {x} {y} a∈x) b b∈x' = left {! ∈-remove    !}
-  ∈-remove .(y ++ x) a (right {y} {x} a∈x) b b∈x' = {!   !}
-
-
- -- once-remove : (x : List A)
- --             → (once : (a : A) → a ∈ x → a ∈₁ x)
- --             → (a : A) → (a∈x : a ∈ x)
- --             → ((b : A) → (b∈x' : b ∈ (remove a x a∈x)) → b ∈₁ (remove a x a∈x))
- -- once-remove .([ a ]) once a here b ()
- -- once-remove .(x ++ y) once a (left {x} {y} a∈x) b b∈x'y with once b ? 
- -- ...                                                         | here₁    = {!   !}
- -- ...                                                         | left₁ _  = {!   !}
- -- ...                                                         | right₁ _ = ?
-
-
-
-
-  -- once-remove .(y ++ x) once a (right {y} {x} a∈x) = {!   !}
-
-
+            → (a : A) → (a∈x : a ∈ x)
+            → ((b : A) → (b∈x' : b ∈ (remove a x a∈x)) → b ∈ x)
+  ∈-remove x a a∈x b b∈x' = ∈ₐ⇒∈ {a = b} {x = x} (∈ₐ-remove x a (∈⇒∈ₐ {a = a} {x = x} a∈x) b (∈⇒∈ₐ {a = b} {! b∈x'  !}))
   
-
+  
+  
   
   once-remove : (x : List A)
               → (once : (a : A) → a ∈ x → a ∈₁ x)
@@ -269,5 +264,5 @@ module _ where
       -- minimal : (l : List Carrier) → ((aₘ : Carrier) → aₘ ∈ l) → length list ≤ length l
       once : (a₁ : Carrier) → a₁ ∈ list → a₁ ∈₁ list
   open FinSet public
-  
+   
         
