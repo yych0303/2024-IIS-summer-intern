@@ -31,23 +31,27 @@ module _ where -- embFinSetN
   
   private
     length-≤ : ∀ {i : Level} {X Y : FinSet {i}} (P : Carrier X ≃ Carrier Y) → length (list X) ≤ length (list Y)
-    length-≤ {X = X} {Y = Y} P = ≤-trans (minimal X fy exist-fy) ( ≤-reflexive  (length-map (from P) (list Y)) )
+    length-≤ {X = X} {Y = Y} P = ≤-trans (minimal) ( ≤-reflexive  (length-map (from P) (list Y)) )
       where
         fy : List (Carrier X)
         fy = map (from P) (list Y)
     
         exist-fy : (a : Carrier X) → a ∈ fy
         exist-fy a = substm (from∘to P a) (congm (from P) (exist Y (to P a)))
+
+        minimal = once-exist'→minimal (once X) exist-fy
     
         
     length-≥ : ∀ {i : Level} {X Y : FinSet {i}} (P : Carrier X ≃ Carrier Y) → length (list Y) ≤ length (list X)
-    length-≥ {X = X} {Y = Y} P = ≤-trans (minimal Y tx exist-tx) ( ≤-reflexive  (length-map (to P) (list X)) )
+    length-≥ {X = X} {Y = Y} P = ≤-trans (minimal) ( ≤-reflexive  (length-map (to P) (list X)) )
       where
         tx : List (Carrier Y)
         tx = map (to P) (list X)
     
         exist-tx : (b : Carrier Y) → b ∈ tx
         exist-tx b = substm (to∘from P b) (congm (to P) (exist X (from P b)))
+        
+        minimal = once-exist'→minimal (once Y) exist-tx
     
 
 
@@ -114,40 +118,27 @@ module _ where -- Func N → FinSet
     P (suc n) fzero = left here
     P (suc n) (fsuc x) = right (congm fsuc (P n x))
 
-    M : (n : ℕ) → (l : List (Fin n)) → ((x : Fin n) → x ∈ l) → length (L n) ≤ length l
-    M zero = λ l _ → z≤n
-    M (suc n) [] p = ⊥-elim ( nonept [] (p fzero) refl )
-    M (suc n) (fzero ∷ l) p =
-      ≤-begin
-        length (fzero ∷ map fsuc (L n))
-      ≤⟨ ≤-reflexive (length-∷ {lzero} {Fin (suc n)} fzero (map fsuc (L n))) ⟩
-        1 + length (map fsuc (L n))
-      ≤⟨ s≤s (≤-reflexive (length-map fsuc (L n))) ⟩
-        1 + (length (L n))
-      ≤⟨ s≤s (M n l' p') ⟩
-        1 + (length l')
-      ≤⟨ s≤s (≤-reflexive (sym (length-map fsuc l'))) ⟩
-        1 + length (map fsuc l')
-      ≤⟨ s≤s {!   !} ⟩
-        1 + length (l)
-      ≤⟨ ≤-reflexive (sym (length-∷ {lzero} {Fin (suc n)} fzero l)) ⟩
-        length (fzero ∷ l)
-      ≤-∎
-        where 
-          l' = {!   !}
-          p' = {!   !}
 
-    M (suc n) (fsuc x ∷ l) p = 
-      ≤-begin
-        length (L (suc n))
-      ≤⟨ {!   !} ⟩
-        length (fsuc x ∷ l)
-      ≤-∎
-      
-      
+    O : ∀ (n : ℕ) → (a : Fin n) → a ∈ L n → a ∈₁' L n
+    O (suc n) fzero a∈l = (here₁' 0∉mfl')
+      where 
+          0∉mfl' : (x : fzero ∈ map fsuc (L n)) → ⊥
+          0∉mfl' () 
+          
+    O (suc n) (fsuc a) a∈l = there₁' sa∉0 fa∈₁'mfl'  
+      where
+        sa∉0 : (x : fsuc a ∈ (fzero ∷ [])) → ⊥
+        sa∉0 ()
+
+        fa∈₁'mfl' : fsuc a ∈₁' map fsuc (L n)
+        fa∈₁'mfl' = {! inject-once (L n) fsuc ? ? (fsuc a) () ) ? !} --with O n a (P n a)
+--        ... | here₁'  _     = ?
+--        ... | there₁' _ _   = ?
+
+    
 
   F : ℕ → FinSet { lzero }
-  F = λ n → record { Carrier = Fin n ; list = L n ; exist = P n ; minimal = {!   !} }
+  F = λ n → record { Carrier = Fin n ; list = L n ; exist = P n ; once = {!   !} }
 
   -- EFF : EF F n ≡ n
   open import Data.Nat using (ℕ; zero; suc; _+_)
@@ -170,4 +161,4 @@ module _ where -- Func N → FinSet
       suc n
     ≡-∎
   
-  
+   

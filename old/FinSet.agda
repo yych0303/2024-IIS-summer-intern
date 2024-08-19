@@ -27,7 +27,6 @@ module _ {i : Level} {A : Set i} where
   infix 7 _∉_
   infix 7 _∈'_
   infix 7 _∈₁_
-  infix 7 _∈₁'_
 
   data _∈_ (a : A) : (x : List A) → Set i where
     here  : a ∈ [ a ]
@@ -42,14 +41,10 @@ module _ {i : Level} {A : Set i} where
     here'  : ∀ {x} → a ∈' (a ∷ x)
     there' : ∀ {b} {x} → (a∈x : a ∈' x) → a ∈' (b ∷ x)
     
-  data _∈₁_ (a : A) : (x : List A) → Set i where
-    here₁  : a ∈₁ [ a ]
-    left₁  : ∀ {x y} → (a∈₁x : a ∈₁ x) → (a∉y : a ∉ y) → a ∈₁ (x ++ y) 
-    right₁ : ∀ {x y} → (a∉x : a ∉ x) → (a∈₁y : a ∈₁ y) → a ∈₁ (x ++ y)
   
-  data _∈₁'_ (a : A) : (x : List A) → Set i where
-    here₁'  : ∀ {y} → (a∉y : a ∉ y) → a ∈₁' (a ∷ y) 
-    there₁' : ∀ {b y} → (a∉x : a ∉ [ b ]) → (a∈₁'y : a ∈₁' y) → a ∈₁' (b ∷ y)
+  data _∈₁_ (a : A) : (x : List A) → Set i where
+    here₁'  : ∀ {y} → (a∉y : a ∉ y) → a ∈₁ (a ∷ y) 
+    there₁' : ∀ {b y} → (a∉x : a ∉ [ b ]) → (a∈₁y : a ∈₁ y) → a ∈₁ (b ∷ y)
 
 
 
@@ -76,10 +71,15 @@ module _ {i : Level} {A : Set i} where
   ... | there' a∈'x' = there' (∈⇒∈' (left (∈'⇒∈ a∈'x')))
     
 
+ -- ∈₁⇒∈ : ∀ {a : A} {x : List A} → a ∈₁ x → a ∈ x
+ -- ∈₁⇒∈ here₁ = here
+ -- ∈₁⇒∈ (left₁ a∈₁x a∉y) = left (∈₁⇒∈ a∈₁x)
+ -- ∈₁⇒∈ (right₁ a∉x a∈₁x) = right (∈₁⇒∈ a∈₁x)
+
+
   ∈₁⇒∈ : ∀ {a : A} {x : List A} → a ∈₁ x → a ∈ x
-  ∈₁⇒∈ here₁ = here
-  ∈₁⇒∈ (left₁ a∈₁x a∉y) = left (∈₁⇒∈ a∈₁x)
-  ∈₁⇒∈ (right₁ a∉x a∈₁x) = right (∈₁⇒∈ a∈₁x)
+  ∈₁⇒∈ (here₁' a∉y) = left here
+  ∈₁⇒∈ (there₁' a∉x x) = right (∈₁⇒∈ x)
 
   ∉∈'⇒∈'t : ∀ {a b : A} {x : List A}
             → (a∉b : a ∉ (b ∷ []))
@@ -107,21 +107,6 @@ module _ {i : Level} {A : Set i} where
 
 
 
-  ∈₁'⇒∈₁ : ∀ {a : A} {x : List A} → a ∈₁' x → a ∈₁ x
-  ∈₁'⇒∈₁ (here₁' a∉y) = left₁ here₁ a∉y
-  ∈₁'⇒∈₁ (there₁' a∉x a∈₁'x) = right₁ a∉x (∈₁'⇒∈₁ a∈₁'x) 
-
-  {-# NON_TERMINATING #-}
-  ∈₁⇒∈₁' : ∀ {a : A} {x : List A} → a ∈₁ x → a ∈₁' x
-  ∈₁⇒∈₁' (right₁ {x = []} a∉y a∈₁x) = ∈₁⇒∈₁' a∈₁x
-  ∈₁⇒∈₁' (right₁ {x = y ∷ y'} a∉yy' a∈₁x) = there₁' (∉⇒∉h a∉yy') (∈₁⇒∈₁' (right₁ (∉⇒∉t a∉yy') a∈₁x))
-  ∈₁⇒∈₁' here₁ = here₁' ∉-ept
-  ∈₁⇒∈₁' (left₁ {x = []} a∈₁x a∉y) = ⊥-elim (∉-ept (∈₁⇒∈ a∈₁x))
-  ∈₁⇒∈₁' (left₁ {x = x ∷ x'} a∈₁x a∉y) with ∈₁⇒∈₁' a∈₁x
-  ... | here₁' a∉x' = here₁' (∉∉⇒∉ a∉x' a∉y)   
-  ... | there₁' a∉x a∈₁'x' = there₁' a∉x (∈₁⇒∈₁' (left₁ (∈₁'⇒∈₁ a∈₁'x') a∉y))
-    
-  
   ---
 
   
@@ -140,9 +125,10 @@ module _ {i : Level} {A : Set i} where
         → (a∈₁bx : a ∈₁ (b ∷ x))
         → (a∈x : a ∈ x)
         → (a ∉ [ b ]) 
-  notfst a∈₁bx a∈x a∈b with ∈₁⇒∈₁' a∈₁bx
-  ... | here₁' a∉x = a∉x a∈x
-  ... | there₁' a∉b _ = a∉b a∈b
+  notfst (here₁' a∉x) a∈x a∈b = a∉x a∈x
+  notfst (there₁' a∉b _) a∈x a∈b = a∉b a∈b
+
+
 
 
   once-∷  : (b : A) (x : List A)
@@ -159,9 +145,9 @@ module _ {i : Level} {A : Set i} where
             → (a∉b : a ∉ [ b ]) 
             → (a∈₁bx : a ∈₁ (b ∷ x))
             → (a ∈₁ x)
-      ∈₁-∷ a∉b a∈₁bx with ∈₁⇒∈₁' a∈₁bx
-      ... | here₁' _ = ⊥-elim (a∉b here)  
-      ... | there₁' _ a∈₁'x = ∈₁'⇒∈₁ a∈₁'x
+      ∈₁-∷ a∉b (here₁' _) = ⊥-elim (a∉b here)
+      ∈₁-∷ a∉b (there₁' _ a∈₁x) = a∈₁x
+
   ---------------------------------------------------------------------------------------------
   
 
@@ -247,8 +233,8 @@ module _ {i : Level} {A B : Set i} where
   
   inject-once : (l : List A) (f : A → B)
               → (inject : (a a' : A) → f a ≡ f a' → a ≡ a)
-              → (once : (a₁ : A) → a₁ ∈' l → a₁ ∈₁' l)
-              → ((b : B) → b ∈ (map f l) → b ∈₁' (map f l))
+              → (once : (a₁ : A) → a₁ ∈' l → a₁ ∈₁ l)
+              → ((b : B) → b ∈ (map f l) → b ∈₁ (map f l))
   inject-once [] f inject once b x = {!   !}
   inject-once (x₁ ∷ l) f inject once b x = {!   !}         
     
