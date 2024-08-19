@@ -20,6 +20,10 @@ open import Data.List.Properties
 
 open import Relation.Nullary using (Dec; ¬_) public
 
+open import Data.Sum using (_⊎_) public
+open import Data.Empty public
+
+
 
 module _ {i : Level} {A : Set i} where
 
@@ -230,7 +234,14 @@ module _ {i : Level} {A : Set i} where
 
 ---------------------------------------------------------------------------------------------
 module _ {i : Level} {A B : Set i} where
-  
+  open import Data.Product using (Σ-syntax; _,_)
+
+  preimg : (l : List A) (f : A → B)
+           → (inject : (a a' : A) → f a ≡ f a' → a ≡ a)
+           → (b : B) → (b∈mfl : b ∈ (map f l)) → Σ[ a ∈ A ] Σ[ a∈l ∈ (a ∈ l) ] (f a ≡ b)
+  preimg = {!   !}
+
+
   inject-∉    : (l : List A) (f : A → B)
               → (inject : (a a' : A) → f a ≡ f a' → a ≡ a)
               → (a : A) → (a∉l :  a ∉ l) → (f a ∉ (map f l))
@@ -244,19 +255,16 @@ module _ {i : Level} {A B : Set i} where
   inject-once (a ∷ l) f inject once b b∈mfl with ∈⇒∈' b∈mfl | once a (left here)
   ... | _               | there₁ a∉a _  = ⊥-elim (a∉a here)  
   ... | here'           | here₁  a∉l    = here₁ (inject-∉ l f inject a a∉l)  
-  ... | there' b∈'mfl   | here₁  a∉l    = there₁ {!   !} (inject-once l f (λ a a' _ → refl) (once-∷ a l once) b (∈'⇒∈ b∈'mfl))  
-  
---  = {!  b∈mfl  !}         
+  ... | there' b∈'mfl   | here₁  a∉l    = there₁ b∉fa (inject-once l f (λ a a' _ → refl) (once-∷ a l once) b (∈'⇒∈ b∈'mfl))  
+    where
+      b∉fa : (b ∈ (f a ∷ [])) → ⊥
+      b∉fa b∈fa = a∉l {!   !}
+--           
     
 
 
+
 module _ where
-
-  open import Relation.Binary.Core using (Rel)
-  open import Relation.Nullary using (Dec; ¬_) public
-  open import Data.Sum using (_⊎_) public
-  open import Data.Empty public
-
 
   congm : ∀ {i : Level} {A B : Set i} {b : B} {s : List B} → (f : B → A) → (b∈s : b ∈ s) → (f b) ∈ (map f s)
   congm {b = b} {s = .([ b ])} f here = here
