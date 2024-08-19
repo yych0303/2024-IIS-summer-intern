@@ -43,8 +43,8 @@ module _ {i : Level} {A : Set i} where
     
   
   data _∈₁_ (a : A) : (x : List A) → Set i where
-    here₁'  : ∀ {y} → (a∉y : a ∉ y) → a ∈₁ (a ∷ y) 
-    there₁' : ∀ {b y} → (a∉x : a ∉ [ b ]) → (a∈₁y : a ∈₁ y) → a ∈₁ (b ∷ y)
+    here₁  : ∀ {y} → (a∉y : a ∉ y) → a ∈₁ (a ∷ y) 
+    there₁ : ∀ {b y} → (a∉x : a ∉ [ b ]) → (a∈₁y : a ∈₁ y) → a ∈₁ (b ∷ y)
 
 
 
@@ -78,8 +78,8 @@ module _ {i : Level} {A : Set i} where
 
 
   ∈₁⇒∈ : ∀ {a : A} {x : List A} → a ∈₁ x → a ∈ x
-  ∈₁⇒∈ (here₁' a∉y) = left here
-  ∈₁⇒∈ (there₁' a∉x x) = right (∈₁⇒∈ x)
+  ∈₁⇒∈ (here₁ a∉y) = left here
+  ∈₁⇒∈ (there₁ a∉x x) = right (∈₁⇒∈ x)
 
   ∉∈'⇒∈'t : ∀ {a b : A} {x : List A}
             → (a∉b : a ∉ (b ∷ []))
@@ -125,8 +125,8 @@ module _ {i : Level} {A : Set i} where
         → (a∈₁bx : a ∈₁ (b ∷ x))
         → (a∈x : a ∈ x)
         → (a ∉ [ b ]) 
-  notfst (here₁' a∉x) a∈x a∈b = a∉x a∈x
-  notfst (there₁' a∉b _) a∈x a∈b = a∉b a∈b
+  notfst (here₁ a∉x) a∈x a∈b = a∉x a∈x
+  notfst (there₁ a∉b _) a∈x a∈b = a∉b a∈b
 
 
 
@@ -145,8 +145,8 @@ module _ {i : Level} {A : Set i} where
             → (a∉b : a ∉ [ b ]) 
             → (a∈₁bx : a ∈₁ (b ∷ x))
             → (a ∈₁ x)
-      ∈₁-∷ a∉b (here₁' _) = ⊥-elim (a∉b here)
-      ∈₁-∷ a∉b (there₁' _ a∈₁x) = a∈₁x
+      ∈₁-∷ a∉b (here₁ _) = ⊥-elim (a∉b here)
+      ∈₁-∷ a∉b (there₁ _ a∈₁x) = a∈₁x
 
   ---------------------------------------------------------------------------------------------
   
@@ -231,12 +231,22 @@ module _ {i : Level} {A : Set i} where
 ---------------------------------------------------------------------------------------------
 module _ {i : Level} {A B : Set i} where
   
+  inject-∉    : (l : List A) (f : A → B)
+              → (inject : (a a' : A) → f a ≡ f a' → a ≡ a)
+              → (a : A) → (a∉l :  a ∉ l) → (f a ∉ (map f l))
+  inject-∉ = {!   !}
+
   inject-once : (l : List A) (f : A → B)
               → (inject : (a a' : A) → f a ≡ f a' → a ≡ a)
-              → (once : (a₁ : A) → a₁ ∈' l → a₁ ∈₁ l)
+              → (once : (a₁ : A) → a₁ ∈ l → a₁ ∈₁ l)
               → ((b : B) → b ∈ (map f l) → b ∈₁ (map f l))
-  inject-once [] f inject once b x = {!   !}
-  inject-once (x₁ ∷ l) f inject once b x = {!   !}         
+  inject-once [] _ _ _ _ b∈mfl = ⊥-elim (∉-ept b∈mfl)
+  inject-once (a ∷ l) f inject once b b∈mfl with ∈⇒∈' b∈mfl | once a (left here)
+  ... | _               | there₁ a∉a _  = ⊥-elim (a∉a here)  
+  ... | here'           | here₁  a∉l    = here₁ (inject-∉ l f inject a a∉l)  
+  ... | there' b∈'mfl   | here₁  a∉l    = there₁ {!   !} (inject-once l f (λ a a' _ → refl) (once-∷ a l once) b (∈'⇒∈ b∈'mfl))  
+  
+--  = {!  b∈mfl  !}         
     
 
 
@@ -276,8 +286,7 @@ module _ where
       Carrier : Set i
       list : List Carrier
       exist : (aₑ : Carrier) → aₑ ∈ list
-      -- minimal : (l : List Carrier) → ((aₘ : Carrier) → aₘ ∈ l) → length list ≤ length l
       once : (a₁ : Carrier) → a₁ ∈ list → a₁ ∈₁ list
   open FinSet public
                   
-                  
+                   

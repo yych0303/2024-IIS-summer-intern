@@ -69,17 +69,17 @@ ringFinSet = record
                       ; to∘from = λ z → refl 
                       }         
   ; ~-trans         = λ P Q → record 
-                              { to = λ a → to Q (to P a) 
-                              ; from = λ c →  from P (from Q c) 
-                              ; from∘to = λ a → trans (cong (from P) (from∘to Q _)) (trans (from∘to P _) refl) 
-                              ; to∘from = λ c → trans (cong (to Q) (to∘from P _)) (trans (to∘from Q _) refl) 
-                              }        
+                      { to = λ a → to Q (to P a) 
+                      ; from = λ c →  from P (from Q c) 
+                      ; from∘to = λ a → trans (cong (from P) (from∘to Q _)) (trans (from∘to P _) refl) 
+                      ; to∘from = λ c → trans (cong (to Q) (to∘from P _)) (trans (to∘from Q _) refl) 
+                      }        
   ; ~-sym           = λ P → record 
-                            { to = from P 
-                            ; from = to P 
-                            ; from∘to = to∘from P 
-                            ; to∘from = from∘to P 
-                            }
+                      { to = from P 
+                      ; from = to P 
+                      ; from∘to = to∘from P 
+                      ; to∘from = from∘to P 
+                      }
   ; Rhead-tail      = {!   !}
   ; Rhead-0h        = {!   !}
   ; Rhead-h0        = {!   !}
