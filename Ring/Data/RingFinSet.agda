@@ -43,16 +43,15 @@ ringFinSet = record
                       { Carrier = Fin 1 
                       ; list = [ fzero ] 
                       ; exist = λ { fzero → here } 
-                      ; once = λ {fzero x → here₁ {_} {Fin 1} {fzero}} 
+                      ; once = λ {fzero x → here₁ ∉-ept} 
                       }     
   ; Rhead           = {!   !} 
   ; Rtail           = {!   !}        
   ; _R+_            = λ X Y → record  
                       { Carrier = Carrier X ⊎ Carrier Y 
                       ; list = (map inj₁ (list X)) ++ (map inj₂ (list Y)) 
-                      ; exist = λ { (inj₁ z) → left (congm inj₁ (exist X z)) 
-                      ; (inj₂ z) → right (congm inj₂ (exist Y z))} 
-                      ; once = λ { (inj₁ z) iz∈Z → left₁ {x = (map inj₁ (list X))} {!   !} {!   !} ; (inj₂ z) iz∈Z → {!   !}}  
+                      ; exist = λ { (inj₁ z) → ∈x⇒∈xy (congm inj₁ (exist X z)) ; (inj₂ z) →  ∈y⇒∈xy (congm inj₂ (exist Y z)) } 
+                      ; once = {!   !} 
                       }         
   ; _R*_            = λ X Y → record  
                       { Carrier = Carrier X × Carrier Y 

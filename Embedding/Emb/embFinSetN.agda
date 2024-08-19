@@ -115,23 +115,23 @@ module _ where -- Func N → FinSet
     
     P : (n : ℕ) → (x : Fin n) → x ∈ L n
     P zero = λ ()
-    P (suc n) fzero = left here
-    P (suc n) (fsuc x) = right (congm fsuc (P n x))
+    P (suc n) fzero = here
+    P (suc n) (fsuc x) = ∈y⇒∈xy (congm fsuc (P n x))
 
 
-    O : ∀ (n : ℕ) → (a : Fin n) → a ∈ L n → a ∈₁' L n
-    O (suc n) fzero a∈l = (here₁' 0∉mfl')
+    O : ∀ (n : ℕ) → (a : Fin n) → a ∈ L n → a ∈₁ L n
+    O (suc n) fzero a∈l = (here₁ 0∉mfl')
       where 
-          0∉mfl' : (x : fzero ∈ map fsuc (L n)) → ⊥
-          0∉mfl' () 
+          0∉mfl' : (fzero ∈ map fsuc (L n)) → ⊥
+          0∉mfl' 0∈mfl = {! 0∈mfl  !} 
           
-    O (suc n) (fsuc a) a∈l = there₁' sa∉0 fa∈₁'mfl'  
+    O (suc n) (fsuc a) a∈l = there₁ sa∉0 fa∈₁mfl'  
       where
-        sa∉0 : (x : fsuc a ∈ (fzero ∷ [])) → ⊥
-        sa∉0 ()
+        sa∉0 : (fsuc a ∈ (fzero ∷ [])) → ⊥
+        sa∉0 (there fa∈0) = ∉-ept fa∈0
 
-        fa∈₁'mfl' : fsuc a ∈₁' map fsuc (L n)
-        fa∈₁'mfl' = {! inject-once (L n) fsuc ? ? (fsuc a) () ) ? !} --with O n a (P n a)
+        fa∈₁mfl' : fsuc a ∈₁ map fsuc (L n)
+        fa∈₁mfl' = {! inject-once (L n) fsuc ? ? (fsuc a) () ) ? !} --with O n a (P n a)
 --        ... | here₁'  _     = ?
 --        ... | there₁' _ _   = ?
 
