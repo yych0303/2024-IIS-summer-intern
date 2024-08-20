@@ -271,7 +271,10 @@ module _ {i i' : Level} {A : Set i} {B : Set i'} where
   inject-∈'    : {l : List A} (f : A → B)
               → (inject : (a a' : A) → f a ≡ f a' → a ≡ a')
               → (a : A) → (fa∈fl :  f a ∈ map f l) → (a ∈ l)
-  inject-∈' f inject a fa∈fl = {! fa∈fl  !}
+  inject-∈' {l@(x ∷ l')} f inject a fa∈fl with map f l | fa∈fl
+  ... | []      | ()
+  ... | _ ∷ _   | here = ∈x⇒∈xy {x = [ x ]} (≡⇒∈ (inject a x ((∈⇒≡ {!   !})))) -- (≡⇒∈ (inject a x (∈⇒≡ here)))
+  ... | _ ∷ _   | there fa∈fl' = ∈y⇒∈xy (inject-∈' {l = l'} f inject a {! fa∈fl'  !})
 
   inject-∉    : (l : List A) (f : A → B)
               → (inject : (a a' : A) → f a ≡ f a' → a ≡ a')
