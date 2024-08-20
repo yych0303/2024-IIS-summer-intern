@@ -41,8 +41,8 @@ module _ {i : Level} {A : Set i} where
   a ∉ x = ¬ (a ∈ x)
   
   data _∈₁_ (a : A) : (x : List A) → Set i where
-    here₁  : ∀ {y} → (a∉y : a ∉ y) → a ∈₁ (a ∷ y) 
-    there₁ : ∀ {b y} → (a∉x : a ∉ [ b ]) → (a∈₁y : a ∈₁ y) → a ∈₁ (b ∷ y)
+    here₁  : ∀ {x} → (a∉x : a ∉ x) → a ∈₁ (a ∷ x) 
+    there₁ : ∀ {b x} → (a∉b : a ∉ [ b ]) → (a∈₁x : a ∈₁ x) → a ∈₁ (b ∷ x)
 
 
 
@@ -50,7 +50,6 @@ module _ {i : Level} {A : Set i} where
 
   ∉-ept : ∀ {a : A} → a ∉ []
   ∉-ept {a} ()
-
 
 
   ∈₁⇒∈ : ∀ {a : A} {x : List A} → a ∈₁ x → a ∈ x
@@ -64,22 +63,6 @@ module _ {i : Level} {A : Set i} where
 --  ∉∈⇒∈t a∉b here = ⊥-elim (a∉b here)
 --  ∉∈⇒∈t a∉b (there a∈bx) = a∈bx
 
---   ∉⇒∉h : ∀ {a b : A} {x : List A} → a ∉ (b ∷ x) → a ∉ [ b ]
---  ∉⇒∉h a∉bx a∈b = a∉bx ({!   !} a∈b)
-
---  ∉⇒∉t : ∀ {a b : A} {x : List A}
---        → (a∉bx : a ∉ (b ∷ x))
---        → (a ∉ x)
---  ∉⇒∉t {b = b} a∉bx a∈x = a∉bx (there a∈x)
-  
---  ∉∉⇒∉ : ∀ {a : A} {x y : List A}
---        → (a∉x : a ∉ x)
---        → (a∉y : a ∉ y)
---        → (a ∉ (x ++ y))
---  ∉∉⇒∉ {x = []} a∉x a∉y a∈xy = a∉y a∈xy
---  ∉∉⇒∉ {x = x ∷ x'} a∉x a∉y a∈xy with a∈xy
---  ... | there a∈xy'  = ∉∉⇒∉ {x = x'} (∉⇒∉t a∉x) a∉y a∈xy'
---  ... | here         = a∉x here
 
   ∈x⇒∈xy : ∀ {a : A} {x y : List A}
           → (a∈x : a ∈ x)
@@ -87,19 +70,66 @@ module _ {i : Level} {A : Set i} where
   ∈x⇒∈xy here = here
   ∈x⇒∈xy (there a∈x) = there (∈x⇒∈xy a∈x)
 
+  ∉⇒∉h : ∀ {a b : A} {x : List A} → a ∉ (b ∷ x) → a ∉ [ b ]
+  ∉⇒∉h a∉bx a∈b = a∉bx (∈x⇒∈xy a∈b)
   
   ∈y⇒∈xy : ∀ {a : A} {x y : List A}
           → (a∈y : a ∈ y)
           → (a ∈ (x ++ y))
   ∈y⇒∈xy {x = []} a∈y = a∈y
   ∈y⇒∈xy {x = x ∷ x₁} a∈y = there (∈y⇒∈xy a∈y) 
+
+
+  ∉⇒∉t : ∀ {a b : A} {x : List A}
+        → (a∉bx : a ∉ (b ∷ x))
+        → (a ∉ x)
+  ∉⇒∉t {b = b} a∉bx a∈x = a∉bx (there a∈x)
+  
+  ∉∉⇒∉ : ∀ {a : A} {x y : List A}
+        → (a∉x : a ∉ x)
+        → (a∉y : a ∉ y)
+        → (a ∉ (x ++ y))
+  ∉∉⇒∉ {x = []} a∉x a∉y a∈xy = a∉y a∈xy
+  ∉∉⇒∉ {x = x ∷ x'} a∉x a∉y a∈xy with a∈xy
+  ... | there a∈xy'  = ∉∉⇒∉ {x = x'} (∉⇒∉t a∉x) a∉y a∈xy'
+  ... | here         = a∉x here
+
+  ∈₁x∉y⇒∈₁xy : ∀ {a : A} {x y : List A}
+              → (a∈₁x : a ∈₁ x)
+              → (a∉y : a ∉ y)
+              → (a ∈₁ (x ++ y))
+  ∈₁x∉y⇒∈₁xy (here₁ a∉y₁) a∉y = here₁ (∉∉⇒∉ a∉y₁ a∉y)
+  ∈₁x∉y⇒∈₁xy (there₁ a∉x a∈₁x) a∉y = there₁ a∉x (∈₁x∉y⇒∈₁xy a∈₁x a∉y)
+
+  ∉x∈₁y⇒∈₁xy : ∀ {a : A} {x y : List A}
+              → (a∉x : a ∉ x)
+              → (a∈₁y : a ∈₁ y)
+              → (a ∈₁ (x ++ y))
+  ∉x∈₁y⇒∈₁xy {x = []} a∉x a∉y = a∉y
+  ∉x∈₁y⇒∈₁xy {x = x ∷ x₁} a∉x a∉y = there₁ (∉⇒∉h a∉x) (∉x∈₁y⇒∈₁xy (∉⇒∉t a∉x) a∉y)
+
+  ∈xy∉y⇒∈x : ∀ {a : A} {x y : List A}
+              → (a∈xy : a ∈ (x ++ y))
+              → (a∉y : a ∉ y)
+              → (a ∈ x)
+  ∈xy∉y⇒∈x {x = []} a∈xy a∉y = ⊥-elim (a∉y a∈xy)
+  ∈xy∉y⇒∈x {x = x ∷ x₁} here a∉y = here
+  ∈xy∉y⇒∈x {x = x ∷ x₁} (there a∈xy) a∉y = there (∈xy∉y⇒∈x a∈xy a∉y)
+ 
+  ∈xy∉x⇒∈y : ∀ {a : A} {x y : List A}
+              → (a∈xy : a ∈ (x ++ y))
+              → (a∉x : a ∉ x)
+              → (a ∈ y)
+  ∈xy∉x⇒∈y {x = []} a∈xy a∉x = a∈xy
+  ∈xy∉x⇒∈y {x = x ∷ x₁} here a∉x = ⊥-elim (a∉x here)
+  ∈xy∉x⇒∈y {x = x ∷ x₁} (there a∈xy) a∉x = ∈xy∉x⇒∈y a∈xy (∉⇒∉t a∉x)
+
   ---
   ∈⇒≡ : ∀ {a b : A} → a ∈ [ b ] → a ≡ b 
   ∈⇒≡ here = refl
 
   ≡⇒∈ : ∀ {a b : A} → a ≡ b → a ∈ [ b ] 
   ≡⇒∈ refl = here
-
 
   
   --nonept : ∀ {a : A} → (x : List A) → a ∈ x → ¬ (x ≡ []) 
@@ -109,6 +139,17 @@ module _ {i : Level} {A : Set i} where
   remove : (a : A) → (x : List A) → (a∈x : a ∈ x) → List A
   remove a .(a ∷ x) (here {x = x}) = x
   remove a .(b ∷ x) (there {b = b} {x = x} a∈x) = b ∷ remove a x a∈x
+
+  
+  ∈-remove  : ∀ {b c : A} {l : List A}
+              → (b∈l : b ∈ l)
+              → (c∈l : c ∈ l)
+              → (c∉b : c ∉ [ b ])
+              → (c ∈ (remove b l b∈l))
+  ∈-remove here here c∉b = ⊥-elim (c∉b here)
+  ∈-remove here (there c∈l) c∉b = c∈l
+  ∈-remove (there b∈l) here c∉b = here
+  ∈-remove (there b∈l) (there c∈l) c∉b = there (∈-remove b∈l c∈l c∉b)
 
 --------------------------------------------
 
@@ -159,15 +200,6 @@ module _ {i : Level} {A : Set i} where
       c∈b'l : c ∈ (b' ∷ l)
       c∈b'l = contain c (c∈blist)
 
-      ∈-remove  : ∀ {b c : A} {l : List A}
-                  → (b∈l : b ∈ l)
-                  → (c∈l : c ∈ l)
-                  → (c∉b : c ∉ [ b ])
-                  → (c ∈ (remove b l b∈l))
-      ∈-remove here here c∉b = ⊥-elim (c∉b here)
-      ∈-remove here (there c∈l) c∉b = c∈l
-      ∈-remove (there b∈l) here c∉b = here
-      ∈-remove (there b∈l) (there c∈l) c∉b = there (∈-remove b∈l c∈l c∉b)
       
  ----------------------------------
 
@@ -224,35 +256,40 @@ module _ {i : Level} {A : Set i} where
 module _ {i i' : Level} {A : Set i} {B : Set i'} where 
   open import Data.Product using (Σ-syntax; _,_)
 
-  preimg : (l : List A) (f : A → B)
-           → (inject : (a a' : A) → f a ≡ f a' → a ≡ a)
-           → (b : B) → (b∈mfl : b ∈ (map f l)) → Σ[ a ∈ A ] Σ[ a∈l ∈ (a ∈ l) ] (f a ≡ b)
-  preimg = {!   !}
-
+--  preimg : (l : List A) (f : A → B)
+--           → (inject : (a a' : A) → f a ≡ f a' → a ≡ a)
+--           → (b : B) → (b∈fl : b ∈ (map f l)) → Σ[ a ∈ A ] Σ[ a∈l ∈ (a ∈ l) ] (f a ≡ b)
+--  preimg = {!   !}
+--
 
   inject-∈    : (l : List A) (f : A → B)
               → (inject : (a a' : A) → f a ≡ f a' → a ≡ a')
               → (a : A) → (fa∈fl :  f a ∈ map f l) → (a ∈ l)
   inject-∈ (x ∷ []) f inject a fa∈fl = ≡⇒∈ (inject a x (∈⇒≡ fa∈fl))
-  inject-∈ (x ∷ x₁ ∷ l) f inject a fa∈fl = {!  l !}
+  inject-∈ (x ∷ x₁ ∷ l) f inject a fa∈fl = {!   !}
+
+  inject-∈'    : {l : List A} (f : A → B)
+              → (inject : (a a' : A) → f a ≡ f a' → a ≡ a')
+              → (a : A) → (fa∈fl :  f a ∈ map f l) → (a ∈ l)
+  inject-∈' f inject a fa∈fl = {! fa∈fl  !}
 
   inject-∉    : (l : List A) (f : A → B)
-              → (inject : (a a' : A) → f a ≡ f a' → a ≡ a)
+              → (inject : (a a' : A) → f a ≡ f a' → a ≡ a')
               → (a : A) → (a∉l :  a ∉ l) → (f a ∉ (map f l))
-  inject-∉ = {!   !}
+  inject-∉ l f inject a a∉l fa∈fl = a∉l (inject-∈ l f inject a fa∈fl)
 
   inject-once : (l : List A) (f : A → B)
-              → (inject : (a a' : A) → f a ≡ f a' → a ≡ a)
+              → (inject : (a a' : A) → f a ≡ f a' → a ≡ a')
               → (once : (a₁ : A) → a₁ ∈ l → a₁ ∈₁ l)
               → ((b : B) → b ∈ (map f l) → b ∈₁ (map f l))
-  inject-once [] _ _ _ _ b∈mfl = ⊥-elim (∉-ept b∈mfl)
-  inject-once (a ∷ l) f inject once b b∈mfl with b∈mfl | once a here
+  inject-once [] _ _ _ _ b∈fl = ⊥-elim (∉-ept b∈fl)
+  inject-once (a ∷ l) f inject once b b∈fl with b∈fl | once a here
   ... | _               | there₁ a∉a _  = ⊥-elim (a∉a here)  
   ... | here           | here₁  a∉l    = here₁ (inject-∉ l f inject a a∉l)  
-  ... | there b∈mfl   | here₁  a∉l    = there₁ b∉fa (inject-once l f (λ a a' _ → refl) (once-∷ a l once) b b∈mfl)  
+  ... | there b∈fl   | here₁  a∉l    = there₁ b∉fa (inject-once l f inject (once-∷ a l once) b b∈fl)  
     where
       b∉fa : (b ∈ (f a ∷ [])) → ⊥
-      b∉fa here = a∉l ({!   !})
+      b∉fa here = a∉l (inject-∈ l f inject a b∈fl)
           
     
 
@@ -289,4 +326,4 @@ module _ where
       exist : (aₑ : Carrier) → aₑ ∈ list
       once : (a₁ : Carrier) → a₁ ∈ list → a₁ ∈₁ list
   open FinSet public
-                  
+                    

@@ -122,8 +122,8 @@ module _ where -- Func N → FinSet
     O : ∀ (n : ℕ) → (a : Fin n) → a ∈ L n → a ∈₁ L n
     O (suc n) fzero a∈l = (here₁ 0∉mfl')
       where 
-          0∉mfl' : (fzero ∈ map fsuc (L n)) → ⊥
-          0∉mfl' 0∈mfl = {! 0∈mfl  !} 
+        0∉mfl' : (fzero ∈ map fsuc (L n)) → ⊥
+        0∉mfl' () 
           
     O (suc n) (fsuc a) a∈l = there₁ sa∉0 fa∈₁mfl'  
       where
@@ -131,14 +131,14 @@ module _ where -- Func N → FinSet
         sa∉0 (there fa∈0) = ∉-ept fa∈0
 
         fa∈₁mfl' : fsuc a ∈₁ map fsuc (L n)
-        fa∈₁mfl' = {! inject-once (L n) fsuc ? ? (fsuc a) () ) ? !} --with O n a (P n a)
---        ... | here₁'  _     = ?
---        ... | there₁' _ _   = ?
-
+        fa∈₁mfl' = inject-once (L n) fsuc inject-fsuc (O n) (fsuc a) (∈xy∉x⇒∈y {x = [ fzero ]} a∈l sa∉0)
+          where
+            inject-fsuc : (x x₁ : Fin n) → (fsuc x ≡ fsuc x₁) → x ≡ x₁
+            inject-fsuc x .x refl = refl
     
 
   F : ℕ → FinSet { lzero }
-  F = λ n → record { Carrier = Fin n ; list = L n ; exist = P n ; once = {!   !} }
+  F = λ n → record { Carrier = Fin n ; list = L n ; exist = P n ; once = O n }
 
   -- EFF : EF F n ≡ n
   open import Data.Nat using (ℕ; zero; suc; _+_)
