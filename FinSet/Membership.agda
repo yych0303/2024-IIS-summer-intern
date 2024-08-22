@@ -23,8 +23,19 @@ module _ {i : Level} {A : Set i} where
     here₁  : ∀ {x} → (a∉x : a ∉ x) → a ∈₁ (a ∷ x) 
     there₁ : ∀ {b x} → (a∉b : a ∉ [ b ]) → (a∈₁x : a ∈₁ x) → a ∈₁ (b ∷ x)
 
+  -- Some Propersitions
 
-    
+  Exist : List A → Set _
+  Exist list = (aₑ : A) → aₑ ∈ list
+  
+  Once : List A → Set _ 
+  Once list = (a₁ : A) → a₁ ∈ list → a₁ ∈₁ list
+  
+  Contain : List A → List A → Set _
+  Contain list l = (a : A) → (a ∈ list) → a ∈ l
+  
+  ------------------------------------------------------------------------------------------------------------------
+
   remove : (a : A) → (x : List A) → (a∈x : a ∈ x) → List A
   remove a .(a ∷ x) (here {x = x}) = x
   remove a .(b ∷ x) (there {b = b} {x = x} a∈x) = b ∷ remove a x a∈x

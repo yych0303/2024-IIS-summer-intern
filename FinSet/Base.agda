@@ -9,7 +9,7 @@ record FinSet {i : Level} : Set (lsuc i) where
   field
     Carrier : Set i
     list : List Carrier
-    exist : (aₑ : Carrier) → aₑ ∈ list
-    once : (a₁ : Carrier) → a₁ ∈ list → a₁ ∈₁ list
+    exist : Exist list  -- (aₑ : Carrier) → aₑ ∈ list
+    once : Once list    -- (a₁ : Carrier) → a₁ ∈ list → a₁ ∈₁ list
 open FinSet public
                     
