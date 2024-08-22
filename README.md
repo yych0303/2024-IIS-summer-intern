@@ -15,7 +15,7 @@ Combinatorial proofs are often more intuitive and easier to understand due to th
 ### 1.1 Combinatorial Operators of Interest
 Combinatorial operators are crucial tools in combinatorics for constructing, manipulating, or analyzing combinatorial objects. These operators help describe the properties of combinatorial structures, calculate combinatorial numbers, or analyze other combinatorial phenomena.
 
-1. **Addition and Multiplication Operators**: These are common in calculating combinatorial numbers or generating functions, used to combine or expand combinatorial objects.
+1. **Addition and Multiplication Operators**: These are common in calculating combinatorial numbers, used to combine or expand combinatorial objects.
 2. **Summation of a Sequence**
 3. **Product of a Sequence**
 4. **Permutation Operators**: These handle or manipulate the permutations of a set of elements, where a permutation can be seen as a combinatorial operation.
@@ -258,16 +258,8 @@ ringFinSet
 
 FinSet
 
-
-## 2 Term !
-
-### 2.1 term
-### 2.2 Eval
-### 2.3 example of term
-  
-
-## 3 Embedding Functions
-### 3.1 Embedding
+## 2 Embedding Functions
+### 2.1 Embedding
 In this context, embedding functions and their properties are crucial for preserving the structure of operations during the transition from one domain to another. Here’s a breakdown:
 
 - **Embedding Function (EF)**: The embedding function \( EF \) maps elements from one structure into another, ensuring that the essential properties and operations are preserved during the embedding process.
@@ -308,7 +300,7 @@ record Embedding : Set (a ⊔ b) where
 This code defines an `Embedding` record that captures the essential properties needed to maintain the algebraic structure during embedding. Each field represents a key aspect of homomorphism or structure preservation, ensuring that the embedded structure accurately reflects the original.
 
 
-### 3.2 Conversion of Rings via Embedding
+### 2.2 Conversion of Rings via Embedding
 
 The `conv` function is designed to generate the algebraic structure formed by the image of the embedding function `EF`. This process involves mapping elements through `EF` and then studying the resulting structure within the new domain, ensuring that it retains the necessary algebraic properties derived from the original ring. This approach is crucial for analyzing how the original ring structure transforms under embedding and how its operations and identities are preserved in the new context.
 
@@ -365,11 +357,11 @@ conv embd rA = record
 
 This code formalizes the transformation of a ring structure through embedding, ensuring that all algebraic properties and operations are preserved in the new context, which is crucial for maintaining the consistency of the algebraic framework across different domains.
 
-## 4 Example of Transforming a Proof: Commutativity of Addition
+## 3 Example of Transforming a Proof: Commutativity of Addition
 
 The goal is to prove the commutativity of addition, \( n + m = m + n \), by using a transformed proof involving the embedding function \( EF \) and the operations on finite sets.
 
-### 4.1 Agda Code
+### 3.1 Agda Code
 
 The first proof, `pf2`, establishes the equivalence of the structures after applying the \( R+ \) operation to finite sets \( F n \) and \( F m \):
 
@@ -397,7 +389,7 @@ pf2' n m =
     m + n  
   ∎
 ```
-### 4.2 Explanation from the Middle of the Proof
+### 3.2 Explanation from the Middle of the Proof
 
 The goal is to prove the commutativity of addition \( n + m = m + n \) by leveraging the properties of the `Embedding` structure and the embedding function `EF`. Here's how the proof works from the middle, focusing on the use of `E~`, homomorphism `E+`, and `EFF`.
 
@@ -425,8 +417,18 @@ In the proof:
 - Once the equivalence \( EF(F n) + EF(F m) \sim EF(F m) + EF(F n) \) has been established using `E+` and `E~`, `EFF` is applied to simplify \( EF(F n) \) and \( EF(F m) \) back to \( n \) and \( m \), respectively.
 - This yields \( n + m = m + n \), completing the proof of commutativity.
 
-### 4.3 Summary
+### 3.3 Summary
 The proof leverages the properties of the `Embedding` structure, particularly the preservation of operations and equivalence relations through `E+`, `E~`, and `EFF`, to demonstrate that the commutativity of addition \( n + m = m + n \) holds by transforming and analyzing the operations within the embedded structure.
+
+
+## 4 Term !
+
+### 4.1 term
+### 4.2 Eval
+### 4.3 example of term
+  
+
+## Conclusion !
 
 ## Future Study
 
@@ -461,3 +463,6 @@ When viewed from a category theory perspective, the algebraic operations and com
 - **\( C(A, B) \)**: This represents a monotonic injection function, which could be interpreted as a morphism that preserves a specific order or structure from \( B \) to \( A \). This could correspond to an order-preserving map in a category of posets or a similar structure.
 
 By interpreting these operations through the lens of category theory, you can leverage categorical constructs to better understand and formalize the relationships between algebraic and combinatorial proofs. This approach may also provide deeper insights into the nature of these operations and how they interact within the broader framework of your research.
+
+
+## Reference !
