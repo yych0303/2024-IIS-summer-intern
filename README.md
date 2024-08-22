@@ -3,7 +3,7 @@
 ## Abstract
 This research investigates the equivalence between algebraic and combinatorial proofs of combinatorial identities using the proof assistant Agda. Combinatorial proofs rely primarily on double counting and bijective proof techniques. Double counting involves proving identities by constructing the same set in two different ways, while bijective proofs establish a one-to-one correspondence between two sets. Algebraic proofs, on the other hand, rely on the properties or theorems of algebraic operations to demonstrate identities.
 
-This work explores how Agda can be used to verify the equivalence of algebraic and combinatorial proofs by abstracting their common algebraic structure. The goal is to establish the conditions needed to maintain proof correctness in Agda, thereby demonstrating the equivalence of the two proof methods, \( S \equiv S' \leftrightarrow n = n' \).
+This work explores how Agda can be used to verify the equivalence of algebraic and combinatorial proofs by abstracting their common algebraic structure. The goal is to establish the conditions needed to maintain proof correctness in Agda, thereby demonstrating the equivalence of the two proof methods.  $$ S \simeq S' \leftrightarrow n = n' $$.
 
 **Keywords**: Agda, Commutative ring, Finset, Combinatorial reasoning, Double counting
 
@@ -15,47 +15,47 @@ Combinatorial proofs are often more intuitive and easier to understand due to th
 ### 1.1 Combinatorial Operators of Interest
 Combinatorial operators are crucial tools in combinatorics for constructing, manipulating, or analyzing combinatorial objects. These operators help describe the properties of combinatorial structures, calculate combinatorial numbers, or analyze other combinatorial phenomena.
 
-1. **Addition and Multiplication Operators**: These are common in calculating combinatorial numbers or generating functions, used to combine or expand combinatorial objects.
+1. **Addition and Multiplication Operators**: These are common in calculating combinatorial numbers, used to combine or expand combinatorial objects.
 2. **Summation of a Sequence**
 3. **Product of a Sequence**
 4. **Permutation Operators**: These handle or manipulate the permutations of a set of elements, where a permutation can be seen as a combinatorial operation.
-5. **Selection Operators**: These describe how to select subsets from a set, such as choosing \( k \) elements from \( n \) elements.
+5. **Selection Operators**: These describe how to select subsets from a set, such as choosing k elements from n elements.
 6. **Factorial Operator**
 
-### 1.2 Algebraic Structure \( R \)
+### 1.2 Algebraic Structure R
 
-The algebraic structure \( R \) is defined as a record in Agda that captures the essential operations, identities, equivalence relations, and properties of a ring. Here's a breakdown:
+The algebraic structure R is defined as a record in Agda that captures the essential operations, identities, equivalence relations, and properties of a ring. Here's a breakdown:
 
 #### Operations
-- **Addition**: \( _R+_ \)  
-  This operation represents the addition of two elements within the ring \( R \).
-- **Multiplication**: \( _R*_ \)  
-  This operation represents the multiplication of two elements within the ring \( R \).
-- **Head**: \( Rhead \)  
-  This function is defined to retrieve or manipulate the "head" of an element in \( R \), playing a role in decomposing elements.
-- **Tail**: \( Rtail \)  
-  This function is defined to retrieve or manipulate the "tail" of an element in \( R \), complementing the head function.
+- **Addition**:  `_R+_` 
+  This operation represents the addition of two elements within the ring R.
+- **Multiplication**: `_R*_`
+  This operation represents the multiplication of two elements within the ring R.
+- **Head**: `Rhead`
+  This function is defined to retrieve or manipulate the "head" of an element in R, playing a role in decomposing elements.
+- **Tail**: `Rtail`
+  This function is defined to retrieve or manipulate the "tail" of an element in R, complementing the head function.
 
 #### Identities
-- **Zero**: \( R0 \)  
-  The additive identity, satisfying \( R0 R+ x = x \) for any element \( x \).
-- **One**: \( R1 \)  
-  The multiplicative identity, satisfying \( R1 R* x = x \) for any element \( x \).
+- **Zero**: `R0`  
+  The additive identity, satisfying R0 R+ x = x for any element x.
+- **One**: `R1`  
+  The multiplicative identity, satisfying R1 R* x = x for any element x.
 
 #### Equivalence Relation
-- **Relation**: \( _\sim_ \)  
-  An equivalence relation \( _\sim_ \) defined on the elements of \( R \), ensuring reflexivity, transitivity, and symmetry.
+- **Relation**: `_~_`  
+  An equivalence relation `_~_` defined on the elements of R, ensuring reflexivity, transitivity, and symmetry.
 
 #### Constraints on Operations
-- **Identity**: The identities \( R0 \) and \( R1 \) are preserved in all operations.
+- **Identity**: The identities `R0` and `R1` are preserved in all operations.
 - **Commutativity**: Both addition and multiplication are commutative.
 - **Associativity**: Both addition and multiplication are associative.
 - **Distributivity**: Multiplication distributes over addition.
 - **Axiom of Equality**: Ensures that equivalence is preserved under addition and multiplication.
 
 #### Theorem
-- \( R/\sim \) is a commutative integral domain.  
-  This theorem states that the quotient of \( R \) under the equivalence relation \( \sim \) forms a commutative integral domain, meaning it has no zero divisors and is commutative under both addition and multiplication.
+- R/~ is a commutative integral domain. 
+  This theorem states that the quotient of R under the equivalence relation `_~_` forms a commutative integral domain, meaning it has no zero divisors and is commutative under both addition and multiplication.
 
 #### Agda Code for Ring Definition
 
@@ -108,13 +108,13 @@ record Ring {ℓ : Level} : Set (lsuc ℓ) where
 This code formalizes the definition of a ring with all its essential operations, properties, and constraints, ensuring that it adheres to the axioms of ring theory and can be used for rigorous algebraic reasoning in Agda.
 
 
-### 1.3 Additional Properties of \( R \)
+### 1.3 Additional Properties of R
 
-In the algebraic structure \( R \), additional properties and axioms are defined to further characterize the behavior of operations, particularly in the context of commutative rings. These properties ensure that operations behave consistently and satisfy fundamental algebraic laws. Below is a detailed explanation of these properties and their corresponding Agda code.
+In the algebraic structure R, additional properties and axioms are defined to further characterize the behavior of operations, particularly in the context of commutative rings. These properties ensure that operations behave consistently and satisfy fundamental algebraic laws. Below is a detailed explanation of these properties and their corresponding Agda code.
 
 #### Additional Commutative Ring Properties
 
-- **Right Identity for Addition**: \( R+-identityʳ \)
+- **Right Identity for Addition**: \( R+\-identityʳ \)
   - This property ensures that adding the identity element \( R0 \) to any element \( x \) on the right results in \( x \) itself.
   - **Agda Definition**:
     ```agda
@@ -140,7 +140,7 @@ In the algebraic structure \( R \), additional properties and axioms are defined
 
 #### Axioms of Equality
 
-- **Right Equality for Addition**: \( R+-axeqʳ \)
+- **Right Equality for Addition**: \( R+\-axeqʳ \)
   - Ensures that if \( x \sim y \), then \( x + z \sim y + z \).
   - **Agda Definition**:
     ```agda
@@ -156,7 +156,7 @@ In the algebraic structure \( R \), additional properties and axioms are defined
     R*-axeqʳ x y z p = ~-trans (R*-comm x z) (~-trans (R*-axeqˡ x y z p) (R*-comm z y))
     ```
 
-- **Combined Equality for Addition**: \( R+-axeq \)
+- **Combined Equality for Addition**: \( R+\-axeq \)
   - Ensures that if \( x \sim y \) and \( s \sim t \), then \( x + s \sim y + t \).
   - **Agda Definition**:
     ```agda
@@ -258,16 +258,8 @@ ringFinSet
 
 FinSet
 
-
-## 2 Term !
-
-### 2.1 term
-### 2.2 Eval
-### 2.3 example of term
-  
-
-## 3 Embedding Functions
-### 3.1 Embedding
+## 2 Embedding Functions
+### 2.1 Embedding
 In this context, embedding functions and their properties are crucial for preserving the structure of operations during the transition from one domain to another. Here’s a breakdown:
 
 - **Embedding Function (EF)**: The embedding function \( EF \) maps elements from one structure into another, ensuring that the essential properties and operations are preserved during the embedding process.
@@ -308,7 +300,7 @@ record Embedding : Set (a ⊔ b) where
 This code defines an `Embedding` record that captures the essential properties needed to maintain the algebraic structure during embedding. Each field represents a key aspect of homomorphism or structure preservation, ensuring that the embedded structure accurately reflects the original.
 
 
-### 3.2 Conversion of Rings via Embedding
+### 2.2 Conversion of Rings via Embedding
 
 The `conv` function is designed to generate the algebraic structure formed by the image of the embedding function `EF`. This process involves mapping elements through `EF` and then studying the resulting structure within the new domain, ensuring that it retains the necessary algebraic properties derived from the original ring. This approach is crucial for analyzing how the original ring structure transforms under embedding and how its operations and identities are preserved in the new context.
 
@@ -365,11 +357,11 @@ conv embd rA = record
 
 This code formalizes the transformation of a ring structure through embedding, ensuring that all algebraic properties and operations are preserved in the new context, which is crucial for maintaining the consistency of the algebraic framework across different domains.
 
-## 4 Example of Transforming a Proof: Commutativity of Addition
+## 3 Example of Transforming a Proof: Commutativity of Addition
 
 The goal is to prove the commutativity of addition, \( n + m = m + n \), by using a transformed proof involving the embedding function \( EF \) and the operations on finite sets.
 
-### 4.1 Agda Code
+### 3.1 Agda Code
 
 The first proof, `pf2`, establishes the equivalence of the structures after applying the \( R+ \) operation to finite sets \( F n \) and \( F m \):
 
@@ -397,7 +389,7 @@ pf2' n m =
     m + n  
   ∎
 ```
-### 4.2 Explanation from the Middle of the Proof
+### 3.2 Explanation from the Middle of the Proof
 
 The goal is to prove the commutativity of addition \( n + m = m + n \) by leveraging the properties of the `Embedding` structure and the embedding function `EF`. Here's how the proof works from the middle, focusing on the use of `E~`, homomorphism `E+`, and `EFF`.
 
@@ -425,8 +417,18 @@ In the proof:
 - Once the equivalence \( EF(F n) + EF(F m) \sim EF(F m) + EF(F n) \) has been established using `E+` and `E~`, `EFF` is applied to simplify \( EF(F n) \) and \( EF(F m) \) back to \( n \) and \( m \), respectively.
 - This yields \( n + m = m + n \), completing the proof of commutativity.
 
-### 4.3 Summary
+### 3.3 Summary
 The proof leverages the properties of the `Embedding` structure, particularly the preservation of operations and equivalence relations through `E+`, `E~`, and `EFF`, to demonstrate that the commutativity of addition \( n + m = m + n \) holds by transforming and analyzing the operations within the embedded structure.
+
+
+## 4 Term !
+
+### 4.1 term
+### 4.2 Eval
+### 4.3 example of term
+  
+
+## Conclusion !
 
 ## Future Study
 
@@ -461,3 +463,6 @@ When viewed from a category theory perspective, the algebraic operations and com
 - **\( C(A, B) \)**: This represents a monotonic injection function, which could be interpreted as a morphism that preserves a specific order or structure from \( B \) to \( A \). This could correspond to an order-preserving map in a category of posets or a similar structure.
 
 By interpreting these operations through the lens of category theory, you can leverage categorical constructs to better understand and formalize the relationships between algebraic and combinatorial proofs. This approach may also provide deeper insights into the nature of these operations and how they interact within the broader framework of your research.
+
+
+## Reference !
