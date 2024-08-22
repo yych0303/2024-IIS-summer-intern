@@ -3,7 +3,7 @@
 ## Abstract
 This research investigates the equivalence between algebraic and combinatorial proofs of combinatorial identities using the proof assistant Agda. Combinatorial proofs rely primarily on double counting and bijective proof techniques. Double counting involves proving identities by constructing the same set in two different ways, while bijective proofs establish a one-to-one correspondence between two sets. Algebraic proofs, on the other hand, rely on the properties or theorems of algebraic operations to demonstrate identities.
 
-This work explores how Agda can be used to verify the equivalence of algebraic and combinatorial proofs by abstracting their common algebraic structure. The goal is to establish the conditions needed to maintain proof correctness in Agda, thereby demonstrating the equivalence of the two proof methods, \( S \equiv S' \leftrightarrow n = n' \).
+This work explores how Agda can be used to verify the equivalence of algebraic and combinatorial proofs by abstracting their common algebraic structure. The goal is to establish the conditions needed to maintain proof correctness in Agda, thereby demonstrating the equivalence of the two proof methods.  $$ S \simeq S' \leftrightarrow n = n' $$.
 
 **Keywords**: Agda, Commutative ring, Finset, Combinatorial reasoning, Double counting
 
@@ -19,43 +19,43 @@ Combinatorial operators are crucial tools in combinatorics for constructing, man
 2. **Summation of a Sequence**
 3. **Product of a Sequence**
 4. **Permutation Operators**: These handle or manipulate the permutations of a set of elements, where a permutation can be seen as a combinatorial operation.
-5. **Selection Operators**: These describe how to select subsets from a set, such as choosing \( k \) elements from \( n \) elements.
+5. **Selection Operators**: These describe how to select subsets from a set, such as choosing k elements from n elements.
 6. **Factorial Operator**
 
-### 1.2 Algebraic Structure \( R \)
+### 1.2 Algebraic Structure R
 
-The algebraic structure \( R \) is defined as a record in Agda that captures the essential operations, identities, equivalence relations, and properties of a ring. Here's a breakdown:
+The algebraic structure R is defined as a record in Agda that captures the essential operations, identities, equivalence relations, and properties of a ring. Here's a breakdown:
 
 #### Operations
-- **Addition**: \( _R+_ \)  
-  This operation represents the addition of two elements within the ring \( R \).
-- **Multiplication**: \( _R*_ \)  
-  This operation represents the multiplication of two elements within the ring \( R \).
-- **Head**: \( Rhead \)  
-  This function is defined to retrieve or manipulate the "head" of an element in \( R \), playing a role in decomposing elements.
-- **Tail**: \( Rtail \)  
-  This function is defined to retrieve or manipulate the "tail" of an element in \( R \), complementing the head function.
+- **Addition**:  `_R+_` 
+  This operation represents the addition of two elements within the ring R.
+- **Multiplication**: `_R*_`
+  This operation represents the multiplication of two elements within the ring R.
+- **Head**: `Rhead`
+  This function is defined to retrieve or manipulate the "head" of an element in R, playing a role in decomposing elements.
+- **Tail**: `Rtail`
+  This function is defined to retrieve or manipulate the "tail" of an element in R, complementing the head function.
 
 #### Identities
-- **Zero**: \( R0 \)  
-  The additive identity, satisfying \( R0 R+ x = x \) for any element \( x \).
-- **One**: \( R1 \)  
-  The multiplicative identity, satisfying \( R1 R* x = x \) for any element \( x \).
+- **Zero**: `R0`  
+  The additive identity, satisfying R0 R+ x = x for any element x.
+- **One**: `R1`  
+  The multiplicative identity, satisfying R1 R* x = x for any element x.
 
 #### Equivalence Relation
-- **Relation**: \( _\sim_ \)  
-  An equivalence relation \( _\sim_ \) defined on the elements of \( R \), ensuring reflexivity, transitivity, and symmetry.
+- **Relation**: `_~_`  
+  An equivalence relation `_~_` defined on the elements of R, ensuring reflexivity, transitivity, and symmetry.
 
 #### Constraints on Operations
-- **Identity**: The identities \( R0 \) and \( R1 \) are preserved in all operations.
+- **Identity**: The identities `R0` and `R1` are preserved in all operations.
 - **Commutativity**: Both addition and multiplication are commutative.
 - **Associativity**: Both addition and multiplication are associative.
 - **Distributivity**: Multiplication distributes over addition.
 - **Axiom of Equality**: Ensures that equivalence is preserved under addition and multiplication.
 
 #### Theorem
-- \( R/\sim \) is a commutative integral domain.  
-  This theorem states that the quotient of \( R \) under the equivalence relation \( \sim \) forms a commutative integral domain, meaning it has no zero divisors and is commutative under both addition and multiplication.
+- R/~ is a commutative integral domain. 
+  This theorem states that the quotient of R under the equivalence relation `_~_` forms a commutative integral domain, meaning it has no zero divisors and is commutative under both addition and multiplication.
 
 #### Agda Code for Ring Definition
 
@@ -108,13 +108,13 @@ record Ring {ℓ : Level} : Set (lsuc ℓ) where
 This code formalizes the definition of a ring with all its essential operations, properties, and constraints, ensuring that it adheres to the axioms of ring theory and can be used for rigorous algebraic reasoning in Agda.
 
 
-### 1.3 Additional Properties of \( R \)
+### 1.3 Additional Properties of R
 
-In the algebraic structure \( R \), additional properties and axioms are defined to further characterize the behavior of operations, particularly in the context of commutative rings. These properties ensure that operations behave consistently and satisfy fundamental algebraic laws. Below is a detailed explanation of these properties and their corresponding Agda code.
+In the algebraic structure R, additional properties and axioms are defined to further characterize the behavior of operations, particularly in the context of commutative rings. These properties ensure that operations behave consistently and satisfy fundamental algebraic laws. Below is a detailed explanation of these properties and their corresponding Agda code.
 
 #### Additional Commutative Ring Properties
 
-- **Right Identity for Addition**: \( R+-identityʳ \)
+- **Right Identity for Addition**: \( R+\-identityʳ \)
   - This property ensures that adding the identity element \( R0 \) to any element \( x \) on the right results in \( x \) itself.
   - **Agda Definition**:
     ```agda
@@ -140,7 +140,7 @@ In the algebraic structure \( R \), additional properties and axioms are defined
 
 #### Axioms of Equality
 
-- **Right Equality for Addition**: \( R+-axeqʳ \)
+- **Right Equality for Addition**: \( R+\-axeqʳ \)
   - Ensures that if \( x \sim y \), then \( x + z \sim y + z \).
   - **Agda Definition**:
     ```agda
@@ -156,7 +156,7 @@ In the algebraic structure \( R \), additional properties and axioms are defined
     R*-axeqʳ x y z p = ~-trans (R*-comm x z) (~-trans (R*-axeqˡ x y z p) (R*-comm z y))
     ```
 
-- **Combined Equality for Addition**: \( R+-axeq \)
+- **Combined Equality for Addition**: \( R+\-axeq \)
   - Ensures that if \( x \sim y \) and \( s \sim t \), then \( x + s \sim y + t \).
   - **Agda Definition**:
     ```agda
