@@ -1,9 +1,6 @@
 {-# OPTIONS --allow-unsolved-metas #-}
-module FinSet where
+module FinSet.Properties where
     
-open import Agda.Primitive
-open import Level
-open import Data.Empty using (⊥-elim) public
 
 -- import Reasoning ≡ ≤ ----------------------------------
 import Data.Nat.Properties as Np
@@ -15,39 +12,14 @@ open Eq.≡-Reasoning renaming (begin_ to ≡-begin_; _∎ to _≡-∎)
 open Eq using (_≡_; refl; cong; cong-app; trans; subst; sym)
 
 
+open import Agda.Primitive
 open import Data.List.Base public
 open import Data.List.Properties
-
-open import Relation.Nullary using (Dec; ¬_) public
-
-open import Data.Sum using (_⊎_) public
 open import Data.Empty public
 
-
+open import FinSet.Membership
 
 module _ {i : Level} {A : Set i} where
-
-  infix 7 _∈_
-  infix 7 _∉_
-  infix 7 _∈₁_
-
-
- 
-  data _∈_ (a : A) : (x : List A) → Set i where
-    here  : ∀ {x} → a ∈ (a ∷ x)
-    there : ∀ {b} {x} → (a∈x : a ∈ x) → a ∈ (b ∷ x)
-    
-  _∉_ : (a : A) → (x : List A) → Set i
-  a ∉ x = ¬ (a ∈ x)
-  
-  data _∈₁_ (a : A) : (x : List A) → Set i where
-    here₁  : ∀ {x} → (a∉x : a ∉ x) → a ∈₁ (a ∷ x) 
-    there₁ : ∀ {b x} → (a∉b : a ∉ [ b ]) → (a∈₁x : a ∈₁ x) → a ∈₁ (b ∷ x)
-
-
-
-
-
   ∉-ept : ∀ {a : A} → a ∉ []
   ∉-ept {a} ()
 
@@ -55,14 +27,6 @@ module _ {i : Level} {A : Set i} where
   ∈₁⇒∈ : ∀ {a : A} {x : List A} → a ∈₁ x → a ∈ x
   ∈₁⇒∈ (here₁ a∉y) = here
   ∈₁⇒∈ (there₁ a∉x x) = there (∈₁⇒∈ x)
-
---  ∉∈⇒∈t : ∀ {a b : A} {x : List A}
---            → (a∉b : a ∉ (b ∷ []))
---            → (a∈bx : a ∈ (b ∷ x))
---            → (a ∈ x)
---  ∉∈⇒∈t a∉b here = ⊥-elim (a∉b here)
---  ∉∈⇒∈t a∉b (there a∈bx) = a∈bx
-
 
   ∈x⇒∈xy : ∀ {a : A} {x y : List A}
           → (a∈x : a ∈ x)
@@ -131,30 +95,7 @@ module _ {i : Level} {A : Set i} where
   ≡⇒∈ : ∀ {a b : A} → a ≡ b → a ∈ [ b ] 
   ≡⇒∈ refl = here
 
-  
-  --nonept : ∀ {a : A} → (x : List A) → a ∈ x → ¬ (x ≡ []) 
-  --nonept [] ()
-  --nonept (x ∷ xs) _ = λ ()
-
-  remove : (a : A) → (x : List A) → (a∈x : a ∈ x) → List A
-  remove a .(a ∷ x) (here {x = x}) = x
-  remove a .(b ∷ x) (there {b = b} {x = x} a∈x) = b ∷ remove a x a∈x
-
-  
-  ∈-remove  : ∀ {b c : A} {l : List A}
-              → (b∈l : b ∈ l)
-              → (c∈l : c ∈ l)
-              → (c∉b : c ∉ [ b ])
-              → (c ∈ (remove b l b∈l))
-  ∈-remove here here c∉b = ⊥-elim (c∉b here)
-  ∈-remove here (there c∈l) c∉b = c∈l
-  ∈-remove (there b∈l) here c∉b = here
-  ∈-remove (there b∈l) (there c∈l) c∉b = there (∈-remove b∈l c∈l c∉b)
-
 --------------------------------------------
-
-  
-
 
   notfst : ∀ {a b : A} {x : List A}
         → (a∈₁bx : a ∈₁ (b ∷ x))
@@ -254,13 +195,6 @@ module _ {i : Level} {A : Set i} where
 
 ---------------------------------------------------------------------------------------------
 module _ {i i' : Level} {A : Set i} {B : Set i'} where 
-  open import Data.Product using (Σ-syntax; _,_)
-
---  preimg : (l : List A) (f : A → B)
---           → (inject : (a a' : A) → f a ≡ f a' → a ≡ a)
---           → (b : B) → (b∈fl : b ∈ (map f l)) → Σ[ a ∈ A ] Σ[ a∈l ∈ (a ∈ l) ] (f a ≡ b)
---  preimg = {!   !}
---
 
   inject-∈    : (l : List A) (f : A → B)
               → (inject : (a a' : A) → f a ≡ f a' → a ≡ a')
@@ -287,8 +221,8 @@ module _ {i i' : Level} {A : Set i} {B : Set i'} where
               → ((b : B) → b ∈ (map f l) → b ∈₁ (map f l))
   inject-once [] _ _ _ _ b∈fl = ⊥-elim (∉-ept b∈fl)
   inject-once (a ∷ l) f inject once b b∈fl with b∈fl | once a here
-  ... | _               | there₁ a∉a _  = ⊥-elim (a∉a here)  
-  ... | here           | here₁  a∉l    = here₁ (inject-∉ l f inject a a∉l)  
+  ... | _            | there₁ a∉a _  = ⊥-elim (a∉a here)  
+  ... | here         | here₁  a∉l    = here₁ (inject-∉ l f inject a a∉l)  
   ... | there b∈fl   | here₁  a∉l    = there₁ b∉fa (inject-once l f inject (once-∷ a l once) b b∈fl)  
     where
       b∉fa : (b ∈ (f a ∷ [])) → ⊥
@@ -308,25 +242,4 @@ module _ where
   substm refl a∈x = a∈x
 
 
-  infix 0 _≃_
-  record _≃_ {a b : Level} (A : Set a) (B : Set b) : Set (a ⊔ b) where
-    field
-      to   : A → B
-      from : B → A
-      from∘to : ∀ (x : A) → from (to x) ≡ x
-      to∘from : ∀ (y : B) → to (from y) ≡ y
-  open _≃_ public
-
-
-
-  open import Data.Nat.Base
-
-
-  record FinSet {i : Level} : Set (lsuc i) where
-    field
-      Carrier : Set i
-      list : List Carrier
-      exist : (aₑ : Carrier) → aₑ ∈ list
-      once : (a₁ : Carrier) → a₁ ∈ list → a₁ ∈₁ list
-  open FinSet public
-                    
+ 

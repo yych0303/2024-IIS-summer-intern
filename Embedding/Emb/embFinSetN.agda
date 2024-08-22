@@ -30,6 +30,7 @@ open import Ring.Data.RingFinSet
 module _ where -- embFinSetN
   
   private
+    
     length-≤ : ∀ {i : Level} {X Y : FinSet {i}} (P : Carrier X ≃ Carrier Y) → length (list X) ≤ length (list Y)
     length-≤ {X = X} {Y = Y} P = ≤-trans (minimal) ( ≤-reflexive  (length-map (from P) (list Y)) )
       where

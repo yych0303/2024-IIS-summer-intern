@@ -24,11 +24,23 @@ open import Data.Product using (_×_)
 open import Data.Sum using (_⊎_; inj₁; inj₂) public
 
 -- Files -----------------------------------------------------------------
-open import FinSet public
-
-
+open import FinSet.Base public
+open import FinSet.Properties public
 
 -- ring ------------------------------------------------------
+
+open import Agda.Primitive
+
+infix 0 _≃_
+record _≃_ {a b : Level} (A : Set a) (B : Set b) : Set (a ⊔ b) where
+  field
+    to   : A → B
+    from : B → A
+    from∘to : ∀ (x : A) → from (to x) ≡ x
+    to∘from : ∀ (y : B) → to (from y) ≡ y
+open _≃_ public
+
+
 
 
 ringFinSet : Ring
