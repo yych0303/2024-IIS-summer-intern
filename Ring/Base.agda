@@ -26,11 +26,11 @@ record Ring {ℓ : Level} : Set (lsuc ℓ) where
     R               : Set ℓ
     R0              : R
     R1              : R
-    Rhead            : R → R
-    Rtail            : R → R
     -- Operations -------------
     _R+_            : R → R → R
     _R*_            : R → R → R   
+    Rhead            : R → R
+    Rtail            : R → R
 --    RIdx          : Idx → R
     -- Equivalence relation ----
     _~_             : R → R → Set
@@ -69,10 +69,10 @@ record Ring {ℓ : Level} : Set (lsuc ℓ) where
   { R               = ?              
   ; R0              = ?      
   ; R1              = ?     
-  ; Rhead           = ?     
-  ; Rtail           = ?        
   ; _R+_            = ?           
   ; _R*_            = ?               
+  ; Rhead           = ?     
+  ; Rtail           = ?        
   ; _~_             = ?           
   ; ~-R0            = ?    
   ; ~-refl          = ?          

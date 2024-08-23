@@ -84,10 +84,10 @@ module _ where -- embFinSetN
     { EF = λ X → length (list X)                                       
     ; E0 = refl                                       
     ; E1 = refl                                       
-    ; Eh = {!   !}                                       
-    ; Et = {!   !}                                        
     ; E+ = λ X Y → trans (length-++ (map inj₁ (list X)) {map inj₂ (list Y)}) (cong₂ _+_ (length-map inj₁ (list X)) (length-map inj₂ (list Y)))                              
     ; E* = λ X Y → length-cart _ (list X) (list Y)                                       
+    ; Eh = {!   !}                                       
+    ; Et = {!   !}                                        
     ; E~ = λ X Y P → ≤-antisym (length-≤ {X = X} {Y = Y} P) (length-≥ {X = X} {Y = Y} P)                                     
     }
 

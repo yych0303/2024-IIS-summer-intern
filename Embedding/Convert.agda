@@ -42,10 +42,10 @@ module _ {a b : Level} (rA : Ring {a} ) ( rB : Ring {b}) where
     { R               = Σ[ y ∈ B ] Σ[ x ∈ A ] (EF embd x ~B y) 
     ; R0              = R0B , R0A , E0 embd             
     ; R1              = R1B , R1A , E1 embd    
-    ; Rhead           = λ (y , x , p) → RhB y , RhA x , ~-trans rB (Eh embd x) (Rhead-~ rB p)
-    ; Rtail           = λ (y , x , p) → RtB y , RtA x , ~-trans rB (Et embd x) (Rtail-~ rB p)
     ; _R+_            = λ (y , x , p) (y' , x' , p') → (y R+B y') , (x R+A x') , ~-trans rB (E+ embd x x') (R+-axeq rB _ _ _ _ p p')           
     ; _R*_            = λ (y , x , p) (y' , x' , p') → (y R*B y') , (x R*A x') , ~-trans rB (E* embd x x') (R*-axeq rB _ _ _ _ p p')
+    ; Rhead           = λ (y , x , p) → RhB y , RhA x , ~-trans rB (Eh embd x) (Rhead-~ rB p)
+    ; Rtail           = λ (y , x , p) → RtB y , RtA x , ~-trans rB (Et embd x) (Rtail-~ rB p)
     ; _~_             = λ (y , _ , _) (y' , _ , _) → (y ~B y') -- _~B_           
     ; ~-R0            = λ (y , _ , _) → ~-R0 rB y -- isDecEquivR0 rB    
     

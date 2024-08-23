@@ -58,8 +58,6 @@ ringFinSet = record
                       ; exist = λ { fzero → here } 
                       ; once = λ {fzero x → here₁ ∉-ept} 
                       }     
-  ; Rhead           = {!   !} 
-  ; Rtail           = {!   !}        
   ; _R+_            = λ X Y → record  
                       { Carrier = Carrier X ⊎ Carrier Y 
                       ; list = (map inj₁ (list X)) ++ (map inj₂ (list Y)) 
@@ -72,6 +70,8 @@ ringFinSet = record
                       ; exist = {!   !} 
                       ; once = {!   !} 
                       }             
+  ; Rhead           = {!   !} 
+  ; Rtail           = {!   !}        
   ; _~_             = λ X Y → Carrier X ≃ Carrier Y           
   ; ~-R0            = λ X → null (list X)
   ; ~-refl          = record 
