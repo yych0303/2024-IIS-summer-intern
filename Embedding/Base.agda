@@ -19,10 +19,10 @@ module _ {a b : Level} (rA : Ring {a} ) ( rB : Ring {b}) where
       EF : R rA → R rB
       E0 : _~_ rB (EF (R0 rA)) (R0 rB) 
       E1 : _~_ rB (EF (R1 rA)) (R1 rB) 
-      Eh : ∀ (x : R rA) → _~_ rB (EF (Rhead rA x)) (Rhead rB (EF x)) 
-      Et : ∀ (x : R rA) → _~_ rB (EF (Rtail rA x)) (Rtail rB (EF x)) 
       E+ : ∀ (x y : R rA) → _~_ rB (EF (_R+_ rA x y)) (_R+_ rB (EF x) (EF y)) 
       E* : ∀ (x y : R rA) → _~_ rB (EF (_R*_ rA x y)) (_R*_ rB (EF x) (EF y))
+      Eh : ∀ (x : R rA) → _~_ rB (EF (Rhead rA x)) (Rhead rB (EF x)) 
+      Et : ∀ (x : R rA) → _~_ rB (EF (Rtail rA x)) (Rtail rB (EF x)) 
 
       -- Embedding
       E~ : ∀ (x y : R rA) → _~_ rA x y → _~_ rB (EF x) (EF y) 

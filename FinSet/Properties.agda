@@ -135,9 +135,9 @@ module _ {i : Level} {A : Set i} where
 
 -- once-∷ ----------------------------------------------------------------------------------
 
-  once-∷  : {b : A} {x : List A}
-          → (Once (b ∷ x))
-          → (Once x)
+  once-∷  : ∀ {b : A} {x : List A}
+            → (Once (b ∷ x))
+            → (Once x)
   once-∷ {b} {x} once a a∈x = ∈₁xy∉x⇒∈₁y a∈₁bx a∉b
     where
       a∈₁bx : a ∈₁ (b ∷ x)
@@ -148,10 +148,10 @@ module _ {i : Level} {A : Set i} where
 
   -- contain-∷ -------------------------------------------------------------------------------------------
   
-  contain-∷ : {b : A} {list l : List A}
-            → (once : Once (b ∷ list))
-            → (contain : Contain (b ∷ list) l)
-            → (Contain list (remove b l (contain b here)))
+  contain-∷ : ∀ {b : A} {list l : List A}
+              → (once : Once (b ∷ list))
+              → (contain : Contain (b ∷ list) l)
+              → (Contain list (remove b l (contain b here)))
   contain-∷ {b} {list} {[]} once contain c c∈list = ⊥-elim (∉-ept (contain c (there c∈list)))
   contain-∷ {b} {list} {b' ∷ l} once contain c c∈list = ∈-remove b∈l c∈b'l (∈₁xy∈y⇒∉x (once c c∈blist) c∈list)
     where
@@ -172,10 +172,10 @@ module _ {i : Level} {A : Set i} where
 
 ----------------------------------
   
-  once-contain→minimal : {list l : List A}
-                      → (Once list)
-                      → (Contain list l)
-                      → length list ≤ length l       
+  once-contain→minimal : ∀ {list l : List A}
+                        → (Once list)
+                        → (Contain list l)
+                        → length list ≤ length l       
   once-contain→minimal {[]} {l} once contain = z≤n
   once-contain→minimal {a ∷ list} {l} once contain = 
       ≤-begin
@@ -193,38 +193,41 @@ module _ {i : Level} {A : Set i} where
         once' = once-∷ once
         contain' = contain-∷ once contain
     
-  once-exist'→minimal : {list l : List A} 
-                      → (Once list)
-                      → (Exist l)
-                      → length list ≤ length l
+  once-exist'→minimal : ∀ {list l : List A} 
+                        → (Once list)
+                        → (Exist l)
+                        → length list ≤ length l
   once-exist'→minimal {list} {l} once exist' = once-contain→minimal once λ b _ → (exist' b)                
 
 ---------------------------------------------------------------------------------------------
 module _ {i i' : Level} {A : Set i} {B : Set i'} where 
 
-  inject-∈    : (l : List A) (f : A → B)
-              → (inject : (a a' : A) → f a ≡ f a' → a ≡ a')
-              → (a : A) → (fa∈fl :  f a ∈ map f l) → (a ∈ l)
+  Inject : (f : A → B) → Set _
+  Inject f = (a a' : A) → f a ≡ f a' → a ≡ a'
+
+  inject-∈    : ∀ (l : List A) (f : A → B)
+                → (Inject f)
+                → (a : A) → (fa∈fl :  f a ∈ map f l) → (a ∈ l)
   inject-∈ (x ∷ []) f inject a fa∈fl = ≡⇒∈ (inject a x (∈⇒≡ fa∈fl))
   inject-∈ (x ∷ x₁ ∷ l) f inject a fa∈fl = {!   !}
 
-  inject-∈'    : {l : List A} (f : A → B)
-              → (inject : (a a' : A) → f a ≡ f a' → a ≡ a')
-              → (a : A) → (fa∈fl :  f a ∈ map f l) → (a ∈ l)
+  inject-∈'    : ∀ {l : List A} (f : A → B)
+                → (Inject f)
+                → (a : A) → (fa∈fl :  f a ∈ map f l) → (a ∈ l)
   inject-∈' {l@(x ∷ l')} f inject a fa∈fl with map f l | fa∈fl
   ... | []      | ()
   ... | _ ∷ _   | here = ∈x⇒∈xy {x = [ x ]} (≡⇒∈ (inject a x ((∈⇒≡ {!   !})))) -- (≡⇒∈ (inject a x (∈⇒≡ here)))
   ... | _ ∷ _   | there fa∈fl' = ∈y⇒∈xy (inject-∈' {l = l'} f inject a {! fa∈fl'  !})
 
-  inject-∉    : (l : List A) (f : A → B)
-              → (inject : (a a' : A) → f a ≡ f a' → a ≡ a')
-              → (a : A) → (a∉l :  a ∉ l) → (f a ∉ (map f l))
+  inject-∉    : ∀ (l : List A) (f : A → B)
+                → (Inject f)
+                → (a : A) → (a∉l :  a ∉ l) → (f a ∉ (map f l))
   inject-∉ l f inject a a∉l fa∈fl = a∉l (inject-∈ l f inject a fa∈fl)
 
-  inject-once : (l : List A) (f : A → B)
-              → (inject : (a a' : A) → f a ≡ f a' → a ≡ a')
-              → (once : (a₁ : A) → a₁ ∈ l → a₁ ∈₁ l)
-              → ((b : B) → b ∈ (map f l) → b ∈₁ (map f l))
+  inject-once : ∀ (l : List A) (f : A → B)
+                → (Inject f)
+                → (Once l)
+                → ((b : B) → b ∈ (map f l) → b ∈₁ (map f l))
   inject-once [] _ _ _ _ b∈fl = ⊥-elim (∉-ept b∈fl)
   inject-once (a ∷ l) f inject once b b∈fl with b∈fl | once a here
   ... | _            | there₁ a∉a _  = ⊥-elim (a∉a here)  
@@ -244,8 +247,8 @@ module _ where
   congm f here = here
   congm f (there a∈l) = there (congm f a∈l) 
 
-  substm : ∀ {i : Level} {A : Set i} {a aa : A} {x : List A} → a ≡ aa → (a∈x : a ∈ x) → aa ∈ x
+  substm : ∀ {i : Level} {A : Set i} {a a' : A} {x : List A} → a ≡ a' → (a∈x : a ∈ x) → a' ∈ x
   substm refl a∈x = a∈x
 
    
-   
+    
