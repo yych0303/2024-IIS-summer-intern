@@ -29,9 +29,8 @@ record Ring {ℓ : Level} : Set (lsuc ℓ) where
     -- Operations -------------
     _R+_            : R → R → R
     _R*_            : R → R → R   
-    Rhead            : R → R
-    Rtail            : R → R
---    RIdx          : Idx → R
+    Rhead           : R → R
+    Rtail           : R → R
     -- Equivalence relation ----
     _~_             : R → R → Set
     ~-R0            : ∀ (x : R) → Bool

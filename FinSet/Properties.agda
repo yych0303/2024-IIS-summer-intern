@@ -20,61 +20,81 @@ open import Data.Empty public
 open import FinSet.Membership
 
 module _ {i : Level} {A : Set i} where
-  ∈⇒≡ : ∀ {a b : A} → a ∈ [ b ] → a ≡ b 
+
+    -- ≡ ---
+    
+  ∈⇒≡ : ∀ {a b : A} 
+      → a ∈ [ b ] 
+      ------------
+      → a ≡ b 
   ∈⇒≡ here = refl
 
-  ≡⇒∈ : ∀ {a b : A} → a ≡ b → a ∈ [ b ] 
+  ≡⇒∈ : ∀ {a b : A} 
+        → a ≡ b 
+        ------------
+        → a ∈ [ b ] 
   ≡⇒∈ refl = here
 
   -- ∈ ---
 
   ∈x⇒∈xy : ∀ {a : A} {x y : List A}
-            → (a∈x : a ∈ x)
-            → (a ∈ (x ++ y))
+            → a ∈ x
+            --------------
+            → a ∈ (x ++ y)
   ∈x⇒∈xy here = here
   ∈x⇒∈xy (there a∈x) = there (∈x⇒∈xy a∈x)
 
   ∈y⇒∈xy : ∀ {a : A} {x y : List A}
-            → (a∈y : a ∈ y)
-            → (a ∈ (x ++ y))
+            → a ∈ y
+            ----------------
+            → a ∈ (x ++ y)
   ∈y⇒∈xy {x = []} a∈y = a∈y
   ∈y⇒∈xy {x = x ∷ x₁} a∈y = there (∈y⇒∈xy a∈y) 
 
   -- ∉ ---
   
   ∉-ept : ∀ {a : A} 
+
+          --------
           → a ∉ []
   ∉-ept {a} ()
 
-  ∉⇒∉h : ∀ {a b : A} {x : List A} → a ∉ (b ∷ x) → a ∉ [ b ]
+  ∉⇒∉h : ∀ {a b : A} {x : List A} 
+          → a ∉ b ∷ x
+          ------------ 
+          → a ∉ [ b ]
   ∉⇒∉h a∉bx a∈b = a∉bx (∈x⇒∈xy a∈b)
-  
+ 
   ∉⇒∉t : ∀ {a b : A} {x : List A}
-          → (a∉bx : a ∉ (b ∷ x))
-          → (a ∉ x)
+          → a ∉ b ∷ x
+          -------------
+          → a ∉ x
   ∉⇒∉t {b = b} a∉bx a∈x = a∉bx (there a∈x)
-  
+
   ∉∉⇒∉ : ∀ {a : A} {x y : List A}
-          → (a∉x : a ∉ x)
-          → (a∉y : a ∉ y)
-          → (a ∉ (x ++ y))
+          → a ∉ x
+          → a ∉ y
+          --------------
+          → a ∉ x ++ y
   ∉∉⇒∉ {x = []} a∉x a∉y a∈xy = a∉y a∈xy
   ∉∉⇒∉ {x = x ∷ x'} a∉x a∉y a∈xy with a∈xy
   ... | there a∈xy'  = ∉∉⇒∉ {x = x'} (∉⇒∉t a∉x) a∉y a∈xy'
   ... | here         = a∉x here
 
   ∈xy∉y⇒∈x : ∀ {a : A} {x y : List A}
-              → (a∈xy : a ∈ (x ++ y))
-              → (a∉y : a ∉ y)
-              → (a ∈ x)
+              → a ∈ x ++ y
+              → a ∉ y
+              ---------------
+              → a ∈ x
   ∈xy∉y⇒∈x {x = []} a∈xy a∉y = ⊥-elim (a∉y a∈xy)
   ∈xy∉y⇒∈x {x = x ∷ x₁} here a∉y = here
   ∈xy∉y⇒∈x {x = x ∷ x₁} (there a∈xy) a∉y = there (∈xy∉y⇒∈x a∈xy a∉y)
  
   ∈xy∉x⇒∈y : ∀ {a : A} {x y : List A}
-              → (a∈xy : a ∈ (x ++ y))
-              → (a∉x : a ∉ x)
-              → (a ∈ y)
+              → a ∈ x ++ y
+              → a ∉ x
+              ------------------
+              → a ∈ y
   ∈xy∉x⇒∈y {x = []} a∈xy a∉x = a∈xy
   ∈xy∉x⇒∈y {x = x ∷ x₁} here a∉x = ⊥-elim (a∉x here)
   ∈xy∉x⇒∈y {x = x ∷ x₁} (there a∈xy) a∉x = ∈xy∉x⇒∈y a∈xy (∉⇒∉t a∉x)
@@ -83,43 +103,50 @@ module _ {i : Level} {A : Set i} where
 
   ∈₁⇒∈ : ∀ {a : A} {x : List A} 
           → a ∈₁ x 
+          ---------
           → a ∈ x
+
   ∈₁⇒∈ (here₁ a∉y) = here
   ∈₁⇒∈ (there₁ a∉x x) = there (∈₁⇒∈ x)
 
   ∈₁x∉y⇒∈₁xy : ∀ {a : A} {x y : List A}
-                → (a∈₁x : a ∈₁ x)
-                → (a∉y : a ∉ y)
-                → (a ∈₁ (x ++ y))
+                → a ∈₁ x
+                → a ∉ y
+                --------------
+                → a ∈₁ x ++ y
   ∈₁x∉y⇒∈₁xy (here₁ a∉y₁) a∉y = here₁ (∉∉⇒∉ a∉y₁ a∉y)
   ∈₁x∉y⇒∈₁xy (there₁ a∉x a∈₁x) a∉y = there₁ a∉x (∈₁x∉y⇒∈₁xy a∈₁x a∉y)
 
   ∉x∈₁y⇒∈₁xy : ∀ {a : A} {x y : List A}
-                → (a∉x : a ∉ x)
-                → (a∈₁y : a ∈₁ y)
-                → (a ∈₁ (x ++ y))
+                → a ∉ x
+                → a ∈₁ y
+                --------------
+                → a ∈₁ x ++ y
   ∉x∈₁y⇒∈₁xy {x = []} a∉x a∉y = a∉y
   ∉x∈₁y⇒∈₁xy {x = x ∷ x₁} a∉x a∉y = there₁ (∉⇒∉h a∉x) (∉x∈₁y⇒∈₁xy (∉⇒∉t a∉x) a∉y)
 
   ∈₁xy∈x⇒∉y : ∀ {a : A} {x y : List A}
-                → (a∈₁xy : a ∈₁ (x ++ y))
-                → (a∈x : a ∈ x)
-                → (a ∉ y) 
+                → a ∈₁ x ++ y
+                → a ∈ x
+                --------------
+                → a ∉ y 
   ∈₁xy∈x⇒∉y {x = .(_ ∷ _)} (here₁ a∉xy) here a∈y = a∉xy (∈y⇒∈xy a∈y)
   ∈₁xy∈x⇒∉y {x = .(_ ∷ _)} (there₁ a∉b a∈₁xy) here a∈y = a∉b here
   ∈₁xy∈x⇒∉y {x = .(_ ∷ _)} (here₁ a∉xy) (there a∈x) a∈y = a∉xy (∈y⇒∈xy a∈y)
   ∈₁xy∈x⇒∉y {x = .(_ ∷ _)} (there₁ a∉b a∈₁xy) (there a∈x) = ∈₁xy∈x⇒∉y a∈₁xy a∈x
 
   ∈₁xy∈y⇒∉x : ∀ {a : A} {x y : List A}
-                → (a∈₁xy : a ∈₁ (x ++ y))
-                → (a∈y : a ∈ y)
-                → (a ∉ x) 
+                → a ∈₁ x ++ y
+                → a ∈ y
+                ---------------
+                → a ∉ x 
   ∈₁xy∈y⇒∉x a∈₁xy a∈y a∈x = ∈₁xy∈x⇒∉y a∈₁xy a∈x a∈y
 
   ∈₁xy∉x⇒∈₁y : ∀ {a : A} {x y : List A}
-                → (a∈₁xy : a ∈₁ (x ++ y))
-                → (a∉x : a ∉ x) 
-                → (a ∈₁ y)
+                → a ∈₁ x ++ y
+                → a ∉ x 
+                --------------
+                → a ∈₁ y
   ∈₁xy∉x⇒∈₁y {x = []} a∈₁xy a∉x = a∈₁xy
   ∈₁xy∉x⇒∈₁y {x = x ∷ x₁} (here₁ a∉x₁) a∉x = ⊥-elim (a∉x here)
   ∈₁xy∉x⇒∈₁y {x = x ∷ x₁} (there₁ a∉b a∈₁xy) a∉x = ∈₁xy∉x⇒∈₁y a∈₁xy (∉⇒∉t a∉x)
@@ -132,12 +159,20 @@ module _ {i : Level} {A : Set i} where
 --  ∈₁xy∉y⇒∈₁x {x = x ∷ x₁} (here₁ a∉x) a∉y = here₁ {!   !}
 --  ∈₁xy∉y⇒∈₁x {x = x ∷ x₁} (there₁ a∉b a∈₁xy) a∉y = {!   !}
 
+----------------------------------------------
+
+  open import Data.Nat.Base
+ 
+  Cover : List A → List A → Set _
+  Cover list l = (a : A) → (a ∈ list) → a ∈ l
+
 
 -- once-∷ ----------------------------------------------------------------------------------
 
   once-∷  : ∀ {b : A} {x : List A}
-            → (Once (b ∷ x))
-            → (Once x)
+            → Once (b ∷ x)
+            ---------------
+            → Once x
   once-∷ {b} {x} once a a∈x = ∈₁xy∉x⇒∈₁y a∈₁bx a∉b
     where
       a∈₁bx : a ∈₁ (b ∷ x)
@@ -146,25 +181,25 @@ module _ {i : Level} {A : Set i} where
       a∉b = ∈₁xy∈y⇒∉x a∈₁bx a∈x
 
 
-  -- contain-∷ -------------------------------------------------------------------------------------------
+  -- cover-∷ -------------------------------------------------------------------------------------------
   
-  contain-∷ : ∀ {b : A} {list l : List A}
+  cover-∷ : ∀ {b : A} {list l : List A}
               → (once : Once (b ∷ list))
-              → (contain : Contain (b ∷ list) l)
-              → (Contain list (remove b l (contain b here)))
-  contain-∷ {b} {list} {[]} once contain c c∈list = ⊥-elim (∉-ept (contain c (there c∈list)))
-  contain-∷ {b} {list} {b' ∷ l} once contain c c∈list = ∈-remove b∈l c∈b'l (∈₁xy∈y⇒∉x (once c c∈blist) c∈list)
+              → (cover : Cover (b ∷ list) l)
+              ----------------------------------------------
+              → (Cover list (remove b l (cover b here)))
+  cover-∷ {b} {list} {[]} once cover c c∈list = ⊥-elim (∉-ept (cover c (there c∈list)))
+  cover-∷ {b} {list} {b' ∷ l} once cover c c∈list = ∈-remove b∈l c∈b'l (∈₁xy∈y⇒∉x (once c c∈blist) c∈list)
     where
       c∈blist : c ∈ (b ∷ list)
       c∈blist = there c∈list
-      b∈l = contain b here
+      b∈l = cover b here
       c∈b'l : c ∈ (b' ∷ l)
-      c∈b'l = contain c (c∈blist)
+      c∈b'l = cover c (c∈blist)
 
       
  -- length --------------------------------
 
-  open import Data.Nat.Base
 
   length-remove : ∀ (a : A) → (l : List A) → (a∈l : a ∈ l) → 1 + length (remove a l a∈l) ≡ length l
   length-remove a .(a ∷ l) (here {x = l}) = refl
@@ -172,32 +207,32 @@ module _ {i : Level} {A : Set i} where
 
 ----------------------------------
   
-  once-contain→minimal : ∀ {list l : List A}
+  once-cover→≤ : ∀ {list l : List A}
                         → (Once list)
-                        → (Contain list l)
+                        → (Cover list l)
                         → length list ≤ length l       
-  once-contain→minimal {[]} {l} once contain = z≤n
-  once-contain→minimal {a ∷ list} {l} once contain = 
+  once-cover→≤ {[]} {l} once cover = z≤n
+  once-cover→≤ {a ∷ list} {l} once cover = 
       ≤-begin
         length (a ∷ list)
       ≤⟨ ≤-refl ⟩
         1 + (length list)
-      ≤⟨ s≤s (once-contain→minimal once' contain') ⟩
+      ≤⟨ s≤s (once-cover→≤ once' cover') ⟩
         1 + length (remove a l a∈l) 
       ≤⟨ ≤-reflexive (length-remove a l a∈l) ⟩
         length l
       ≤-∎
       where
-        a∈l = contain a (here)
+        a∈l = cover a (here)
         l' = remove a l a∈l
         once' = once-∷ once
-        contain' = contain-∷ once contain
+        cover' = cover-∷ once cover
     
-  once-exist'→minimal : ∀ {list l : List A} 
-                        → (Once list)
-                        → (Exist l)
-                        → length list ≤ length l
-  once-exist'→minimal {list} {l} once exist' = once-contain→minimal once λ b _ → (exist' b)                
+  minimal : ∀ {list l : List A} 
+            → (Once list)
+            → (Enum l)
+            → length list ≤ length l
+  minimal {list} {l} once enum' = once-cover→≤ once λ b _ → (enum' b)                
 
 ---------------------------------------------------------------------------------------------
 module _ {i i' : Level} {A : Set i} {B : Set i'} where 

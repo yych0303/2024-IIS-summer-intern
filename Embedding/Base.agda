@@ -3,15 +3,15 @@ module Embedding.Base where
 open import Agda.Primitive
 open import Ring.Base public
 
+open import Data.Product
+open import Data.Sum.Base
+-- open import Relation.Binary.PropositionalEquality using (_≡_; refl; sym; trans; cong)
+open import Ring.Properties
+  
 
 module _ {a b : Level} (rA : Ring {a} ) ( rB : Ring {b}) where
   open Ring
 
-  open import Data.Product
-  open import Data.Sum.Base
-  -- open import Relation.Binary.PropositionalEquality using (_≡_; refl; sym; trans; cong)
-  open import Ring.Properties
-    
 
   record Embedding : Set (a ⊔ b) where
     field

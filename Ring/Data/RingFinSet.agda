@@ -49,25 +49,25 @@ ringFinSet = record
   ; R0              = record  
                       { Carrier = Fin 0 
                       ; list = [] 
-                      ; exist = λ () 
+                      ; enum = λ () 
                       ; once = λ () 
                       }             
   ; R1              = record  
                       { Carrier = Fin 1 
                       ; list = [ fzero ] 
-                      ; exist = λ { fzero → here } 
+                      ; enum = λ { fzero → here } 
                       ; once = λ {fzero x → here₁ ∉-ept} 
                       }     
   ; _R+_            = λ X Y → record  
                       { Carrier = Carrier X ⊎ Carrier Y 
                       ; list = (map inj₁ (list X)) ++ (map inj₂ (list Y)) 
-                      ; exist = λ { (inj₁ z) → ∈x⇒∈xy (congm inj₁ (exist X z)) ; (inj₂ z) →  ∈y⇒∈xy (congm inj₂ (exist Y z)) } 
+                      ; enum = λ { (inj₁ z) → ∈x⇒∈xy (congm inj₁ (enum X z)) ; (inj₂ z) →  ∈y⇒∈xy (congm inj₂ (enum Y z)) } 
                       ; once = λ {(inj₁ z) iz∈list → ∈₁x∉y⇒∈₁xy (inject-once (list X) inj₁ (λ {a a refl → refl}) (once X) (inj₁ z) (∈xy∉y⇒∈x iz∈list λ ())) λ () ; (inj₂ z) iz∈list →  ∉x∈₁y⇒∈₁xy (λ ()) (inject-once (list Y) inj₂ (λ {a a refl → refl}) (once Y) (inj₂ z) (∈xy∉x⇒∈y iz∈list λ ())) }
                       }
   ; _R*_            = λ X Y → record  
                       { Carrier = Carrier X × Carrier Y 
                       ; list = cartesianProduct (list X) (list Y) 
-                      ; exist = {!   !} 
+                      ; enum = {!   !} 
                       ; once = {!   !} 
                       }             
   ; Rhead           = {!   !} 

@@ -32,28 +32,24 @@ module _ where -- embFinSetN
   private
     
     length-≤ : ∀ {i : Level} {X Y : FinSet {i}} (P : Carrier X ≃ Carrier Y) → length (list X) ≤ length (list Y)
-    length-≤ {X = X} {Y = Y} P = ≤-trans (minimal) ( ≤-reflexive  (length-map (from P) (list Y)) )
+    length-≤ {X = X} {Y = Y} P = ≤-trans (minimal (once X) enum-fy) ( ≤-reflexive  (length-map (from P) (list Y)) )
       where
         fy : List (Carrier X)
         fy = map (from P) (list Y)
     
-        exist-fy : (a : Carrier X) → a ∈ fy
-        exist-fy a = substm (from∘to P a) (congm (from P) (exist Y (to P a)))
-
-        minimal = once-exist'→minimal (once X) exist-fy
+        enum-fy : (a : Carrier X) → a ∈ fy
+        enum-fy a = substm (from∘to P a) (congm (from P) (enum Y (to P a)))
     
         
     length-≥ : ∀ {i : Level} {X Y : FinSet {i}} (P : Carrier X ≃ Carrier Y) → length (list Y) ≤ length (list X)
-    length-≥ {X = X} {Y = Y} P = ≤-trans (minimal) ( ≤-reflexive  (length-map (to P) (list X)) )
+    length-≥ {X = X} {Y = Y} P = ≤-trans (minimal (once Y) enum-tx) ( ≤-reflexive  (length-map (to P) (list X)) )
       where
         tx : List (Carrier Y)
         tx = map (to P) (list X)
     
-        exist-tx : (b : Carrier Y) → b ∈ tx
-        exist-tx b = substm (to∘from P b) (congm (to P) (exist X (from P b)))
+        enum-tx : (b : Carrier Y) → b ∈ tx
+        enum-tx b = substm (to∘from P b) (congm (to P) (enum X (from P b)))
         
-        minimal = once-exist'→minimal (once Y) exist-tx
-    
 
 
 
@@ -139,7 +135,7 @@ module _ where -- Func N → FinSet
     
 
   F : ℕ → FinSet { lzero }
-  F = λ n → record { Carrier = Fin n ; list = L n ; exist = P n ; once = O n }
+  F = λ n → record { Carrier = Fin n ; list = L n ; enum = P n ; once = O n }
 
   -- EFF : EF F n ≡ n
   open import Data.Nat using (ℕ; zero; suc; _+_)

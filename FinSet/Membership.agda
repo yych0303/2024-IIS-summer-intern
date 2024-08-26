@@ -8,9 +8,9 @@ open import Data.Empty
 
 module _ {i : Level} {A : Set i} where
 
-  infix 7 _∈_
-  infix 7 _∉_
-  infix 7 _∈₁_
+  infix 2 _∈_
+  infix 2 _∉_
+  infix 2 _∈₁_
  
   data _∈_ (a : A) : (x : List A) → Set i where
     here  : ∀ {x} → a ∈ (a ∷ x)
@@ -25,15 +25,12 @@ module _ {i : Level} {A : Set i} where
 
   -- Some Propersitions
 
-  Exist : List A → Set _
-  Exist list = (aₑ : A) → aₑ ∈ list
+  Enum : List A → Set _
+  Enum list = (aₑ : A) → aₑ ∈ list
   
   Once : List A → Set _ 
   Once list = (a₁ : A) → a₁ ∈ list → a₁ ∈₁ list
-  
-  Contain : List A → List A → Set _
-  Contain list l = (a : A) → (a ∈ list) → a ∈ l
-  
+ 
   ------------------------------------------------------------------------------------------------------------------
 
   remove : (a : A) → (x : List A) → (a∈x : a ∈ x) → List A

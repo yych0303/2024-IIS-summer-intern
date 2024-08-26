@@ -46,20 +46,24 @@ pf1' =
 
 
 
+-- Fₙ + Fₘ ~ Fₘ + Fₙ = Sₙ ⊎ Sₘ ≃  Sₘ ⊎ Sₙ
+combi-pf : (n m : ℕ) → ((F n) R+ (F m)) ~ ((F m) R+ (F n))
+combi-pf n m = record { to   = λ {(inj₁ x) → inj₂ x ; (inj₂ y) → inj₁ y} 
+                      ; from =  λ {(inj₁ x) → inj₂ x ; (inj₂ y) → inj₁ y}
+                      ; from∘to = λ {(inj₁ x) → refl ; (inj₂ y) → refl}
+                      ; to∘from = λ {(inj₁ x) → refl ; (inj₂ y) → refl}
+                      }
 
-pf2 : (n m : ℕ) → ((F n) R+ (F m)) ~ ((F m) R+ (F n))
-pf2 = {!   !}
 
-
-pf2' : (n m : ℕ) → n + m ≡ m + n 
-pf2' n m = 
+algeb-pf : (n m : ℕ) → n + m ≡ m + n 
+algeb-pf n m = 
   begin 
     n + m
   ≡⟨ sym (cong₂ _+_ (EFF n) (EFF m)) ⟩
     EF (F n) + EF (F m)
   ≡⟨ sym (E+ (F n) (F m)) ⟩
     EF ((F n) R+ (F m))
-  ≡⟨ E~ ((F n) R+ (F m)) ((F m) R+ (F n)) (pf2 n m)  ⟩
+  ≡⟨ E~ ((F n) R+ (F m)) ((F m) R+ (F n)) (combi-pf n m)  ⟩
     EF ((F m) R+ (F n))
   ≡⟨ E+ (F m) (F n) ⟩
     EF (F m) + EF (F n)
