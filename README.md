@@ -1,28 +1,94 @@
 # Bridging Combinatorial and Algebraic proof: An Algebraic Approach with Agda
 
 ## Abstract
-This research investigates the equivalence between algebraic and combinatorial proofs of combinatorial identities using the proof assistant Agda. Combinatorial proofs rely primarily on double counting and bijective proof techniques. Double counting involves proving identities by constructing the same set in two different ways, while bijective proofs establish a one-to-one correspondence between two sets. Algebraic proofs, on the other hand, rely on the properties or theorems of algebraic operations to demonstrate identities.
+This research explores the equivalence between algebraic and combinatorial proofs of combinatorial identities using Agda. Combinatorial proofs typically utilize double counting and bijective techniques, while algebraic proofs rely on algebraic operations. The goal is to transform combinatorial proofs into algebraic ones in Agda by abstracting their shared algebraic structure, ensuring proof correctness and equivalence. The equivalence of sets $S$ and $S'$ is expressed as $S \simeq S'$, indicating a bijection, with $S \simeq S' \leftrightarrow n = n'$. This equivalence is crucial in transforming combinatorial proofs into algebraic forms, ensuring the preservation of mathematical accuracy.
 
-This work explores how Agda can be used to verify the equivalence of algebraic and combinatorial proofs by abstracting their common algebraic structure. The goal is to establish the conditions needed to maintain proof correctness in Agda, thereby demonstrating the equivalence of the two proof methods.  $$ S \simeq S' \leftrightarrow n = n' $$.
+
 
 **Keywords**: Agda, Commutative ring, Finset, Combinatorial reasoning, Double counting
 
 ## Motivation
-Combinatorial proofs are often more intuitive and easier to understand due to their combinatorial significance, while algebraic proofs may require the buildup of numerous auxiliary lemmas. This research aims to verify the equivalence of these two proof methods by abstracting their common algebraic structure in Agda, thereby systematically constructing the correctness of combinatorial proofs and exploring their equivalence.
+Combinatorial proofs are often more intuitive and easier to understand due to their reliance on counting and reasoning about sets, which often makes them more accessible. On the other hand, algebraic proofs, while more formal, typically require the buildup of numerous auxiliary lemmas and the use of more complex mathematical tools such as calculus and generating functions. This complexity can make proving intricate combinatorial identities in Agda a challenging task.
+
+This research aims to verify the equivalence of these two proof methods by abstracting their common algebraic structure in Agda, thereby systematically constructing the correctness of combinatorial proofs and exploring their equivalence. By establishing this equivalence, this study hopes to provide a new dimension of proof that could bridge the gap between combinatorial and algebraic approaches.
+
+## 0 Intoduction
+
+
+
+### 0.1 Combinatorial Operators of Interest
+Combinatorial operators are crucial tools in combinatorics for constructing, manipulating, or analyzing combinatorial objects. These operators help describe the properties of combinatorial structures, calculate combinatorial numbers, or analyze other combinatorial phenomena.
+
+1. **`+` : Addition and `*` Multiplication Operators**: These are common in calculating combinatorial numbers, used to combine or expand combinatorial objects.
+2. **`Σ` : Summation of a Sequence** Summation operator, which aggregates a list of elements by summing them according to a given function.
+3. **`Π` : Product of a Sequence** Multiplication operator, which aggregates a list of elements by multiplying them according to a given function.
+4. **`P` : Permutation Operator**: These handle or manipulate the permutations of a set of elements, where a permutation can be seen as a combinatorial operation.
+5. **`C` : Selection Operator**: These describe how to select subsets from a set, such as choosing k elements from n elements.
+6. **`!` : Factorial** Which is a specific case of permutation.
+
+
+### 0.2 Example of Combinatorial and Algebraic proof
+
+
+
+![image](https://hackmd.io/_uploads/ryuXteQq0.png)
+
+#### (a) Combinatorial Argument
+
+To prove this identity combinatorially, we can consider the problem of selecting a committee from a group of $n$ people, where one person in the committee is chosen as the chairperson.
+
+- **(i) Number of possible selections for a committee of size $k$ and its chairperson:**
+
+  - First, choose $k$ members out of $n$. This can be done in $\binom{n}{k}$ ways.
+  - Then, choose the chairperson from the $k$ members of the committee. This can be done in $k$ ways.
+  
+  Therefore, the total number of ways to choose a committee of size $k$ with a chairperson is $k \cdot \binom{n}{k}$.
+  
+- **(ii) Number of possible selections of a chairperson and the other committee members:**
+
+  - Select the chairperson from the $n$ people. This can be done in $n$ ways.
+  - After choosing the chairperson, the remaining $n-1$ people can either be included in the committee or not. This gives $2^{n-1}$ possible subsets.
+  
+  Therefore, the total number of ways to choose the chairperson and the other committee members is $n \cdot 2^{n-1}$.
+
+Since these two counts represent the same situation, the identity is proven combinatorially.
+
+#### (b) Algebraic Argument
+
+To prove the identity algebraically, use the binomial theorem:
+
+$$
+(1 + x)^n = \sum_{k=0}^n \binom{n}{k} x^k
+$$
+
+Differentiate both sides with respect to $x$:
+
+$$
+n(1 + x)^{n-1} = \sum_{k=1}^n k \binom{n}{k} x^{k-1}
+$$
+
+Now, set $x = 1$:
+
+$$
+n \cdot 2^{n-1} = \sum_{k=1}^n k \binom{n}{k}
+$$
+
+This gives the desired identity.
+
+### 0.3 Summary of Example Proofs:
+**Comparison:**
+- The combinatorial proof is intuitive, relying on counting and reasoning about sets, which often makes it easier to understand.
+- The algebraic proof uses a more formal, symbolic approach by manipulating algebraic expressions and applying theorems such as the binomial theorem.
+
+In the context of the research, the goal is to abstract the common algebraic structure underlying these proofs and verify their equivalence within Agda, thus demonstrating that both approaches are valid and equivalent in proving the same combinatorial identity.
+
+
+
 
 ## 1 Algebraic Structure of Combinatorial Systems
 
-### 1.1 Combinatorial Operators of Interest
-Combinatorial operators are crucial tools in combinatorics for constructing, manipulating, or analyzing combinatorial objects. These operators help describe the properties of combinatorial structures, calculate combinatorial numbers, or analyze other combinatorial phenomena.
 
-1. **Addition and Multiplication Operators**: These are common in calculating combinatorial numbers, used to combine or expand combinatorial objects.
-2. **Summation of a Sequence**
-3. **Product of a Sequence**
-4. **Permutation Operators**: These handle or manipulate the permutations of a set of elements, where a permutation can be seen as a combinatorial operation.
-5. **Selection Operators**: These describe how to select subsets from a set, such as choosing k elements from n elements.
-6. **Factorial Operator**
-
-### 1.2 Algebraic Structure R
+### 1.1 Algebraic Structure R
 
 The algebraic structure R is defined as a record in Agda that captures the essential operations, identities, equivalence relations, and properties of a ring. Here's a breakdown:
 
@@ -105,7 +171,7 @@ record Ring {ℓ : Level} : Set (lsuc ℓ) where
     R*-axeqˡ         : ∀ (x y z : R)   → x ~ y → (z R* x) ~ (z R* y)
 ```
 
-This code formalizes the definition of a ring with all its essential operations, properties, and constraints, ensuring that it adheres to the axioms of ring theory and can be used for rigorous algebraic reasoning in Agda.
+This code formalizes the definition of a ring with all its essential operations and constraints, ensuring that it adheres to the axioms of ring theory and can be used for rigorous algebraic reasoning in Agda.
 
 
 ### 1.3 Additional Properties of R
@@ -300,7 +366,11 @@ record Embedding : Set (a ⊔ b) where
 This code defines an `Embedding` record that captures the essential properties needed to maintain the algebraic structure during embedding. Each field represents a key aspect of homomorphism or structure preservation, ensuring that the embedded structure accurately reflects the original.
 
 
-### 2.2 Conversion of Rings via Embedding
+### 2.2 Embedding from FinSet to N !
+
+
+
+### 2.3 Conversion of Rings via Embedding
 
 The `conv` function is designed to generate the algebraic structure formed by the image of the embedding function `EF`. This process involves mapping elements through `EF` and then studying the resulting structure within the new domain, ensuring that it retains the necessary algebraic properties derived from the original ring. This approach is crucial for analyzing how the original ring structure transforms under embedding and how its operations and identities are preserved in the new context.
 
@@ -426,11 +496,12 @@ The proof leverages the properties of the `Embedding` structure, particularly th
 ### 4.1 term
 ### 4.2 Eval
 ### 4.3 example of term
-  
 
-## Conclusion !
-
-## Future Study
+## Unfinished Code Components
+1. inject-∈ Function
+2. ringFinSet Implementation
+3. embdFinSet Implementation Eh, Et
+## Future Studies
 
 ### 1. **Automatic Proof Generation Using `data Term`**
 
@@ -454,15 +525,28 @@ These extensions to the `data Term` structure will allow for more comprehensive 
 
 When viewed from a category theory perspective, the algebraic operations and combinatorial structures can be interpreted as categorical constructs:
 
-- **\( R+ \)**: This can be interpreted as a function couple \([f, g]\), where the operation represents the combination or addition of two functions. In categorical terms, this could represent the coproduct or sum in a category where functions or morphisms are objects.
+- **`R+`**: 
 
-- **\( R* \)**: This operation is seen as function composition \( f \circ g \). In category theory, composition is fundamental, representing the chaining of morphisms (functions) from one object to another, capturing the idea of multiplication in an algebraic sense.
+- **`R*`**: This operation is seen as function composition $f \circ g$. In category theory, composition is fundamental, representing the chaining of morphisms (functions) from one object to another, capturing the idea of multiplication in an algebraic sense.
 
-- **\( P(A, B) \)**: This represents an injection function from \( B \) to \( A \). In categorical terms, this could be seen as a monomorphism, where the injection preserves the structure of \( B \) within \( A \).
+- **`P(A, B)`**: This represents an injection function from \( B \) to \( A \). In categorical terms, this could be seen as a monomorphism, where the injection preserves the structure of \( B \) within \( A \).
 
-- **\( C(A, B) \)**: This represents a monotonic injection function, which could be interpreted as a morphism that preserves a specific order or structure from \( B \) to \( A \). This could correspond to an order-preserving map in a category of posets or a similar structure.
+- **`C(A, B)`**: This represents a monotonic injection function, which could be interpreted as a morphism that preserves a specific order or structure from \( B \) to \( A \). This could correspond to an order-preserving map in a category of posets or a similar structure.
 
 By interpreting these operations through the lens of category theory, you can leverage categorical constructs to better understand and formalize the relationships between algebraic and combinatorial proofs. This approach may also provide deeper insights into the nature of these operations and how they interact within the broader framework of your research.
 
 
-## Reference !
+## Conclusion
+Conclusion:
+
+By abstracting set theory and arithmetic structures in number theory, this research has constructed a promising system. It is believed that once the automation of the Term is completed, this system will provide a new pathway for proof methods in Agda, lowering the difficulty and technical barrier of proofs while increasing their readability. However, due to time constraints, there are still many parts of the project that remain unfinished, including the proof of `once` in FinSet multiplication and the Lemma `inject-∈` used for defining addition.
+
+## References
+
+- FRUMIN, Dan, et al. "Finite sets in homotopy type theory." *Proceedings of the 7th ACM SIGPLAN International Conference on Certified Programs and Proofs*. 2018. pp. 201-214.
+
+- EDMONDS, Chelsea. *Formalising Combinatorial Structures and Proof Techniques in Isabelle/HOL*. 2024. PhD Thesis.
+
+- RIJKE, Egbert; SPITTERS, Bas. "Sets in homotopy type theory." *Mathematical Structures in Computer Science*. 2015, 25(5): 1172-1202.
+
+- The Univalent Foundations Program. *Homotopy Type Theory: Univalent Foundations of Mathematics*. arXiv preprint arXiv:1308.0729, 2013.
