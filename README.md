@@ -127,7 +127,7 @@ The algebraic structure R is defined as a record in Agda that captures the essen
 
 Here is the Agda code that defines the `Ring` record with the above properties:
 
-```agda
+```agda=
 record Ring {ℓ : Level} : Set (lsuc ℓ) where
   field
     R               : Set ℓ
@@ -183,7 +183,7 @@ In the algebraic structure R, additional properties and axioms are defined to fu
 - **Right Identity for Addition**: \( R+\-identityʳ \)
   - This property ensures that adding the identity element \( R0 \) to any element \( x \) on the right results in \( x \) itself.
   - **Agda Definition**:
-    ```agda
+    ```agda=
     R+-identityʳ : ∀ (x : R) → (x R+ R0) ~ x
     R+-identityʳ x = ~-trans (R+-comm x R0) (R+-identityˡ x)
     ```
@@ -191,7 +191,7 @@ In the algebraic structure R, additional properties and axioms are defined to fu
 - **Right Identity for Multiplication**: \( R*-identityʳ \)
   - This property ensures that multiplying any element \( x \) by the identity element \( R1 \) on the right results in \( x \) itself.
   - **Agda Definition**:
-    ```agda
+    ```agda=
     R*-identityʳ : ∀ (x : R) → (x R* R1) ~ x
     R*-identityʳ x = ~-trans (R*-comm x R1) (R*-identityˡ x)
     ```
@@ -199,7 +199,7 @@ In the algebraic structure R, additional properties and axioms are defined to fu
 - **Right Zero for Multiplication**: \( R*-zeroʳ \)
   - This property ensures that multiplying any element \( x \) by the zero element \( R0 \) on the right results in \( R0 \).
   - **Agda Definition**:
-    ```agda
+    ```agda=
     R*-zeroʳ : ∀ (x : R) → (x R* R0) ~ R0
     R*-zeroʳ x = ~-trans (R*-comm x R0) (R*-zeroˡ x)
     ```
@@ -209,7 +209,7 @@ In the algebraic structure R, additional properties and axioms are defined to fu
 - **Right Equality for Addition**: \( R+\-axeqʳ \)
   - Ensures that if \( x \sim y \), then \( x + z \sim y + z \).
   - **Agda Definition**:
-    ```agda
+    ```agda=
     R+-axeqʳ : ∀ (x y z : R) → x ~ y → (x R+ z) ~ (y R+ z)
     R+-axeqʳ x y z p = ~-trans (R+-comm x z) (~-trans (R+-axeqˡ x y z p) (R+-comm z y))
     ```
@@ -217,7 +217,7 @@ In the algebraic structure R, additional properties and axioms are defined to fu
 - **Right Equality for Multiplication**: \( R*-axeqʳ \)
   - Ensures that if \( x \sim y \), then \( x * z \sim y * z \).
   - **Agda Definition**:
-    ```agda
+    ```agda=
     R*-axeqʳ : ∀ (x y z : R) → x ~ y → (x R* z) ~ (y R* z)
     R*-axeqʳ x y z p = ~-trans (R*-comm x z) (~-trans (R*-axeqˡ x y z p) (R*-comm z y))
     ```
@@ -225,7 +225,7 @@ In the algebraic structure R, additional properties and axioms are defined to fu
 - **Combined Equality for Addition**: \( R+\-axeq \)
   - Ensures that if \( x \sim y \) and \( s \sim t \), then \( x + s \sim y + t \).
   - **Agda Definition**:
-    ```agda
+    ```agda=
     R+-axeq : ∀ (x y s t : R) → x ~ y → s ~ t → (x R+ s) ~ (y R+ t)
     R+-axeq x y s t p q =  ~-trans (R+-axeqʳ x y s p) (R+-axeqˡ s t y q)
     ```
@@ -233,7 +233,7 @@ In the algebraic structure R, additional properties and axioms are defined to fu
 - **Combined Equality for Multiplication**: \( R*-axeq \)
   - Ensures that if \( x \sim y \) and \( s \sim t \), then \( x * s \sim y * t \).
   - **Agda Definition**:
-    ```agda
+    ```agda=
     R*-axeq : ∀ (x y s t : R) → x ~ y → s ~ t → (x R* s) ~ (y R* t)
     R*-axeq x y s t p q =  ~-trans (R*-axeqʳ x y s p) (R*-axeqˡ s t y q)
     ```
@@ -243,7 +243,7 @@ In the algebraic structure R, additional properties and axioms are defined to fu
 - **Right Distributivity of Multiplication over Addition**: \( R*-distribʳ-+ \)
   - This property ensures the distributive law for multiplication over addition holds when multiplication is applied on the right side of the addition.
   - **Agda Definition**:
-    ```agda
+    ```agda=
     R*-distribʳ-+ : ∀ (x y z : R) → ((x R+ y) R* z) ~ ((x R* z) R+ (y R* z))
     R*-distribʳ-+ x y z = ~-trans (~-trans (R*-comm (x R+ y) z) (R*-distribˡ-+ z x y) )
                           (R+-axeq (z R* x) (x R* z) (z R* y) (y R* z) (R*-comm z x) (R*-comm z y))
@@ -269,7 +269,7 @@ In this context, combinatorial operations are defined using recursive functions 
 
 The following Agda code defines these operations within the algebraic structure \( R \):
 
-```agda
+```agda=
 rsigma : List R → (R → R) → R
 rsigma []      F = R0  
 rsigma (i ∷ l) F = (F i) R+ (rsigma l F)
@@ -317,8 +317,96 @@ These functions provide a framework for performing combinatorial operations with
 
 ### 1.5 Rings !
 
-ringN
+#### ringN
 
+```agda=
+
+
+ringℕ : Ring
+ringℕ = record
+  { R               = ℕ        
+  ; R0              = 0        
+  ; R1              = 1          
+  ; _R+_            = _+_        
+  ; _R*_            = _*_            
+  ; Rhead           = rh   
+  ; Rtail           = rt       
+  ; _~_             = _≡_     
+  ; ~-R0            = λ { 0 → true ; _ → false }    
+  ; ~-refl          = refl          
+  ; ~-trans         = trans         
+  ; ~-sym           = sym 
+  ; Rhead-tail      = ht
+  ; Rhead-0h        = 0h 
+  ; Rhead-h0        = h0
+  ; Rhead-n0        = hn0 
+  ; Rtail-01t       = 01t 
+  ; Rtail-t01       = t01
+  ; Rhead-~         = λ p → cong rh p  
+  ; Rtail-~         = λ p → cong rt p  
+  ; R+-identityˡ    = λ x → refl
+  ; R*-identityˡ    = *-identityˡ
+  ; R+-comm         = +-comm
+  ; R*-comm         = *-comm
+  ; R+-assoc        = +-assoc
+  ; R*-assoc        = *-assoc
+  ; R*-zeroˡ        = λ x → refl
+  ; R*-distribˡ-+   = *-distribˡ-+ 
+  ; R+-axeqˡ        = +ae
+  ; R*-axeqˡ        = *ae
+  }
+    where
+      rh : ℕ → ℕ
+      rh 0       = 0
+      rh (suc x) = 1  
+      rt : ℕ → ℕ
+      rt 0       = 0
+      rt (suc x) = x  
+
+      ht : (x : ℕ) → rh x + rt x ≡ x
+      ht zero = refl
+      ht (suc x) = refl
+
+      0h : (x : ℕ) → (x ≡ 0) → (rh x ≡ 0)
+      0h 0 = λ p → cong rh p
+      0h (suc x) = λ p → cong rh p
+      h0 : (x : ℕ) → (rh x ≡ 0) → (x ≡ 0)
+      h0 0 = λ p → refl
+      h0 (suc x) = λ p → ⊥-elim (contradiction p)
+        where
+          contradiction : 1 ≡ 0 → ⊥
+          contradiction ()
+      hn0 : (x : ℕ) → ¬ (x ≡ 0) → rh x ≡ 1
+      hn0 zero = λ x → ⊥-elim (x refl)
+      hn0 (suc x) = λ _ → refl
+      
+      contradiction : (x : ℕ) → suc (suc x) ≡ 1 → ⊥
+      contradiction zero = λ () 
+      contradiction (suc x) = λ ()    
+      proof : (x : ℕ) → suc x ≡ 1 → x ≡ 0
+      proof 0 p = refl
+      proof (suc x) p = ⊥-elim (contradiction x p)
+      tof : (x : ℕ) → (suc x ≡ 0 ⊎ suc x ≡ 1 → x ≡ 0)
+      tof x (_⊎_.inj₂ y) = proof x y
+
+
+      01t : (x : ℕ) → ((x ≡ 0) ⊎ (x ≡ 1)) → (rt x ≡ 0)
+
+      01t zero    = λ p → refl
+      01t (suc x) = tof x 
+
+      t01 : (x : ℕ) → (rt x ≡ 0) → ((x ≡ 0) ⊎ (x ≡ 1))
+      
+      t01 zero = λ p → _⊎_.inj₁ refl
+      t01 (suc x) = λ p → _⊎_.inj₂ (cong suc p)
+      
+      +ae : ∀ (x y z : ℕ) → x ≡ y → (z + x) ≡ (z + y)
+      +ae _ _ z p = cong (z +_) p
+      *ae : ∀ (x y z : ℕ) → x ≡ y → z * x ≡ z * y
+      *ae _ _ z p = cong (z *_) p
+ 
+
+```
 
 ringFinSet
 
@@ -346,7 +434,7 @@ This formalization of embedding functions ensures that the algebraic and combina
 
 #### Agda Code for `Embedding`:
 
-```agda
+```agda=
 record Embedding : Set (a ⊔ b) where
   field
     -- Homomorphic properties
@@ -376,7 +464,7 @@ The `conv` function is designed to generate the algebraic structure formed by th
 
 Here is the Agda code for the `conv` function:
 
-```agda
+```agda=
 conv : (Embedding rA rB) → Ring {a} → Ring {a ⊔ b}
 conv embd rA = record
   { R               = Σ[ y ∈ B ] Σ[ x ∈ A ] (EF embd x ~B y) 
@@ -433,25 +521,29 @@ The goal is to prove the commutativity of addition, \( n + m = m + n \), by usin
 
 ### 3.1 Agda Code
 
-The first proof, `pf2`, establishes the equivalence of the structures after applying the \( R+ \) operation to finite sets \( F n \) and \( F m \):
+The first proof, `combi-pf`, establishes the equivalence of the structures after applying the `R+` operation to finite sets `F n` and `F m`:
 
-```agda
-pf2 : (n m : ℕ) → ((F n) R+ (F m)) ~ ((F m) R+ (F n))
-pf2 = {!   !}
+```agda=
+combi-pf : (n m : ℕ) → ((F n) R+ (F m)) ~ ((F m) R+ (F n))
+combi-pf n m = record { to   = λ {(inj₁ x) → inj₂ x ; (inj₂ y) → inj₁ y} 
+                      ; from =  λ {(inj₁ x) → inj₂ x ; (inj₂ y) → inj₁ y}
+                      ; from∘to = λ {(inj₁ x) → refl ; (inj₂ y) → refl}
+                      ; to∘from = λ {(inj₁ x) → refl ; (inj₂ y) → refl}
+                      }
 ```
 
-The second proof, `pf2'`, uses the `pf2` to demonstrate the commutativity of addition:
+The second proof, `algeb-pf`, uses the `combi-pf` to demonstrate the commutativity of addition:
 
-```agda
-pf2' : (n m : ℕ) → n + m ≡ m + n 
-pf2' n m = 
+```agda=
+algeb-pf : (n m : ℕ) → n + m ≡ m + n 
+algeb-pf n m = 
   begin 
     n + m
   ≡⟨ sym (cong₂ _+_ (EFF n) (EFF m)) ⟩
     EF (F n) + EF (F m)
   ≡⟨ sym (E+ (F n) (F m)) ⟩
     EF ((F n) R+ (F m))
-  ≡⟨ E~ ((F n) R+ (F m)) ((F m) R+ (F n)) (pf2 n m)  ⟩
+  ≡⟨ E~ ((F n) R+ (F m)) ((F m) R+ (F n)) (combi-pf n m)  ⟩
     EF ((F m) R+ (F n))
   ≡⟨ E+ (F m) (F n) ⟩
     EF (F m) + EF (F n)
@@ -461,19 +553,19 @@ pf2' n m =
 ```
 ### 3.2 Explanation from the Middle of the Proof
 
-The goal is to prove the commutativity of addition \( n + m = m + n \) by leveraging the properties of the `Embedding` structure and the embedding function `EF`. Here's how the proof works from the middle, focusing on the use of `E~`, homomorphism `E+`, and `EFF`.
+The goal is to prove the commutativity of addition $n + m = m + n$ by leveraging the properties of the `Embedding` structure and the embedding function `EF`. Here's how the proof works from the middle, focusing on the use of `E~`, homomorphism `E+`, and `EFF`.
 
 #### **1. Using `E~`:**
-`E~` is a field of the `Embedding` record, which ensures that the equivalence relation \( \sim \) is preserved under the embedding function `EF`. Specifically, if two elements \( x \) and \( y \) are equivalent in the original structure (i.e., \( x \sim y \)), then their images under `EF` are also equivalent in the embedded structure (i.e., \( EF(x) \sim EF(y) \)).
+`E~` is a field of the `Embedding` record, which ensures that the equivalence relation \( \sim \) is preserved under the embedding function `EF`. Specifically, if two elements `x` and `y` are equivalent in the original structure (i.e., `x ~ y`, then their images under `EF` are also equivalent in the embedded structure (i.e., `EF(x) ~ EF(y)`).
 
 In the proof:
-- The goal is to show that \( EF((F n) R+ (F m)) \sim EF((F m) R+ (F n)) \).
-- The function `E~` is used to transform the equivalence in the original domain \( (F n) R+ (F m) \sim (F m) R+ (F n) \) into an equivalence in the embedded domain \( EF((F n) R+ (F m)) \sim EF((F m) R+ (F n)) \).
+- The goal is to show that `EF((F n) R+ (F m)) ≡ EF((F m) R+ (F n))`.
+- The function `E~` is used to transform the equivalence in the original domain `(F n) R+ (F m) ~ (F m) R+ (F n)` into an equivalence in the embedded domain `EF((F n) R+ (F m)) ≡ EF((F m) R+ (F n))`.
 
 #### **2. Using Homomorphism `E+`:**
-The field `E+` in the `Embedding` record ensures that the addition operation \( R+ \) is preserved under the embedding function `EF`. Specifically, if \( x \) and \( y \) are elements in the original structure, then:
-\[ EF(x R+ y) \sim EF(x) R+ EF(y) \]
-This property is used to show that the embedding of the sum \( (F n) R+ (F m) \) corresponds to the sum of the embeddings \( EF(F n) + EF(F m) \).
+The field `E+` in the `Embedding` record ensures that the addition operation `R+` is preserved under the embedding function `EF`. Specifically, if `x` and `y` are elements in the original structure, then:
+`EF(x R+ y) ~ EF(x) R+ EF(y)`
+This property is used to show that the embedding of the sum `(F n) R+ (F m) ` corresponds to the sum of the embeddings `EF(F n) + EF(F m)`.
 
 In the proof:
 - After applying `E~`, `E+` is used to move from the embedded operation back to the sum of the individual embedded elements, i.e., \( EF((F n) R+ (F m)) \sim EF(F n) + EF(F m) \).
