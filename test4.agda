@@ -71,3 +71,38 @@ algeb-pf n m =
     m + n  
   ∎
 
+open import Data.Product
+
+combi-pf2 : (n m l : ℕ) → ((F n) R* ((F m) R* (F l))) ~ (((F n) R* (F m)) R* (F l))
+combi-pf2 n m l = record { to   = λ {(i , (j , k)) → ((i , j) , k)} 
+                      ; from = λ {((i , j) , k) → (i , (j , k))}
+                      ; from∘to = λ {(i , (j , k)) → refl}
+                      ; to∘from = λ {((i , j) , k) → refl}
+                      }
+
+
+
+
+algeb-pf2 : (n m l : ℕ) → n * (m * l) ≡ (n * m) * l 
+algeb-pf2 n m l = 
+  begin 
+    n * (m * l)
+  ≡⟨ sym (cong (_* (m * l)) (EFF n)) ⟩
+    EF (F n) * (m * l)
+  ≡⟨ sym (cong (EF (F n) *_) (cong₂ _*_ (EFF m) (EFF l))) ⟩
+    EF (F n) * (EF (F m) * EF (F l))
+  ≡⟨ sym (cong (EF (F n) *_) (E* (F m) (F l))) ⟩
+    EF (F n) * EF ((F m) R* (F l))
+  ≡⟨ sym (E* (F n) ((F m) R* (F l))) ⟩
+    EF ((F n) R* ((F m) R* (F l)))
+  ≡⟨ E~ ((F n) R* ((F m) R* (F l))) (((F n) R* (F m)) R* (F l)) (combi-pf2 n m l)  ⟩
+    EF (((F n) R* (F m)) R* (F l))
+  ≡⟨ E* (((F n) R* (F m))) ((F l)) ⟩
+    EF ((F n) R* (F m)) * EF (F l)
+  ≡⟨ cong (_* EF (F l)) (E* (F n) (F m)) ⟩
+    (EF (F n) * EF (F m)) * EF (F l)
+  ≡⟨ cong (_* EF (F l)) (cong₂ _*_ (EFF n) (EFF m)) ⟩
+    (n * m) * EF (F l)
+  ≡⟨ cong ((n * m) *_) (EFF l) ⟩
+    (n * m) * l
+  ∎
