@@ -106,3 +106,11 @@ algeb-pf2 n m l =
   ≡⟨ cong ((n * m) *_) (EFF l) ⟩
     (n * m) * l
   ∎
+
+
+
+algeb-pf2' : (n m l : ℕ) → n * (m * l) ≡ (n * m) * l
+algeb-pf2' zero zero l = refl 
+algeb-pf2' zero (suc m) l = refl
+algeb-pf2' (suc n) zero l = algeb-pf2' n zero l
+algeb-pf2' (suc n) (suc m) l = {!   !}
