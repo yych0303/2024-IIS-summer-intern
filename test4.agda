@@ -107,10 +107,99 @@ algeb-pf2 n m l =
     (n * m) * l
   ∎
 
+lemma-1 : ∀ (m : ℕ) → m + zero ≡ m
+lemma-1 zero = refl
+lemma-1 (suc m) rewrite lemma-1 m = refl
+
+lemma-2 : ∀ (m n : ℕ) → m + suc n ≡ suc (m + n)
+lemma-2 zero n = refl
+lemma-2 (suc m) n rewrite lemma-2 m n = refl
+
++-comm : ∀ (m n : ℕ) → m + n ≡ n + m
++-comm m zero rewrite lemma-1 m = refl
++-comm m (suc n) rewrite lemma-2 m n | +-comm m n = refl
+
+lemma-1 : ∀ (m : ℕ) → m + zero ≡ m
+lemma-1 zero =
+  begin
+    zero + zero
+  ≡⟨⟩
+    zero
+  ∎
+lemma-1 (suc m) =
+  begin
+    suc m + zero
+  ≡⟨⟩
+    suc (m + zero)
+  ≡⟨ cong suc (lemma-1 m) ⟩
+    suc m
+  ∎
+lemma-2 : ∀ (m n : ℕ) → m + suc n ≡ suc (m + n)
+lemma-2 zero n =
+  begin
+    zero + suc n
+  ≡⟨⟩
+    suc n
+  ≡⟨⟩
+    suc (zero + n)
+  ∎
+lemma-2 (suc m) n =
+  begin
+    suc m + suc n
+  ≡⟨⟩
+    suc (m + suc n)
+  ≡⟨ cong suc (lemma-2 m n) ⟩
+    suc (suc (m + n))
+  ≡⟨⟩
+    suc (suc m + n)
+  ∎
++-comm : ∀ (m n : ℕ) → m + n ≡ n + m
++-comm m zero =
+  begin
+    m + zero
+  ≡⟨ lemma-1 m ⟩
+    m
+  ≡⟨⟩
+    zero + m
+  ∎
++-comm m (suc n) =
+  begin
+    m + suc n
+  ≡⟨ lemma-2 m n ⟩
+    suc (m + n)
+  ≡⟨ cong suc (+-comm m n) ⟩
+    suc (n + m)
+  ≡⟨⟩
+    suc n + m
+  ∎
+
+*-assoc : ∀ (m n p : ℕ) → (m * n) * p ≡ m * (n * p)
+
+*-assoc zero n p = refl
+*-assoc (suc m) n p rewrite *-distrib-+ n (m * n) p | *-assoc m n p = refl
 
 
-algeb-pf2' : (n m l : ℕ) → n * (m * l) ≡ (n * m) * l
-algeb-pf2' zero zero l = refl 
-algeb-pf2' zero (suc m) l = refl
-algeb-pf2' (suc n) zero l = algeb-pf2' n zero l
-algeb-pf2' (suc n) (suc m) l = {!   !}
+Here’s how to rewrite the *-assoc proof using the reasoning style (begin...∎) instead of rewrite:
+
+
+*-assoc : ∀ (m n p : ℕ) → (m * n) * p ≡ m * (n * p)
+*-assoc zero n p =
+  begin
+    (zero * n) * p
+  ≡⟨⟩
+    zero * p
+  ≡⟨⟩
+    zero
+  ≡⟨⟩
+    zero * (n * p)
+  ∎
+*-assoc (suc m) n p =
+  begin
+    (suc m * n) * p
+  ≡⟨ *-distrib-+ n (m * n) p ⟩
+    (n + m * n) * p
+  ≡⟨ *-assoc m n p ⟩
+    n * p + (m * n) * p
+  ≡⟨⟩
+    suc m * (n * p)
+  ∎
