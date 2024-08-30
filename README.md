@@ -91,9 +91,9 @@ In the context of the research, the goal is to abstract the common algebraic str
 
 The algebraic structure `Ring` is defined as a record in Agda that captures the essential operations, identities, equivalence relations, and properties of a ring. Here's a 
 
-#### Carrier `R : Set`
+#### 1. Carrier `R : Set`
 
-#### Operations
+#### 2. Operations
 - `_R+_` **Addition**:
   This operation represents the addition of two elements within the ring R.
 - `_R*_` **Multiplication**: 
@@ -103,17 +103,17 @@ The algebraic structure `Ring` is defined as a record in Agda that captures the 
 - `Rtail` **Tail**: 
   This function is defined to retrieve or manipulate the "tail" of an element in R, complementing the head function.
 
-#### Identities
+#### 3. Equivalence Relation
+- **Relation**: `_~_`  
+  An equivalence relation `_~_` defined on the elements of R, ensuring reflexivity, transitivity, and symmetry.
+
+#### 4. Identities
 - `R0` **Zero**:   
   The additive identity, satisfying R0 R+ x ~ x for any element x.
 - `R1` **One**:   
   The multiplicative identity, satisfying R1 R* x ~ x for any element x.
 
-#### Equivalence Relation
-- **Relation**: `_~_`  
-  An equivalence relation `_~_` defined on the elements of R, ensuring reflexivity, transitivity, and symmetry.
-
-#### Constraints on Operations
+#### 5. Constraints on Operations
 
 - **head-tail properties**: 
 - **Commutative ring properties**
@@ -179,7 +179,7 @@ record Ring {ℓ : Level} : Set (lsuc ℓ) where
 This code formalizes the definition of a ring with all its essential operations and constraints, ensuring that it adheres to the axioms of ring theory and can be used for rigorous algebraic reasoning in Agda.
 
 
-### 1.3 Additional Properties of R
+### 1.2 Additional Properties of R
 
 In the algebraic structure R, additional properties and axioms are defined to further characterize the behavior of operations, particularly in the context of commutative rings. These properties ensure that operations behave consistently and satisfy fundamental algebraic laws. Below is a detailed explanation of these properties and their corresponding Agda code.
 
@@ -258,7 +258,7 @@ In the algebraic structure R, additional properties and axioms are defined to fu
 
 These additional properties extend the basic algebraic structure of \( R \), reinforcing that it adheres to the principles of a commutative ring with respect to addition and multiplication. The axioms of equality ensure consistent behavior when comparing elements, and the distributive property guarantees that multiplication distributes over addition, which is essential for maintaining the integrity of the ring structure. The Agda code provided formalizes these properties, enabling rigorous reasoning about the structure within a proof assistant environment.
 
-### 1.4 Definition of Combinatorial Operations
+### 1.3 Definition of Combinatorial Operations
 
 In this context, combinatorial operations are defined using recursive functions that leverage the algebraic structure \( R \). Below are the definitions of key combinatorial operations such as summation, multiplication, binomial coefficients, permutations, and factorials.
 
@@ -320,7 +320,7 @@ r! r = rP r r
 
 These functions provide a framework for performing combinatorial operations within the algebraic structure \( R \), preserving the properties and relationships essential for combinatorial reasoning.
 
-### 1.5 ringN
+### 1.4 ringN
 
 ```agda=
 
