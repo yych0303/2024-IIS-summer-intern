@@ -20,20 +20,15 @@ module _ {a b : Level} {rA : Ring {a}} {rB : Ring {b}} (emb : Embedding rA rB) w
   infix 1 trns
 
   trns : Term rA → Term rB
-  trns term with term
-  ...               | (` v)            = (` (EF v))        
---  ...               | ($ i)            = ($ i)        
-  ...               | (t `+ t₁)        = (trns t `+ trns t₁)    
-  ...               | (t `* t₁)        = (trns  t `* trns t₁)    
---  ...               | `P[ t , t₁ ]     = `P[ trns emb t , trns emb t₁ ]   
---  ...               | `C[ t , t₁ ]     = `C[ trns emb t , trns emb t₁ ]   
---  ...               | (`Σ[ i ∈ l ] t)  = (`Σ[ i ∈ map (EF emb) l ] trns emb t)
---  ...               | (`Π[ i ∈ l ] t)  = (`Π[ i ∈ map (EF emb) l ] trns emb t)
---  ...               | [ t ]`!          = [ trns emb t ]`!      
+  trns (` x) = ` (EF x)
+--  trns (& n) = {! ` (EF x)  !}
+  trns (t `+ t₁) = trns t `+ trns t₁
+  trns (t `* t₁) = trns t `* trns t₁
 
-  
+
   evtr : Term rA → B
-  evtr (` x) = EF x                         
+  evtr (` x) = EF x  
+--  evtr (& x) = {!   !}                   
   evtr (t `+ t₁) = _R+_ rB (evtr t) (evtr t₁)   
   evtr (t `* t₁) = _R*_ rB (evtr  t) (evtr t₁)  
 

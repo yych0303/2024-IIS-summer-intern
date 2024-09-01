@@ -31,7 +31,11 @@ T₄ = ` (F 4)
 
 
 pf1 : (S₃ R+ S₄) ~ (S₄ R+ S₃)
-pf1 = {!   !}
+pf1 = record { to   = λ {(inj₁ x) → inj₂ x ; (inj₂ y) → inj₁ y} 
+             ; from =  λ {(inj₁ x) → inj₂ x ; (inj₂ y) → inj₁ y}
+             ; from∘to = λ {(inj₁ x) → refl ; (inj₂ y) → refl}
+             ; to∘from = λ {(inj₁ x) → refl ; (inj₂ y) → refl}
+             }
 
 
 pf1' : 3 + 4 ≡ 4 + 3 
@@ -84,7 +88,7 @@ algeb-pf n m =
   ∎
 
 algeb-pf-auto : (n m : ℕ) → EF (F n) + EF (F m) ≡ EF (F m) + EF (F n)
-algeb-pf-auto n m = auto embFinSetN (` (F n) `+ ` (F m)) (` (F m) `+ ` (F n)) (combi-pf n m) -- (` (F n) `+ ` (F m)) (` (F m) `+ ` (F n)) {!   !}
+algeb-pf-auto n m = auto embFinSetN (` (F n) `+ ` (F m)) (` (F m) `+ ` (F n)) (combi-pf n m) 
 
 
 
