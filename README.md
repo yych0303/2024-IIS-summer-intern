@@ -1,9 +1,6 @@
 # Bridging Combinatorial and Algebraic proof: An Algebraic Approach with Agda
-
 ## Abstract
 This research explores the equivalence between algebraic and combinatorial proofs of combinatorial identities using Agda. Combinatorial proofs typically utilize double counting and bijective techniques, while algebraic proofs rely on algebraic operations. The goal is to transform combinatorial proofs into algebraic ones in Agda by abstracting their shared algebraic structure, ensuring proof correctness and equivalence. The equivalence of sets $S$ and $S'$ is expressed as $S \simeq S'$, indicating a bijection, with $S \simeq S' \leftrightarrow n = n'$. This equivalence is crucial in transforming combinatorial proofs into algebraic forms, ensuring the preservation of mathematical accuracy.
-
-
 
 **Keywords**: Agda, Commutative ring, Finset, Combinatorial reasoning, Double counting
 
@@ -31,7 +28,9 @@ Combinatorial operators are crucial tools in combinatorics for constructing, man
 
 
 
-![image](https://hackmd.io/_uploads/ryuXteQq0.png)
+
+![image](https://hackmd.io/_uploads/H1-32sRj0.png)
+
 
 #### (a) Combinatorial Argument
 
@@ -88,46 +87,52 @@ In the context of the research, the goal is to abstract the common algebraic str
 ## 1 Algebraic Structure of Combinatorial Systems
 
 
-### 1.1 Algebraic Structure R
+### 1.1 Algebraic Structure: `Ring`
 
-The algebraic structure R is defined as a record in Agda that captures the essential operations, identities, equivalence relations, and properties of a ring. Here's a breakdown:
+The algebraic structure `Ring` is defined as a record in Agda that captures the essential operations, identities, equivalence relations, and properties of a ring. Here's a 
 
-#### Operations
-- **Addition**:  `_R+_` 
+#### 1. Carrier `R : Set`
+
+#### 2. Operations
+- `_R+_` **Addition**:
   This operation represents the addition of two elements within the ring R.
-- **Multiplication**: `_R*_`
+- `_R*_` **Multiplication**: 
   This operation represents the multiplication of two elements within the ring R.
-- **Head**: `Rhead`
+- `Rhead` **Head**: 
   This function is defined to retrieve or manipulate the "head" of an element in R, playing a role in decomposing elements.
-- **Tail**: `Rtail`
+- `Rtail` **Tail**: 
   This function is defined to retrieve or manipulate the "tail" of an element in R, complementing the head function.
 
-#### Identities
-- **Zero**: `R0`  
-  The additive identity, satisfying R0 R+ x = x for any element x.
-- **One**: `R1`  
-  The multiplicative identity, satisfying R1 R* x = x for any element x.
-
-#### Equivalence Relation
+#### 3. Equivalence Relation
 - **Relation**: `_~_`  
   An equivalence relation `_~_` defined on the elements of R, ensuring reflexivity, transitivity, and symmetry.
 
-#### Constraints on Operations
-- **Identity**: The identities `R0` and `R1` are preserved in all operations.
-- **Commutativity**: Both addition and multiplication are commutative.
-- **Associativity**: Both addition and multiplication are associative.
-- **Distributivity**: Multiplication distributes over addition.
+#### 4. Identities
+- `R0` **Zero**:   
+  The additive identity, satisfying R0 R+ x ~ x for any element x.
+- `R1` **One**:   
+  The multiplicative identity, satisfying R1 R* x ~ x for any element x.
+
+#### 5. Constraints on Operations
+
+- **head-tail properties**: 
+- **Commutative ring properties**
+    - **Identity**: 
+    - **Commutativity**: Both addition and multiplication are commutative.
+    - **Associativity**: Both addition and multiplication are associative.
+    - **Distributivity**: Multiplication distributes over addition.
 - **Axiom of Equality**: Ensures that equivalence is preserved under addition and multiplication.
+
 
 #### Theorem
 - R/~ is a commutative integral domain. 
-  This theorem states that the quotient of R under the equivalence relation `_~_` forms a commutative integral domain, meaning it has no zero divisors and is commutative under both addition and multiplication.
+  This theorem states that the quotient of carrier `R` under the equivalence relation `_~_` forms a commutative integral domain, meaning it has no zero divisors and is commutative under both addition and multiplication.
 
 #### Agda Code for Ring Definition
 
 Here is the Agda code that defines the `Ring` record with the above properties:
 
-```agda
+```agda=
 record Ring {ℓ : Level} : Set (lsuc ℓ) where
   field
     R               : Set ℓ
@@ -174,7 +179,7 @@ record Ring {ℓ : Level} : Set (lsuc ℓ) where
 This code formalizes the definition of a ring with all its essential operations and constraints, ensuring that it adheres to the axioms of ring theory and can be used for rigorous algebraic reasoning in Agda.
 
 
-### 1.3 Additional Properties of R
+### 1.2 Additional Properties of R
 
 In the algebraic structure R, additional properties and axioms are defined to further characterize the behavior of operations, particularly in the context of commutative rings. These properties ensure that operations behave consistently and satisfy fundamental algebraic laws. Below is a detailed explanation of these properties and their corresponding Agda code.
 
@@ -183,7 +188,7 @@ In the algebraic structure R, additional properties and axioms are defined to fu
 - **Right Identity for Addition**: \( R+\-identityʳ \)
   - This property ensures that adding the identity element \( R0 \) to any element \( x \) on the right results in \( x \) itself.
   - **Agda Definition**:
-    ```agda
+    ```agda=
     R+-identityʳ : ∀ (x : R) → (x R+ R0) ~ x
     R+-identityʳ x = ~-trans (R+-comm x R0) (R+-identityˡ x)
     ```
@@ -191,7 +196,7 @@ In the algebraic structure R, additional properties and axioms are defined to fu
 - **Right Identity for Multiplication**: \( R*-identityʳ \)
   - This property ensures that multiplying any element \( x \) by the identity element \( R1 \) on the right results in \( x \) itself.
   - **Agda Definition**:
-    ```agda
+    ```agda=
     R*-identityʳ : ∀ (x : R) → (x R* R1) ~ x
     R*-identityʳ x = ~-trans (R*-comm x R1) (R*-identityˡ x)
     ```
@@ -199,7 +204,7 @@ In the algebraic structure R, additional properties and axioms are defined to fu
 - **Right Zero for Multiplication**: \( R*-zeroʳ \)
   - This property ensures that multiplying any element \( x \) by the zero element \( R0 \) on the right results in \( R0 \).
   - **Agda Definition**:
-    ```agda
+    ```agda=
     R*-zeroʳ : ∀ (x : R) → (x R* R0) ~ R0
     R*-zeroʳ x = ~-trans (R*-comm x R0) (R*-zeroˡ x)
     ```
@@ -209,7 +214,7 @@ In the algebraic structure R, additional properties and axioms are defined to fu
 - **Right Equality for Addition**: \( R+\-axeqʳ \)
   - Ensures that if \( x \sim y \), then \( x + z \sim y + z \).
   - **Agda Definition**:
-    ```agda
+    ```agda=
     R+-axeqʳ : ∀ (x y z : R) → x ~ y → (x R+ z) ~ (y R+ z)
     R+-axeqʳ x y z p = ~-trans (R+-comm x z) (~-trans (R+-axeqˡ x y z p) (R+-comm z y))
     ```
@@ -217,7 +222,7 @@ In the algebraic structure R, additional properties and axioms are defined to fu
 - **Right Equality for Multiplication**: \( R*-axeqʳ \)
   - Ensures that if \( x \sim y \), then \( x * z \sim y * z \).
   - **Agda Definition**:
-    ```agda
+    ```agda=
     R*-axeqʳ : ∀ (x y z : R) → x ~ y → (x R* z) ~ (y R* z)
     R*-axeqʳ x y z p = ~-trans (R*-comm x z) (~-trans (R*-axeqˡ x y z p) (R*-comm z y))
     ```
@@ -225,7 +230,7 @@ In the algebraic structure R, additional properties and axioms are defined to fu
 - **Combined Equality for Addition**: \( R+\-axeq \)
   - Ensures that if \( x \sim y \) and \( s \sim t \), then \( x + s \sim y + t \).
   - **Agda Definition**:
-    ```agda
+    ```agda=
     R+-axeq : ∀ (x y s t : R) → x ~ y → s ~ t → (x R+ s) ~ (y R+ t)
     R+-axeq x y s t p q =  ~-trans (R+-axeqʳ x y s p) (R+-axeqˡ s t y q)
     ```
@@ -233,7 +238,7 @@ In the algebraic structure R, additional properties and axioms are defined to fu
 - **Combined Equality for Multiplication**: \( R*-axeq \)
   - Ensures that if \( x \sim y \) and \( s \sim t \), then \( x * s \sim y * t \).
   - **Agda Definition**:
-    ```agda
+    ```agda=
     R*-axeq : ∀ (x y s t : R) → x ~ y → s ~ t → (x R* s) ~ (y R* t)
     R*-axeq x y s t p q =  ~-trans (R*-axeqʳ x y s p) (R*-axeqˡ s t y q)
     ```
@@ -243,7 +248,7 @@ In the algebraic structure R, additional properties and axioms are defined to fu
 - **Right Distributivity of Multiplication over Addition**: \( R*-distribʳ-+ \)
   - This property ensures the distributive law for multiplication over addition holds when multiplication is applied on the right side of the addition.
   - **Agda Definition**:
-    ```agda
+    ```agda=
     R*-distribʳ-+ : ∀ (x y z : R) → ((x R+ y) R* z) ~ ((x R* z) R+ (y R* z))
     R*-distribʳ-+ x y z = ~-trans (~-trans (R*-comm (x R+ y) z) (R*-distribˡ-+ z x y) )
                           (R+-axeq (z R* x) (x R* z) (z R* y) (y R* z) (R*-comm z x) (R*-comm z y))
@@ -253,7 +258,7 @@ In the algebraic structure R, additional properties and axioms are defined to fu
 
 These additional properties extend the basic algebraic structure of \( R \), reinforcing that it adheres to the principles of a commutative ring with respect to addition and multiplication. The axioms of equality ensure consistent behavior when comparing elements, and the distributive property guarantees that multiplication distributes over addition, which is essential for maintaining the integrity of the ring structure. The Agda code provided formalizes these properties, enabling rigorous reasoning about the structure within a proof assistant environment.
 
-### 1.4 Definition of Combinatorial Operations
+### 1.3 Definition of Combinatorial Operations
 
 In this context, combinatorial operations are defined using recursive functions that leverage the algebraic structure \( R \). Below are the definitions of key combinatorial operations such as summation, multiplication, binomial coefficients, permutations, and factorials.
 
@@ -269,7 +274,7 @@ In this context, combinatorial operations are defined using recursive functions 
 
 The following Agda code defines these operations within the algebraic structure \( R \):
 
-```agda
+```agda=
 rsigma : List R → (R → R) → R
 rsigma []      F = R0  
 rsigma (i ∷ l) F = (F i) R+ (rsigma l F)
@@ -315,17 +320,110 @@ r! r = rP r r
 
 These functions provide a framework for performing combinatorial operations within the algebraic structure \( R \), preserving the properties and relationships essential for combinatorial reasoning.
 
-### 1.5 Rings !
+### 1.4 ringN
 
-ringN
+```agda=
 
 
-ringFinSet
+ringℕ : Ring
+ringℕ = record
+  { R               = ℕ        
+  ; R0              = 0        
+  ; R1              = 1          
+  ; _R+_            = _+_        
+  ; _R*_            = _*_            
+  ; Rhead           = rh   
+  ; Rtail           = rt       
+  ; _~_             = _≡_     
+  ; ~-R0            = λ { 0 → true ; _ → false }    
+  ; ~-refl          = refl          
+  ; ~-trans         = trans         
+  ; ~-sym           = sym 
+  ; Rhead-tail      = ht
+  ; Rhead-0h        = 0h 
+  ; Rhead-h0        = h0
+  ; Rhead-n0        = hn0 
+  ; Rtail-01t       = 01t 
+  ; Rtail-t01       = t01
+  ; Rhead-~         = λ p → cong rh p  
+  ; Rtail-~         = λ p → cong rt p  
+  ; R+-identityˡ    = λ x → refl
+  ; R*-identityˡ    = *-identityˡ
+  ; R+-comm         = +-comm
+  ; R*-comm         = *-comm
+  ; R+-assoc        = +-assoc
+  ; R*-assoc        = *-assoc
+  ; R*-zeroˡ        = λ x → refl
+  ; R*-distribˡ-+   = *-distribˡ-+ 
+  ; R+-axeqˡ        = +ae
+  ; R*-axeqˡ        = *ae
+  }
+    where
+      rh : ℕ → ℕ
+      rh 0       = 0
+      rh (suc x) = 1  
+      rt : ℕ → ℕ
+      rt 0       = 0
+      rt (suc x) = x  
 
-FinSet
+      ht : (x : ℕ) → rh x + rt x ≡ x
+      ht zero = refl
+      ht (suc x) = refl
 
-## 2 Embedding Functions
-### 2.1 Embedding
+      0h : (x : ℕ) → (x ≡ 0) → (rh x ≡ 0)
+      0h 0 = λ p → cong rh p
+      0h (suc x) = λ p → cong rh p
+      h0 : (x : ℕ) → (rh x ≡ 0) → (x ≡ 0)
+      h0 0 = λ p → refl
+      h0 (suc x) = λ p → ⊥-elim (contradiction p)
+        where
+          contradiction : 1 ≡ 0 → ⊥
+          contradiction ()
+      hn0 : (x : ℕ) → ¬ (x ≡ 0) → rh x ≡ 1
+      hn0 zero = λ x → ⊥-elim (x refl)
+      hn0 (suc x) = λ _ → refl
+      
+      contradiction : (x : ℕ) → suc (suc x) ≡ 1 → ⊥
+      contradiction zero = λ () 
+      contradiction (suc x) = λ ()    
+      proof : (x : ℕ) → suc x ≡ 1 → x ≡ 0
+      proof 0 p = refl
+      proof (suc x) p = ⊥-elim (contradiction x p)
+      tof : (x : ℕ) → (suc x ≡ 0 ⊎ suc x ≡ 1 → x ≡ 0)
+      tof x (_⊎_.inj₂ y) = proof x y
+
+
+      01t : (x : ℕ) → ((x ≡ 0) ⊎ (x ≡ 1)) → (rt x ≡ 0)
+
+      01t zero    = λ p → refl
+      01t (suc x) = tof x 
+
+      t01 : (x : ℕ) → (rt x ≡ 0) → ((x ≡ 0) ⊎ (x ≡ 1))
+      
+      t01 zero = λ p → _⊎_.inj₁ refl
+      t01 (suc x) = λ p → _⊎_.inj₂ (cong suc p)
+      
+      +ae : ∀ (x y z : ℕ) → x ≡ y → (z + x) ≡ (z + y)
+      +ae _ _ z p = cong (z +_) p
+      *ae : ∀ (x y z : ℕ) → x ≡ y → z * x ≡ z * y
+      *ae _ _ z p = cong (z *_) p
+ 
+
+```
+## 2 FinSet
+
+### 2.1 Membership of List
+
+
+### 2.2 Properties of membership
+
+### 2.3 FinSet
+
+### 2.4 ringFinSet
+
+
+## 3 Embedding Functions
+### 3.1 Embedding
 In this context, embedding functions and their properties are crucial for preserving the structure of operations during the transition from one domain to another. Here’s a breakdown:
 
 - **Embedding Function (EF)**: The embedding function \( EF \) maps elements from one structure into another, ensuring that the essential properties and operations are preserved during the embedding process.
@@ -346,7 +444,7 @@ This formalization of embedding functions ensures that the algebraic and combina
 
 #### Agda Code for `Embedding`:
 
-```agda
+```agda=
 record Embedding : Set (a ⊔ b) where
   field
     -- Homomorphic properties
@@ -366,17 +464,17 @@ record Embedding : Set (a ⊔ b) where
 This code defines an `Embedding` record that captures the essential properties needed to maintain the algebraic structure during embedding. Each field represents a key aspect of homomorphism or structure preservation, ensuring that the embedded structure accurately reflects the original.
 
 
-### 2.2 Embedding from FinSet to N !
+### 3.2 Embedding from FinSet to N !
 
 
 
-### 2.3 Conversion of Rings via Embedding
+### 3.3 Conversion of Rings via Embedding
 
 The `conv` function is designed to generate the algebraic structure formed by the image of the embedding function `EF`. This process involves mapping elements through `EF` and then studying the resulting structure within the new domain, ensuring that it retains the necessary algebraic properties derived from the original ring. This approach is crucial for analyzing how the original ring structure transforms under embedding and how its operations and identities are preserved in the new context.
 
 Here is the Agda code for the `conv` function:
 
-```agda
+```agda=
 conv : (Embedding rA rB) → Ring {a} → Ring {a ⊔ b}
 conv embd rA = record
   { R               = Σ[ y ∈ B ] Σ[ x ∈ A ] (EF embd x ~B y) 
@@ -427,31 +525,37 @@ conv embd rA = record
 
 This code formalizes the transformation of a ring structure through embedding, ensuring that all algebraic properties and operations are preserved in the new context, which is crucial for maintaining the consistency of the algebraic framework across different domains.
 
-## 3 Example of Transforming a Proof: Commutativity of Addition
+## 4 Examples of Transforming a Proof
+
+### 4.1 Commutativity of Addition
 
 The goal is to prove the commutativity of addition, \( n + m = m + n \), by using a transformed proof involving the embedding function \( EF \) and the operations on finite sets.
 
-### 3.1 Agda Code
+#### Agda Code
 
-The first proof, `pf2`, establishes the equivalence of the structures after applying the \( R+ \) operation to finite sets \( F n \) and \( F m \):
+The first proof, `combi-pf`, establishes the equivalence of the structures after applying the `R+` operation to finite sets `F n` and `F m`:
 
-```agda
-pf2 : (n m : ℕ) → ((F n) R+ (F m)) ~ ((F m) R+ (F n))
-pf2 = {!   !}
+```agda=
+combi-pf : (n m : ℕ) → ((F n) R+ (F m)) ~ ((F m) R+ (F n))
+combi-pf n m = record { to   = λ {(inj₁ x) → inj₂ x ; (inj₂ y) → inj₁ y} 
+                      ; from =  λ {(inj₁ x) → inj₂ x ; (inj₂ y) → inj₁ y}
+                      ; from∘to = λ {(inj₁ x) → refl ; (inj₂ y) → refl}
+                      ; to∘from = λ {(inj₁ x) → refl ; (inj₂ y) → refl}
+                      }
 ```
 
-The second proof, `pf2'`, uses the `pf2` to demonstrate the commutativity of addition:
+The second proof, `algeb-pf`, uses the `combi-pf` to demonstrate the commutativity of addition:
 
-```agda
-pf2' : (n m : ℕ) → n + m ≡ m + n 
-pf2' n m = 
+```agda=
+algeb-pf : (n m : ℕ) → n + m ≡ m + n 
+algeb-pf n m = 
   begin 
     n + m
   ≡⟨ sym (cong₂ _+_ (EFF n) (EFF m)) ⟩
     EF (F n) + EF (F m)
   ≡⟨ sym (E+ (F n) (F m)) ⟩
     EF ((F n) R+ (F m))
-  ≡⟨ E~ ((F n) R+ (F m)) ((F m) R+ (F n)) (pf2 n m)  ⟩
+  ≡⟨ E~ ((F n) R+ (F m)) ((F m) R+ (F n)) (combi-pf n m)  ⟩
     EF ((F m) R+ (F n))
   ≡⟨ E+ (F m) (F n) ⟩
     EF (F m) + EF (F n)
@@ -459,26 +563,26 @@ pf2' n m =
     m + n  
   ∎
 ```
-### 3.2 Explanation from the Middle of the Proof
+#### Explanation from the Middle of the Proof
 
-The goal is to prove the commutativity of addition \( n + m = m + n \) by leveraging the properties of the `Embedding` structure and the embedding function `EF`. Here's how the proof works from the middle, focusing on the use of `E~`, homomorphism `E+`, and `EFF`.
+The goal is to prove the commutativity of addition $n + m = m + n$ by leveraging the properties of the `Embedding` structure and the embedding function `EF`. Here's how the proof works from the middle, focusing on the use of `E~`, homomorphism `E+`, and `EFF`.
 
-#### **1. Using `E~`:**
-`E~` is a field of the `Embedding` record, which ensures that the equivalence relation \( \sim \) is preserved under the embedding function `EF`. Specifically, if two elements \( x \) and \( y \) are equivalent in the original structure (i.e., \( x \sim y \)), then their images under `EF` are also equivalent in the embedded structure (i.e., \( EF(x) \sim EF(y) \)).
+##### **1. Using `E~`:**
+`E~` is a field of the `Embedding` record, which ensures that the equivalence relation \( \sim \) is preserved under the embedding function `EF`. Specifically, if two elements `x` and `y` are equivalent in the original structure (i.e., `x ~ y`, then their images under `EF` are also equivalent in the embedded structure (i.e., `EF(x) ~ EF(y)`).
 
 In the proof:
-- The goal is to show that \( EF((F n) R+ (F m)) \sim EF((F m) R+ (F n)) \).
-- The function `E~` is used to transform the equivalence in the original domain \( (F n) R+ (F m) \sim (F m) R+ (F n) \) into an equivalence in the embedded domain \( EF((F n) R+ (F m)) \sim EF((F m) R+ (F n)) \).
+- The goal is to show that `EF((F n) R+ (F m)) ≡ EF((F m) R+ (F n))`.
+- The function `E~` is used to transform the equivalence in the original domain `(F n) R+ (F m) ~ (F m) R+ (F n)` into an equivalence in the embedded domain `EF((F n) R+ (F m)) ≡ EF((F m) R+ (F n))`.
 
-#### **2. Using Homomorphism `E+`:**
-The field `E+` in the `Embedding` record ensures that the addition operation \( R+ \) is preserved under the embedding function `EF`. Specifically, if \( x \) and \( y \) are elements in the original structure, then:
-\[ EF(x R+ y) \sim EF(x) R+ EF(y) \]
-This property is used to show that the embedding of the sum \( (F n) R+ (F m) \) corresponds to the sum of the embeddings \( EF(F n) + EF(F m) \).
+##### **2. Using Homomorphism `E+`:**
+The field `E+` in the `Embedding` record ensures that the addition operation `R+` is preserved under the embedding function `EF`. Specifically, if `x` and `y` are elements in the original structure, then:
+`EF(x R+ y) ~ EF(x) R+ EF(y)`
+This property is used to show that the embedding of the sum `(F n) R+ (F m) ` corresponds to the sum of the embeddings `EF(F n) + EF(F m)`.
 
 In the proof:
 - After applying `E~`, `E+` is used to move from the embedded operation back to the sum of the individual embedded elements, i.e., \( EF((F n) R+ (F m)) \sim EF(F n) + EF(F m) \).
 
-#### **3. Using `EFF`:**
+##### **3. Using `EFF`:**
 `EFF` refers to a function or property that establishes a direct relationship between the embedding function `EF` and the original elements \( F n \). It essentially states that embedding \( F n \) using `EF` returns \( n \):
 \[ EF(F n) = n \]
 This property is crucial for returning to the original numeric domain after applying the embedding.
@@ -487,15 +591,55 @@ In the proof:
 - Once the equivalence \( EF(F n) + EF(F m) \sim EF(F m) + EF(F n) \) has been established using `E+` and `E~`, `EFF` is applied to simplify \( EF(F n) \) and \( EF(F m) \) back to \( n \) and \( m \), respectively.
 - This yields \( n + m = m + n \), completing the proof of commutativity.
 
-### 3.3 Summary
+#### Summary
 The proof leverages the properties of the `Embedding` structure, particularly the preservation of operations and equivalence relations through `E+`, `E~`, and `EFF`, to demonstrate that the commutativity of addition \( n + m = m + n \) holds by transforming and analyzing the operations within the embedded structure.
 
+### 4.2 Associativity of Product
 
-## 4 Term !
+#### Agda code
 
-### 4.1 term
-### 4.2 Eval
-### 4.3 example of term
+```agda=
+combi-pf2 : (n m l : ℕ) → ((F n) R* ((F m) R* (F l))) ~ (((F n) R* (F m)) R* (F l))
+combi-pf2 n m l = record { to   = λ {(i , (j , k)) → ((i , j) , k)} 
+                      ; from = λ {((i , j) , k) → (i , (j , k))}
+                      ; from∘to = λ {(i , (j , k)) → refl}
+                      ; to∘from = λ {((i , j) , k) → refl}
+                      }
+
+
+algeb-pf2 : (n m l : ℕ) → n * (m * l) ≡ (n * m) * l 
+algeb-pf2 n m l = 
+  begin 
+    n * (m * l)
+  ≡⟨ sym (cong (_* (m * l)) (EFF n)) ⟩
+    EF (F n) * (m * l)
+  ≡⟨ sym (cong (EF (F n) *_) (cong₂ _*_ (EFF m) (EFF l))) ⟩
+    EF (F n) * (EF (F m) * EF (F l))
+  ≡⟨ sym (cong (EF (F n) *_) (E* (F m) (F l))) ⟩
+    EF (F n) * EF ((F m) R* (F l))
+  ≡⟨ sym (E* (F n) ((F m) R* (F l))) ⟩
+    EF ((F n) R* ((F m) R* (F l)))
+  ≡⟨ E~ ((F n) R* ((F m) R* (F l))) (((F n) R* (F m)) R* (F l)) (combi-pf2 n m l)  ⟩
+    EF (((F n) R* (F m)) R* (F l))
+  ≡⟨ E* (((F n) R* (F m))) ((F l)) ⟩
+    EF ((F n) R* (F m)) * EF (F l)
+  ≡⟨ cong (_* EF (F l)) (E* (F n) (F m)) ⟩
+    (EF (F n) * EF (F m)) * EF (F l)
+  ≡⟨ cong (_* EF (F l)) (cong₂ _*_ (EFF n) (EFF m)) ⟩
+    (n * m) * EF (F l)
+  ≡⟨ cong ((n * m) *_) (EFF l) ⟩
+    (n * m) * l
+  ∎
+
+```
+
+
+
+## 5 Term !
+
+### 5.1 term
+### 5.2 Eval
+### 5.3 example of term
 
 ## Unfinished Code Components
 1. inject-∈ Function
