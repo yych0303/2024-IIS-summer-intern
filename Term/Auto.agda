@@ -4,15 +4,15 @@ open import Ring.Base
 open import Ring.Properties
 open import Term.Base
 open import Term.Translate
-open import Term.Equiv
+-- open import Term.Equiv
 open import Term.Evaluate
 open import Embedding.Base
 
 open import Agda.Primitive
+open import Data.Nat using (ℕ)
 
 
-
-module _ {a b : Level} {rA : Ring {a}} {rB : Ring {b}} (emb : Embedding rA rB) where
+module _ {a b : Level} {rA : Ring {a}} {rB : Ring {b}} (emb : Embedding rA rB) (f : ℕ → Ring.R rA) (g : ℕ → Ring.R rB) (EF# : (n : ℕ) → (Ring._~_ rB (Embedding.EF emb (f n)) (g n))) where
   open Embedding emb
   open Ring rB
   private
@@ -22,14 +22,14 @@ module _ {a b : Level} {rA : Ring {a}} {rB : Ring {b}} (emb : Embedding rA rB) w
 
 
 
-  hat : (t : Term rA) → EF (eval t) ~ evtr emb t
+  hat : (t : Term rA) → EF (eval f t) ~ evtr emb g t
   hat (` x) = ~-refl
---  hat (# n) = EFF  
-  hat (t `+ t₁) = ~-trans (E+ (eval t) (eval t₁)) (R+-axeq rB (EF (eval t)) (evtr emb t) (EF (eval t₁)) (evtr emb t₁) (hat t) (hat t₁)) 
-  hat (t `* t₁) = ~-trans (E* (eval t) (eval t₁)) (R*-axeq rB (EF (eval t)) (evtr emb t) (EF (eval t₁)) (evtr emb t₁) (hat t) (hat t₁))
+  hat (# n) = EF# n  
+  hat (t `+ t₁) = ~-trans (E+ (eval f t) (eval f t₁)) (R+-axeq rB (EF (eval f t)) (evtr emb g t) (EF (eval f t₁)) (evtr emb g t₁) (hat t) (hat t₁)) 
+  hat (t `* t₁) = ~-trans (E* (eval f t) (eval f t₁)) (R*-axeq rB (EF (eval f t)) (evtr emb g t) (EF (eval f t₁)) (evtr emb g t₁) (hat t) (hat t₁))
 
-  auto : (t t' : Term rA) → t ≈ t' → evtr emb t ~ evtr emb t'
-  auto t t' p = ~-trans (~-trans (~-sym (hat t)) (E~ (eval t) (eval t') p)) (hat t') 
+  auto : (t t' : Term rA) → Ring._~_ rA (eval f t) (eval f t') → evtr emb g t ~ evtr emb g t'
+  auto t t' p = ~-trans (~-trans (~-sym (hat t)) (E~ (eval f t) (eval f t') p)) (hat t') 
 
 
   

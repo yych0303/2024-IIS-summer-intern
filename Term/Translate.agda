@@ -2,6 +2,7 @@ module Term.Translate where
 -- Translate Term A to Term B
 
 open import Agda.Primitive
+open import Data.Nat using (ℕ)
 
 open import Term.Base
 open import Embedding.Base
@@ -21,15 +22,16 @@ module _ {a b : Level} {rA : Ring {a}} {rB : Ring {b}} (emb : Embedding rA rB) w
 
   trns : Term rA → Term rB
   trns (` x) = ` (EF x)
---  trns (& n) = {! ` (EF x)  !}
+  trns (# n) = # n
   trns (t `+ t₁) = trns t `+ trns t₁
   trns (t `* t₁) = trns t `* trns t₁
 
 
-  evtr : Term rA → B
-  evtr (` x) = EF x  
---  evtr (& x) = {!   !}                   
-  evtr (t `+ t₁) = _R+_ rB (evtr t) (evtr t₁)   
-  evtr (t `* t₁) = _R*_ rB (evtr  t) (evtr t₁)  
+  evtr : (ℕ → B) → Term rA → B
+  evtr _ (` x) = EF x  
+  evtr g (# n) = g n                   
+  evtr g (t `+ t₁) = _R+_ rB (evtr g t) (evtr g t₁)   
+  evtr g (t `* t₁) = _R*_ rB (evtr g t) (evtr g t₁)  
 
 
+ 

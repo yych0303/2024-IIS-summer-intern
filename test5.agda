@@ -55,7 +55,7 @@ pf1' =
   ∎
 
 pf1'' : 3 + 4 ≡ 4 + 3 
-pf1'' = auto embFinSetN (` (F 3) `+ ` (F 4)) (` (F 4) `+ ` (F 3)) pf1
+pf1'' = auto embFinSetN _ _ _ (` (F 3) `+ ` (F 4)) (` (F 4) `+ ` (F 3)) pf1
 
 
 
@@ -87,8 +87,10 @@ algeb-pf n m =
     m + n  
   ∎
 
-algeb-pf-auto : (n m : ℕ) → EF (F n) + EF (F m) ≡ EF (F m) + EF (F n)
-algeb-pf-auto n m = auto embFinSetN (` (F n) `+ ` (F m)) (` (F m) `+ ` (F n)) (combi-pf n m) 
+autoF = auto embFinSetN F (λ n → n) EFF
+
+algeb-pf-auto : (n m : ℕ) → n + m ≡ m + n
+algeb-pf-auto n m = autoF (# n `+ # m) (# m `+ # n) (combi-pf n m) 
 
 
 

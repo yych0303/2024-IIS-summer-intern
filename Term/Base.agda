@@ -28,7 +28,7 @@ module _  {ℓ : Level} (ring : Ring {ℓ} ) where
 
   data Term : Set ℓ where
     `_          : R → Term
---    #_          : ℕ → Term
+    #_          : ℕ → Term
     _`+_        : Term → Term → Term
     _`*_        : Term → Term → Term
 --    $_          : Idx → Term

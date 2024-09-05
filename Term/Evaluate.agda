@@ -2,6 +2,7 @@
 module Term.Evaluate where
 
 open import Agda.Primitive
+open import Data.Nat using (ℕ)
 
 open import Term.Base
 open import Ring.Base
@@ -13,8 +14,9 @@ module _ {ℓ : Level} {ring : Ring {ℓ}} where
   infix 1 eval
 
 
-  eval : Term ring → R
-  eval (` x) = x                    
-  eval (t `+ t₁) = (eval t) R+ (eval t₁)
-  eval (t `* t₁) = (eval t) R* (eval t₁)
+  eval : (ℕ → R) → Term ring → R
+  eval _ (` x) = x                    
+  eval f (# n) = f n
+  eval f (t `+ t₁) = (eval f t) R+ (eval f t₁)
+  eval f (t `* t₁) = (eval f t) R* (eval f t₁)
 
