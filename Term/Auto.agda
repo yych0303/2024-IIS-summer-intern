@@ -12,7 +12,7 @@ open import Agda.Primitive
 open import Data.Nat using (ℕ)
 
 
-module _ {a b : Level} {rA : Ring {a}} {rB : Ring {b}} (emb : Embedding rA rB) (f : ℕ → Ring.R rA) (g : ℕ → Ring.R rB) (EF# : (n : ℕ) → (Ring._~_ rB (Embedding.EF emb (f n)) (g n))) where
+module _ {a b : Level} {rA : Ring {a}} {rB : Ring {b}} (emb : Embedding rA rB) (f : ℕ → Ring.R rA) (g : ℕ → Ring.R rB) (E# : (n : ℕ) → (Ring._~_ rB (Embedding.EF emb (f n)) (g n))) where
   open Embedding emb
   open Ring rB
   private
@@ -20,12 +20,9 @@ module _ {a b : Level} {rA : Ring {a}} {rB : Ring {b}} (emb : Embedding rA rB) (
     B = Ring.R rB
     _~A_ = Ring._~_ rA
 
-
-
-
   hat : (t : Term rA) → EF (eval f t) ~ evtr emb g t
   hat (` x) = ~-refl
-  hat (# n) = EF# n  
+  hat (# n) = E# n  
   hat (t `+ t₁) = ~-trans (E+ (eval f t) (eval f t₁)) (R+-axeq rB (EF (eval f t)) (evtr emb g t) (EF (eval f t₁)) (evtr emb g t₁) (hat t) (hat t₁)) 
   hat (t `* t₁) = ~-trans (E* (eval f t) (eval f t₁)) (R*-axeq rB (EF (eval f t)) (evtr emb g t) (EF (eval f t₁)) (evtr emb g t₁) (hat t) (hat t₁))
 
@@ -35,3 +32,4 @@ module _ {a b : Level} {rA : Ring {a}} {rB : Ring {b}} (emb : Embedding rA rB) (
 
   
 
+  
